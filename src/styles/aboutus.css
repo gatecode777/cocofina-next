@@ -1,0 +1,749 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Great+Vibes&family=Inter:wght@400&display=swap');
+
+.abs-main-wrapper {
+    padding: 20px 0 80px 0;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.abs-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Banner Styling */
+.abs-hero-banner {
+    width: 100%;
+    height: 500px;
+    background-image: url('/assets/Aboutus.jpeg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.abs-banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.abs-hero-text {
+    font-family: 'Great Vibes', cursive;
+    font-size: 140px;
+    color: #ffffff;
+    font-weight: 400;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Content Area Styling */
+.abs-content-box {
+    text-align: left;
+}
+
+.abs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 500;
+    color: #814A30;
+    line-height: 1;
+    letter-spacing: 0%;
+    margin-bottom: 30px;
+}
+
+.abs-description {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    color: #814A30;
+    line-height: 1.8;
+    max-width: 100%;
+    font-weight: 400;
+}
+
+
+@media (max-width: 1024px) {
+    .abs-hero-text {
+        font-size: 100px;
+    }
+
+    .abs-hero-banner {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .abs-hero-banner {
+        height: 300px;
+    }
+
+    .abs-hero-text {
+        font-size: 70px;
+    }
+
+    .abs-title {
+        font-size: 32px;
+    }
+
+    .abs-description {
+        font-size: 16px;
+    }
+
+    .abs-main-wrapper {
+        padding-bottom: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .abs-hero-banner {
+        height: 250px;
+    }
+
+    .abs-hero-text {
+        font-size: 50px;
+    }
+
+    .abs-title {
+        font-size: 28px;
+    }
+}
+
+/* Our Mission Section Styles */
+.oms-wrapper {
+    background-color: #814A30;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.oms-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.oms-row {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+/* Image Styling */
+.oms-image-col {
+    flex: 1;
+}
+
+.oms-img-box {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.oms-img-box img {
+    width: 100%;
+    height: 250px;
+    display: block;
+    object-fit: cover;
+}
+
+/* Content Styling */
+.oms-content-col {
+    flex: 1;
+}
+
+.oms-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 45px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 25px;
+    line-height: 1.2;
+}
+
+.oms-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    font-weight: 400;
+}
+
+
+@media (max-width: 1024px) {
+    .oms-row {
+        gap: 40px;
+    }
+
+    .oms-heading {
+        font-size: 38px;
+    }
+}
+
+/* Mobile View (768px and below) */
+@media (max-width: 768px) {
+    .oms-wrapper {
+        padding: 60px 0;
+    }
+
+    .oms-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .oms-image-col,
+    .oms-content-col {
+        width: 100%;
+    }
+
+    .oms-heading {
+        font-size: 32px;
+    }
+
+    .oms-text {
+        font-size: 16px;
+    }
+}
+
+/* Small Mobile View (480px) */
+@media (max-width: 480px) {
+    .oms-heading {
+        font-size: 28px;
+    }
+}
+
+/* Why Choose Section Styles */
+.wcc-wrapper {
+    padding: 80px 0;
+    background-color: #ffffff;
+    font-family: 'Inter', sans-serif;
+}
+
+.wcc-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.wcc-main-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    color: #814A30;
+    font-weight: 500;
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+/* Grid Layout */
+.wcc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 80px;
+}
+
+/* Card Styling */
+.wcc-card {
+    background-color: #F5EBE0;
+    padding: 35px 25px;
+    border-radius: 8px;
+    text-align: left;
+    transition: transform 0.3s ease;
+}
+
+
+
+.wcc-icon-box {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+.wcc-icon-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.wcc-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #814A30;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.wcc-card-text {
+    font-size: 15px;
+    color: #814A30;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* How Made Styling */
+.wcc-how-made {
+    margin-top: 40px;
+}
+
+.wcc-description {
+    font-size: 18px;
+    color: #814A30;
+    line-height: 1.8;
+    max-width: 100%;
+}
+
+
+
+/* Tablet View */
+@media (max-width: 1024px) {
+    .wcc-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .wcc-main-heading {
+        font-size: 36px;
+    }
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .wcc-wrapper {
+        padding: 60px 0;
+    }
+
+    .wcc-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .wcc-main-heading {
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+
+    .wcc-description {
+        font-size: 16px;
+    }
+
+    .wcc-card {
+        padding: 30px 20px;
+    }
+}
+
+/* Our Promise Section Styles */
+.ops-wrapper {
+    background-color: #814A30;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.ops-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.ops-row {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+/* Content Styling */
+.ops-content-col {
+    flex: 1.2;
+}
+
+.ops-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 45px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 25px;
+    line-height: 1.2;
+}
+
+.ops-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    font-weight: 400;
+}
+
+/* Image Styling */
+.ops-image-col {
+    flex: 1;
+}
+
+.ops-img-box {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.ops-img-box img {
+    width: 100%;
+    height: 250px;
+    display: block;
+    object-fit: cover;
+}
+
+
+@media (max-width: 1024px) {
+    .ops-row {
+        gap: 40px;
+    }
+
+    .ops-heading {
+        font-size: 38px;
+    }
+}
+
+/* Mobile View (768px and below) */
+@media (max-width: 768px) {
+    .ops-wrapper {
+        padding: 60px 0;
+    }
+
+    .ops-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .ops-content-col,
+    .ops-image-col {
+        width: 100%;
+    }
+
+    .ops-heading {
+        font-size: 32px;
+    }
+
+    .ops-text {
+        font-size: 16px;
+    }
+}
+
+/* Small Mobile View (480px) */
+@media (max-width: 480px) {
+    .ops-heading {
+        font-size: 28px;
+    }
+}
+
+/* --- Stay Connected Section --- */
+
+.cf-connect-section {
+    padding: 80px 10px;
+}
+
+.cf-connect-wrapper {
+    background-color: #F4E8D8;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 20px 60px;
+    gap: 10px;
+    max-width: 1350px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.cf-newsletter-side {
+    flex: 1.2;
+    z-index: 2;
+}
+
+.cf-sub-title {
+    color: #814A30;
+    font-size: 20px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: -30px;
+    font-family: 'Afacad', sans-serif;
+    text-transform: uppercase;
+}
+
+.cf-main-title {
+    color: #814A30;
+    font-size: 52px;
+    line-height: 1.1;
+    font-weight: 600;
+
+    font-family: 'Manrope', sans-serif;
+}
+
+/* Newsletter Input Box */
+.cf-input-box {
+    background: #FFFFFF;
+    border-radius: 50px;
+    padding: 8px 10px 8px 25px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(129, 74, 48, 0.1);
+}
+
+.cf-email-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    color: #8B5D43;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.cf-email-input::placeholder {
+    color: #A18D82;
+}
+
+.cf-submit-btn {
+    background-color: #8B5D43;
+    color: #fff;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.cf-submit-btn:hover {
+    background-color: #723D29;
+    transform: scale(1.05);
+}
+
+/* --- Right Side (Chat Mockup) --- */
+.cf-chat-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px 0;
+
+}
+
+
+.cf-circle-top {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    background: #F4E8D8;
+    border-radius: 50%;
+    top: 13%;
+    left: 19%;
+    z-index: 1;
+}
+
+.cf-circle-bottom {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: #F4E8D8;
+    border-radius: 50%;
+    bottom: 30%;
+    right: 17%;
+    z-index: 1;
+}
+
+/* Chat Card */
+.cf-chat-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 380px;
+    height: 350px;
+    padding: 15px 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cf-chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Bubbles  */
+.cf-bubble {
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 85%;
+    font-family: 'DM Sans', sans-serif;
+    align-items: center;
+}
+
+.cf-bubble-small {
+    background-color: #814A30;
+    border-radius: 4px 18px 18px 18px;
+    align-self: flex-start;
+    margin-left: 17%;
+    margin-top: 34px;
+}
+
+.cf-bubble-large {
+    background-color: #814A30;
+    border-radius: 20px 20px 4px 20px;
+    width: 55%;
+    align-self: flex-end;
+    text-align: right;
+    margin-right: 55px;
+}
+
+/* Input Footer */
+.cf-chat-footer {
+    border: 1.2px solid #BC9A8B;
+    border-radius: 50px;
+    padding: 10px 18px;
+
+}
+
+.cf-chat-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cf-cursor {
+    color: #A67C6A;
+    font-size: 18px;
+}
+
+.cf-chat-input {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #814A30;
+    flex: 1;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.cf-send-icon {
+    color: #333;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+
+/* For Laptops/Large Tablets */
+@media (max-width: 1024px) {
+    .cf-connect-wrapper {
+        padding: 40px;
+    }
+
+    .cf-main-title {
+        font-size: 42px;
+    }
+}
+
+/* For Tablets & Small Laptops (Break into Column) */
+@media (max-width: 900px) {
+    .cf-connect-wrapper {
+        flex-direction: column;
+        text-align: center;
+        padding: 50px 30px;
+        gap: 50px;
+    }
+
+    .cf-input-box {
+        margin: 0 auto;
+    }
+
+    .cf-newsletter-side {
+        width: 100%;
+    }
+
+    .cf-chat-side {
+        width: 100%;
+        padding: 0;
+    }
+
+    .cf-circle-top {
+        left: 5%;
+        top: 0;
+    }
+
+    .cf-circle-bottom {
+        right: 5%;
+        bottom: 0;
+    }
+}
+
+/* For Mobile Phones */
+@media (max-width: 500px) {
+    .cf-connect-section {
+        padding: 0px 0px;
+    }
+
+    .cf-connect-wrapper {
+        padding: 40px 20px;
+        border-radius: 15px;
+    }
+
+    .cf-main-title {
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+
+    .cf-chat-card {
+        padding: 25px 15px;
+        min-height: 300px;
+    }
+
+    .cf-bubble {
+        font-size: 13px;
+        max-width: 90%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .cf-bubble-large {
+        width: 65%;
+    }
+
+    .cf-input-box {
+        margin: 0 auto;
+        max-width: fit-content;
+    }
+
+    .cf-circle-bottom {
+        display: none;
+    }
+
+    .cf-circle-top {
+        display: none;
+    }
+}

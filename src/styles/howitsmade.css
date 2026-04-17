@@ -1,0 +1,163 @@
+.how-process-section {
+    padding: 40px 0;
+    font-family: "Poppins", sans-serif;
+}
+
+.how-process-section .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.process-banner {
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.responsive-banner {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.process-content h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.process-content p {
+    font-size: 16px;
+    font-weight: 400;
+    color: #444;
+    line-height: 1.7;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .how-process-section {
+        padding: 20px 0;
+    }
+
+    .process-content h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .process-content p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .responsive-banner {
+        border-radius: 8px;
+    }
+}
+
+.process-steps-section {
+    padding: 60px 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #fff;
+}
+
+.process-steps-section .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.step-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 80px;
+}
+
+.step-row:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.step-text,
+.step-image {
+    flex: 1;
+}
+
+.step-number {
+    display: block;
+    color: #a67c52;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.step-text h3 {
+    color: #a67c52;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.step-text p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #444;
+    margin: 0;
+}
+
+.step-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    display: block;
+}
+
+.process-footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 40px;
+}
+
+.process-footer h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.process-footer p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #333;
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+
+    .step-row,
+    .step-row:nth-child(even) {
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    .step-image img {
+        height: 220px;
+    }
+
+    .step-text h3 {
+        font-size: 18px;
+    }
+
+    .process-footer h4 {
+        font-size: 16px;
+    }
+}

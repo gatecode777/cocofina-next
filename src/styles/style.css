@@ -1,0 +1,1207 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Great+Vibes&family=Inter:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@600&family=Afacad:wght@400;500&display=swap');
+
+:root {
+    --cf-brown: #8B573C;
+    --cf-light-bg: #F5EDE3;
+    --cf-text-gray: #956767;
+    --cf-heading-font: 'Playfair Display', serif;
+}
+
+
+/* Hero Section */
+.cf-hero {
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 3%;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.cf-hero-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+
+    border-radius: 8px;
+}
+
+/* Intro Section */
+.cf-intro {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.cf-intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 46px;
+
+    color: #814a30;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.cf-title-line {
+    /* width: 380px; */
+    height: 2px;
+    background-color: var(--cf-brown);
+    margin: 0 auto 25px;
+}
+
+.cf-intro-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto 35px;
+
+    color: #956767;
+    line-height: 1.6;
+
+
+}
+
+.cf-btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--cf-brown);
+    color: #fff;
+    padding: 14px 32px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 87, 60, 0.3);
+}
+
+.cf-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 87, 60, 0.4);
+}
+
+.cf-btn-primary svg {
+    width: 18px;
+}
+
+/* Features Grid */
+.cf-features {
+    padding-bottom: 80px;
+    background-color: #fff;
+}
+
+.cf-features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.cf-feature-card {
+
+    background-color: #F4E8D8;
+    padding: 30px 25px;
+    border-radius: 4px;
+    text-align: left;
+    transition: background 0.3s ease;
+}
+
+.cf-card-icon {
+    margin-bottom: 20px;
+}
+
+.cf-card-icon img {
+    height: 50px;
+    width: auto;
+}
+
+
+.cf-card-title {
+    font-family: 'DM Sans', sans-serif;
+
+    color: #814A30;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.cf-card-text {
+    font-family: 'DM Sans', sans-serif;
+
+    color: #814A30;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+/* Tablet View */
+@media (max-width: 1024px) {
+    .cf-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cf-intro-title {
+        font-size: 32px;
+    }
+}
+
+/* Mobile View */
+@media (max-width: 600px) {
+    .cf-features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cf-intro {
+        padding: 50px 15px;
+    }
+
+    .cf-intro-title {
+        font-size: 28px;
+    }
+
+    .cf-intro-desc {
+        font-size: 16px;
+    }
+
+    .cf-feature-card {
+        padding: 25px;
+    }
+}
+
+
+/* --- Products Section Styles --- */
+
+.cf-products-section {
+    background-color: #F5EEE2;
+    padding: 80px 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.cf-products-title-area {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.cf-products-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: #8B4513;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.cf-title-underline-center {
+    width: 150px;
+    height: 1.5px;
+    background-color: #000;
+    margin: 0 auto;
+}
+
+/* Grid Layout */
+.cf-products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Card Styling */
+.cf-product-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.cf-product-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Brown Image Area */
+.cf-card-header-brown {
+    background-color: #A15D40;
+    border-radius: 15px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cf-product-image {
+    max-height: 85%;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Card Content */
+.cf-card-body {
+    padding: 10px 5px;
+}
+
+.cf-product-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #814A30;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+
+.cf-product-desc {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #814A30;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Card Footer (Price & Button) */
+.cf-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.cf-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #814A30;
+}
+
+.cf-order-btn {
+    background-color: #A15D40;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(161, 93, 64, 0.3);
+    transition: background 0.3s;
+}
+
+.cf-order-btn:hover {
+    background-color: #8B4E35;
+}
+
+
+/* For Tablets */
+@media (max-width: 1024px) {
+    .cf-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cf-products-main-title {
+        font-size: 38px;
+    }
+}
+
+/* For Mobile Phones */
+@media (max-width: 768px) {
+    .cf-products-section {
+        padding: 50px 0;
+    }
+
+    .cf-products-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .cf-products-main-title {
+        font-size: 32px;
+    }
+
+    .cf-card-header-brown {
+        height: 250px;
+    }
+
+    .cf-product-card {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+
+    .cf-order-btn {
+        width: auto;
+        height: auto;
+        padding: 12px 28px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 12px;
+        inline-size: auto;
+
+    }
+}
+
+/* --- Our Story Section --- */
+
+.cf-story-section {
+    padding: 60px 0;
+    background-color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.cf-story-card {
+    background-color: #814A30;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    padding: 50px;
+
+    gap: 50px;
+    overflow: hidden;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Image Side */
+.cf-story-image-side {
+    flex: 1;
+    display: flex;
+    justify-content: left;
+}
+
+.cf-story-main-img {
+    width: 100%;
+    max-width: 680px;
+
+    height: auto;
+    border-radius: 20px;
+
+}
+
+/* Content Side */
+.cf-story-content-side {
+    flex: 1;
+    color: #FFFFFF;
+}
+
+.cf-story-header {
+    margin-bottom: 30px;
+}
+
+.cf-story-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.cf-story-underline {
+    width: 110px;
+    height: 1.5px;
+    background-color: #FFFFFF;
+}
+
+.cf-story-text p {
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+    font-weight: 300;
+    opacity: 0.95;
+}
+
+.cf-story-text p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* For Tablet & Large Phones */
+@media (max-width: 992px) {
+    .cf-story-card {
+        flex-direction: column;
+        padding: 40px;
+        border-radius: 30px;
+        gap: 40px;
+        margin: 0 20px;
+    }
+
+    .cf-story-content-side {
+        text-align: center;
+    }
+
+    .cf-story-underline {
+        margin: 0 auto;
+    }
+
+    .cf-story-title {
+        font-size: 36px;
+    }
+}
+
+/* For Small Mobile Phones */
+@media (max-width: 576px) {
+    .cf-story-section {
+        padding: 40px 0;
+    }
+
+    .cf-story-card {
+        padding: 30px 20px;
+        border-radius: 25px;
+    }
+
+    .cf-story-title {
+        font-size: 28px;
+    }
+
+    .cf-story-text p {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+}
+
+/* --- About Our Product Section --- */
+
+.cf-about-product {
+    background-color: #F4E8D8;
+    padding: 20px 0;
+
+}
+
+/* Header & Text Styling */
+.cf-about-header {
+    text-align: center;
+    max-width: 950px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+}
+
+.cf-about-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: #814A30;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.cf-about-underline {
+    width: 200px;
+    height: 2px;
+    background-color: #333;
+    margin: 0 auto 35px;
+}
+
+.cf-about-desc-container p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 17px;
+    color: #814A30;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    font-weight: 400;
+}
+
+.cf-about-desc-container p:last-child {
+    margin-bottom: 0;
+}
+
+/* Visual Section (The Layered Image Part) */
+.cf-about-visual {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+/* Peeche wala light brown box */
+.cf-about-bg-box {
+    position: absolute;
+    width: 95%;
+    height: 75%;
+    background-color: #D7B49E;
+    border-radius: 25px;
+    z-index: 1;
+}
+
+/* Main Image */
+.cf-about-main-img {
+    position: relative;
+    z-index: 2;
+    width: 85%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    display: block;
+}
+
+
+/* Tablet View */
+@media (max-width: 992px) {
+    .cf-about-title {
+        font-size: 38px;
+    }
+
+    .cf-about-main-img {
+        width: 92%;
+    }
+
+    .cf-about-bg-box {
+        width: 100%;
+        height: 70%;
+    }
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+    .cf-about-product {
+        padding: 60px 0;
+    }
+
+    .cf-about-title {
+        font-size: 30px;
+    }
+
+    .cf-about-desc-container p {
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .cf-about-visual {
+        padding: 20px 0;
+    }
+
+
+    .cf-about-bg-box {
+        height: 60%;
+        border-radius: 15px;
+    }
+
+    .cf-about-main-img {
+        width: 100%;
+        border-radius: 10px;
+    }
+}
+
+/* --- Featured Recipes Section --- */
+
+.cf-recipes-section {
+    padding: 10px 0;
+    background-color: #FFFFFF;
+
+}
+
+.cf-recipes-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.cf-recipes-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: #814A30;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.cf-recipes-underline {
+    width: 200px;
+    height: 1.5px;
+    background-color: #333;
+    margin: 0 auto;
+}
+
+/* Grid Logic */
+.cf-recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    max-width: 1250px;
+    margin: 0 auto;
+    /* padding: 0 20px; */
+}
+
+/* Card Styling */
+.cf-recipe-card {
+    background-color: #C08267;
+    border-radius: 25px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+    height: 80%;
+}
+
+.cf-recipe-card:hover {
+    transform: translateY(-8px);
+}
+
+/* Inner Image Container */
+.cf-recipe-img-wrapper {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: 18px;
+    margin-bottom: 20px;
+}
+
+.cf-recipe-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Text Content inside Card */
+.cf-recipe-content {
+    flex-grow: 1;
+    padding: 0 5px;
+}
+
+.cf-recipe-card-title {
+    font-family: 'Poppins', sans-serif;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.cf-recipe-card-desc {
+
+    font-family: 'Poppins', sans-serif;
+    color: #FFFADA;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Button Styling */
+.cf-recipe-action {
+    text-align: center;
+    margin-top: auto;
+    padding-bottom: 10px;
+}
+
+
+.cf-recipe-btn {
+    font-family: 'Poppins', sans-serif;
+    display: inline-block;
+    background-color: #A0583C;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: background 0.3s;
+}
+
+.cf-recipe-btn:hover {
+    background-color: #723D29;
+}
+
+
+/* For Tablets (Screen size 1024px and below) */
+@media (max-width: 1024px) {
+    .cf-recipes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .cf-recipes-title {
+        font-size: 38px;
+    }
+}
+
+/* For Mobile Phones (Screen size 650px and below) */
+@media (max-width: 650px) {
+    .cf-recipes-section {
+        padding: 60px 0;
+    }
+
+    .cf-recipes-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+
+    .cf-recipes-title {
+        font-size: 32px;
+    }
+
+    .cf-recipe-card {
+        padding: 15px;
+    }
+
+    .cf-recipe-img-wrapper {
+        height: 220px;
+    }
+}
+
+/* --- Stay Connected Section --- */
+
+.cf-connect-section {
+    padding: 0;
+}
+
+.cf-connect-wrapper {
+    background-color: #F4E8D8;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 20px 60px;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- Left Side Styling (Newsletter) --- */
+.cf-newsletter-side {
+    flex: 1.2;
+    z-index: 2;
+}
+
+.cf-sub-title {
+    color: #814A30;
+    font-size: 20px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: -30px;
+    font-family: 'Afacad', sans-serif;
+    text-transform: uppercase;
+}
+
+.cf-main-title {
+    color: #814A30;
+    font-size: 52px;
+    line-height: 1.1;
+    font-weight: 600;
+
+    font-family: 'Manrope', sans-serif;
+}
+
+/* Newsletter Input Box */
+.cf-input-box {
+    background: #FFFFFF;
+    border-radius: 50px;
+    padding: 8px 10px 8px 25px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(129, 74, 48, 0.1);
+}
+
+.cf-email-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    color: #8B5D43;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.cf-email-input::placeholder {
+    color: #A18D82;
+}
+
+.cf-submit-btn {
+    background-color: #8B5D43;
+    color: #fff;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.cf-submit-btn:hover {
+    background-color: #723D29;
+    transform: scale(1.05);
+}
+
+/* --- Right Side (Chat Mockup) --- */
+.cf-chat-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px 0;
+
+}
+
+/* Decorative Circles - Adjusted for Professional Look */
+.cf-circle-top {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    background: #F4E8D8;
+    border-radius: 50%;
+    top: 13%;
+    left: 15%;
+    z-index: 1;
+}
+
+.cf-circle-bottom {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: #F4E8D8;
+    border-radius: 50%;
+    bottom: 30%;
+    right: 15%;
+    z-index: 1;
+}
+
+/* Chat Card */
+.cf-chat-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 380px;
+    height: 350px;
+    padding: 15px 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cf-chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Bubbles - Exact Shape matching Target */
+.cf-bubble {
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 85%;
+    font-family: 'DM Sans', sans-serif;
+    align-items: center;
+}
+
+.cf-bubble-small {
+    background-color: #814A30;
+    border-radius: 4px 18px 18px 18px;
+    align-self: flex-start;
+    margin-left: 17%;
+    margin-top: 34px;
+}
+
+.cf-bubble-large {
+    background-color: #814A30;
+    border-radius: 20px 20px 4px 20px;
+    width: 55%;
+    align-self: flex-end;
+    text-align: right;
+    margin-right: 45px;
+}
+
+/* Input Footer */
+.cf-chat-footer {
+    border: 1.2px solid #BC9A8B;
+    border-radius: 50px;
+    padding: 10px 18px;
+
+}
+
+.cf-chat-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cf-cursor {
+    color: #A67C6A;
+    font-size: 18px;
+}
+
+.cf-chat-input {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #814A30;
+    flex: 1;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.cf-send-icon {
+    color: #333;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+
+/* For Laptops/Large Tablets */
+@media (max-width: 1024px) {
+    .cf-connect-wrapper {
+        padding: 40px;
+    }
+
+    .cf-main-title {
+        font-size: 42px;
+    }
+}
+
+/* For Tablets & Small Laptops (Break into Column) */
+@media (max-width: 900px) {
+    .cf-connect-wrapper {
+        flex-direction: column;
+        text-align: center;
+        padding: 50px 30px;
+        gap: 50px;
+    }
+
+    .cf-input-box {
+        margin: 0 auto;
+    }
+
+    .cf-newsletter-side {
+        width: 100%;
+    }
+
+    .cf-chat-side {
+        width: 100%;
+        padding: 0;
+    }
+
+    .cf-circle-top {
+        left: 5%;
+        top: 0;
+    }
+
+    .cf-circle-bottom {
+        right: 5%;
+        bottom: 0;
+    }
+}
+
+/* For Mobile Phones */
+@media (max-width: 500px) {
+    .cf-connect-section {
+        padding: 0px 0px;
+    }
+
+    .cf-connect-wrapper {
+        padding: 40px 20px;
+        border-radius: 15px;
+    }
+
+    .cf-main-title {
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+
+    .cf-chat-card {
+        padding: 25px 15px;
+        min-height: 300px;
+    }
+
+    .cf-bubble {
+        font-size: 13px;
+        max-width: 90%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .cf-bubble-large {
+        width: 65%;
+    }
+
+    .cf-input-box {
+        margin: 0 auto;
+        max-width: fit-content;
+    }
+
+    .cf-circle-bottom {
+        display: none;
+    }
+
+    .cf-circle-top {
+        display: none;
+    }
+}
+
+/* Section Styles */
+.ctm-testimonial-wrapper {
+    padding: 40px 10px;
+
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+.ctm-container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+.ctm-main-heading {
+    font-family: 'Manrope', sans-serif;
+    text-align: center;
+    font-size: 45px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 60px;
+}
+
+/* Card Design */
+.ctm-card {
+    background: #ffffff;
+    padding: 40px 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.ctm-stars {
+    color: #ff3b30;
+    font-size: 22px;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+}
+
+.ctm-text {
+    font-family: 'Afacad', sans-serif;
+    color: #818181;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 35px;
+    min-height: 100px;
+}
+
+.ctm-user-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: auto;
+}
+
+.ctm-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.ctm-username {
+    font-size: 17px;
+    font-weight: 500;
+    color: #000;
+    margin: 0;
+    font-family: 'Afacad', sans-serif;
+}
+
+.ctm-user-loc {
+    font-size: 14px;
+    color: #999;
+    margin: 2px 0 0 0;
+    font-family: 'Afacad', sans-serif;
+}
+
+/* Navigation & Pagination */
+.ctm-controls-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.ctm-arrow-prev,
+.ctm-arrow-next {
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+    background: transparent;
+    border: none;
+}
+
+.ctm-arrow-prev:hover,
+.ctm-arrow-next:hover {
+    opacity: 0.5;
+}
+
+.ctm-custom-pagination {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.ctm-num {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 25px;
+    text-align: center;
+}
+
+.ctm-num.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65px;
+    height: 65px;
+    border: 1.5px solid #333;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+    .ctm-main-heading {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ctm-card {
+        padding: 30px 20px;
+    }
+
+    .ctm-controls-area {
+        gap: 20px;
+    }
+
+    .ctm-num.active {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}

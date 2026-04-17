@@ -1,0 +1,908 @@
+:root {
+  --primary-brown: #542e1b;
+  --light-gray: #f9f9f9;
+  --border-color: #eee;
+  --text-muted: #999;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #fff;
+  color: #333;
+}
+
+.checkout-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* --- Stepper Header --- */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 60px;
+  position: relative;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ccc;
+  transition: 0.3s;
+}
+
+.step.active {
+  color: #000;
+  font-weight: bold;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  background: #eee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.step.active .step-icon {
+  background: #000;
+  color: #fff;
+}
+
+.step-info span {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.step-info strong {
+  font-size: 16px;
+}
+
+/* --- Common Styles --- */
+.step-content {
+  display: none;
+}
+
+.step-content.active {
+  display: block;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+/* --- Address & Shipping Cards --- */
+.selection-card {
+  background: var(--light-gray);
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.selection-card.selected {
+  border-color: #000;
+  background: #fff;
+}
+
+.radio-circle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.selected .radio-circle {
+  border-color: #000;
+}
+
+.selected .radio-circle::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.address-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag {
+  background: #000;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.address-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.card-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 15px;
+  color: #333;
+}
+
+/* Add New Address Section */
+.add-new-wrap {
+  text-align: center;
+  margin: 40px 0;
+  position: relative;
+}
+
+.add-new-wrap::before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed #ccc;
+  z-index: 1;
+}
+
+.add-new-btn {
+  background: #000;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  border: none;
+  font-size: 20px;
+}
+
+.add-new-text {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* --- Shipping Page Specific --- */
+.ship-method {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ship-details {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.ship-date {
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+}
+
+/* --- Payment Page Layout --- */
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 50px;
+}
+
+.summary-card {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.summary-item {
+  display: flex;
+  gap: 15px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.summary-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.total-row {
+  font-weight: bold;
+  color: #000;
+  font-size: 18px;
+  margin-top: 25px;
+}
+
+/* Card Visual */
+.card-preview {
+  background: linear-gradient(135deg, #111, #333);
+  color: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  margin: 20px 0;
+  position: relative;
+  height: 180px;
+}
+
+.chip {
+  width: 40px;
+  height: 30px;
+  background: #ffd700;
+  border-radius: 4px;
+  margin-bottom: 40px;
+}
+
+.card-number {
+  font-size: 22px;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+}
+
+.card-brand {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 5px;
+}
+
+.circle-red {
+  width: 25px;
+  height: 25px;
+  background: #eb001b;
+  border-radius: 50%;
+}
+
+.circle-orange {
+  width: 25px;
+  height: 25px;
+  background: #f79e1b;
+  border-radius: 50%;
+  margin-left: -12px;
+  opacity: 0.9;
+}
+
+/* Payment Form */
+.payment-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding-bottom: 10px;
+  cursor: pointer;
+  color: #999;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: #000;
+  border-color: #000;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  margin: 15px 0;
+}
+
+/* --- Footer Buttons --- */
+.checkout-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-top: 50px;
+}
+
+.btn {
+  padding: 15px 60px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  border: 1px solid #333;
+}
+
+.btn-back {
+  background: #fff;
+  color: #000;
+}
+
+.btn-next {
+  background: var(--primary-brown);
+  color: #fff;
+  border: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .checkout-footer {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPEND TO: frontend/src/styles/buynow.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Loading ─────────────────────────────────────────────────────────────────── */
+.bn-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 16px;
+  color: #888;
+}
+
+.bn-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e8e0d8;
+  border-top-color: #3b2a1a;
+  border-radius: 50%;
+  animation: bn-spin 0.75s linear infinite;
+}
+
+@keyframes bn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Stepper enhancements ────────────────────────────────────────────────────── */
+.step.done .step-icon {
+  background: #22c55e;
+  color: #fff;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #e8e0d8;
+  margin: 0 4px;
+  align-self: center;
+  transition: background 0.3s;
+}
+
+.step-connector.done {
+  background: #22c55e;
+}
+
+/* ── Step body ───────────────────────────────────────────────────────────────── */
+.step-content-wrapper {
+  animation: bn-fadein 0.2s ease;
+}
+
+@keyframes bn-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.step-body {
+  padding: 8px 0 24px;
+}
+
+.step-heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+}
+
+/* ── Radio circle ────────────────────────────────────────────────────────────── */
+.radio-circle {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid #c8b89a;
+  border-radius: 50%;
+  transition: border-color 0.2s;
+}
+
+.radio-circle.filled {
+  border-color: #3b2a1a;
+  background: radial-gradient(circle, #3b2a1a 55%, transparent 56%);
+}
+
+.selection-card:hover .radio-circle {
+  border-color: #3b2a1a;
+}
+
+/* ── Tag badges ──────────────────────────────────────────────────────────────── */
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  background: #f0e8de;
+  color: #5a3e28;
+}
+
+.tag-default {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* ── Card action buttons ─────────────────────────────────────────────────────── */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.card-action-btn {
+  background: none;
+  border: 1px solid #e0d8cf;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.card-action-btn:hover {
+  border-color: #3b2a1a;
+  background: #faf7f4;
+}
+
+/* ── Add new address row ─────────────────────────────────────────────────────── */
+.add-new-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: 1.5px dashed #c8b89a;
+  border-radius: 12px;
+  padding: 14px 20px;
+  width: 100%;
+  cursor: pointer;
+  color: #5a3e28;
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color 0.2s, background 0.2s;
+  margin-top: 12px;
+}
+
+.add-new-btn-row:hover {
+  border-color: #3b2a1a;
+  background: #faf7f4;
+}
+
+.add-new-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3b2a1a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+/* ── Empty message ───────────────────────────────────────────────────────────── */
+.bn-empty-msg {
+  color: #888;
+  font-size: 14px;
+  padding: 16px;
+  text-align: center;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* ── Address form box ────────────────────────────────────────────────────────── */
+.address-form-box {
+  background: #faf7f4;
+  border: 1px solid #e8e0d8;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+  animation: bn-fadein 0.2s ease;
+}
+
+.address-form-box h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: #1a1a1a;
+}
+
+.bn-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #c0392b;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.bn-form-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.bn-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 5px;
+}
+
+.bn-field.full {
+  flex: 1;
+}
+
+.bn-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5a4a3a;
+}
+
+.bn-field input,
+.bn-field select {
+  padding: 10px 12px;
+  border: 1.5px solid #e0d8cf;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.bn-field input:focus,
+.bn-field select:focus {
+  border-color: #3b2a1a;
+}
+
+.bn-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #5a4a3a;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.bn-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.btn-outline {
+  padding: 10px 20px;
+  background: none;
+  border: 1.5px solid #c8b89a;
+  border-radius: 8px;
+  color: #5a4a3a;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover {
+  border-color: #3b2a1a;
+  color: #3b2a1a;
+}
+
+.btn-save {
+  padding: 10px 24px;
+  background: #3b2a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #5a3e28;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Shipping method ─────────────────────────────────────────────────────────── */
+.ship-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: #fef9c3;
+  color: #854d0e;
+  margin-left: 8px;
+}
+
+.ship-desc {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  margin-top: 3px;
+  font-weight: 400;
+}
+
+.ship-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+/* ── Payment step layout ─────────────────────────────────────────────────────── */
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px;
+}
+
+/* Summary panel */
+.summary-panel {
+  background: #faf7f4;
+  border: 1px solid #e8e0d8;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.summary-items {
+  margin-bottom: 12px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ede8e2;
+}
+
+.summary-item img {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.summary-item-info {
+  flex: 1;
+}
+
+.summary-item-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.summary-item-variant {
+  font-size: 11px;
+  color: #888;
+}
+
+.summary-divider {
+  height: 1px;
+  background: #e0d8cf;
+  margin: 12px 0;
+}
+
+.summary-addr {
+  font-size: 13px;
+  color: #3b2a1a;
+  font-weight: 500;
+}
+
+/* Payment panel */
+.payment-panel {
+  background: #fff;
+  border: 1px solid #e8e0d8;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.pay-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.pay-icon {
+  font-size: 24px;
+}
+
+.pay-desc {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.disabled-card {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.soon-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 10px;
+}
+
+.cod-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #166534;
+}
+
+.cod-note span {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 13px;
+}
+
+/* ── Step error ──────────────────────────────────────────────────────────────── */
+.bn-step-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #c0392b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Footer total ────────────────────────────────────────────────────────────── */
+.footer-total {
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+.footer-total strong {
+  font-size: 17px;
+  color: #3b2a1a;
+}
+
+/* ── Btn spinner ─────────────────────────────────────────────────────────────── */
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: bn-spin 0.7s linear infinite;
+  margin-right: 6px;
+}

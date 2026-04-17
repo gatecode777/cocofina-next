@@ -1,0 +1,564 @@
+/* src/styles/addresses.css */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.my-account-wrapper-ad{
+    background: #FFF5F1;
+    padding: 32px 20px 60px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.addr-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    background: #FFF5F1;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────────── */
+.addr-page-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+.addr-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+}
+
+.addr-page-sub {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.addr-header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.addr-btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: #7a4e39;
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.addr-btn-add:hover {
+    background: #5a3e28;
+}
+
+.addr-btn-outline {
+    padding: 9px 18px;
+    background: none;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 9px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.addr-btn-outline:hover {
+    border-color: #7a4e39;
+    color: #7a4e39;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────────── */
+.addr-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #7a4e39;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+    animation: addr-toast-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+}
+
+.addr-toast i {
+    color: #22c55e;
+}
+
+@keyframes addr-toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ── Global error ────────────────────────────────────────────────────────────── */
+.addr-global-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.addr-retry {
+    margin-left: auto;
+    color: #dc2626;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* ── Form panel ──────────────────────────────────────────────────────────────── */
+.addr-form-panel {
+    background: #fff;
+    border: 1.5px solid #e8e0d8;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    animation: addr-panel-in 0.2s ease;
+}
+
+@keyframes addr-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.addr-form-panel-header {
+    padding: 18px 24px 0;
+}
+
+.addr-form-panel-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 16px;
+}
+
+/* ── Form internals ──────────────────────────────────────────────────────────── */
+.addr-form {
+    padding: 0 24px 24px;
+}
+
+.addr-form-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Label toggle */
+.addr-label-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.addr-label-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 8px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.addr-label-btn.active {
+    border-color: #7a4e39;
+    background: #7a4e39;
+    color: #fff;
+}
+
+.addr-label-btn:not(.active):hover {
+    border-color: #7a4e39;
+    color: #7a4e39;
+}
+
+/* Fields */
+.addr-field-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.addr-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 140px;
+}
+
+.addr-field--sm {
+    flex: 0 0 100px;
+    min-width: 80px;
+}
+
+.addr-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.addr-field input {
+    padding: 10px 12px;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: #1a1a1a;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fff;
+}
+
+.addr-field input:focus {
+    border-color: #7a4e39;
+    box-shadow: 0 0 0 3px rgba(59, 42, 26, 0.06);
+}
+
+.addr-field input.err {
+    border-color: #ef4444;
+}
+
+.addr-err {
+    font-size: 11px;
+    color: #ef4444;
+    margin-top: 1px;
+}
+
+.addr-field {
+    margin-bottom: 14px;
+}
+
+/* Default checkbox */
+.addr-default-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.addr-default-check input {
+    width: 15px;
+    height: 15px;
+    accent-color: #7a4e39;
+    cursor: pointer;
+}
+
+/* Form actions */
+.addr-form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.addr-btn-save {
+    padding: 10px 24px;
+    background: #7a4e39;
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.2s;
+}
+
+.addr-btn-save:hover:not(:disabled) {
+    background: #5a3e28;
+}
+
+.addr-btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Address grid ────────────────────────────────────────────────────────────── */
+.addr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* ── Address card ────────────────────────────────────────────────────────────── */
+.addr-card {
+    background: #fff;
+    border: 1.5px solid #e8e4df;
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    overflow: hidden;
+}
+
+.addr-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.addr-card--default {
+    border-color: #7a4e39;
+    background: linear-gradient(135deg, #faf7f4 0%, #fff 100%);
+}
+
+/* Default ribbon */
+.addr-default-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #7a4e39;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 0 0 0 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.addr-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.addr-card-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.addr-card-label i {
+    color: #5a3e28;
+    font-size: 12px;
+}
+
+/* Card actions */
+.addr-card-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.addr-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border: 1.5px solid;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+}
+
+.addr-action-btn--default {
+    border-color: #e8e0d8;
+    color: #6b7280;
+}
+
+.addr-action-btn--default:hover:not(:disabled) {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    background: #fffbeb;
+}
+
+.addr-action-btn--edit {
+    border-color: #e0e7ff;
+    color: #4f46e5;
+}
+
+.addr-action-btn--edit:hover {
+    background: #eff6ff;
+    border-color: #4f46e5;
+}
+
+.addr-action-btn--delete {
+    border-color: #fee2e2;
+    color: #ef4444;
+    padding: 5px 8px;
+}
+
+.addr-action-btn--delete:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.addr-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Card body */
+.addr-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.addr-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.addr-phone {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.addr-phone i {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.addr-line {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── Loading skeleton ────────────────────────────────────────────────────────── */
+.addr-loading {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.addr-skel-card {
+    pointer-events: none;
+    min-height: 140px;
+}
+
+.addr-skel {
+    display: block;
+    background: linear-gradient(90deg, #f5f0eb 25%, #ede8e2 50%, #f5f0eb 75%);
+    background-size: 400% 100%;
+    animation: addr-shimmer 1.2s infinite;
+    border-radius: 6px;
+}
+
+@keyframes addr-shimmer {
+    0% {
+        background-position: -400% 0
+    }
+
+    100% {
+        background-position: 400% 0
+    }
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────────── */
+.addr-empty {
+    text-align: center;
+    padding: 64px 20px;
+    color: #9ca3af;
+}
+
+.addr-empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #faf7f4;
+    border: 2px solid #e8e0d8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #c8b89a;
+    margin: 0 auto 16px;
+}
+
+.addr-empty h3 {
+    font-size: 18px;
+    color: #374151;
+    margin: 0 0 6px;
+}
+
+.addr-empty p {
+    font-size: 14px;
+    margin: 0 0 20px;
+}

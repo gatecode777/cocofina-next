@@ -1,0 +1,718 @@
+/* ── AdminCoupons.css ──────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
+
+.admin-coupons {
+    font-family: 'DM Sans', sans-serif;
+    padding-bottom: 60px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+/* ── Stats strip ─────────────────────────────────────────────────────────────── */
+.coupon-stats-strip {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.coupon-stat {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid #e8edf3;
+    border-radius: 14px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 160px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.coupon-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.coupon-stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1;
+}
+
+.coupon-stat-label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 3px;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────────────── */
+.coupon-controls {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+}
+
+.search-bar i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-select {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 180px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ── Coupons grid ────────────────────────────────────────────────────────────── */
+.coupons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .coupons-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Coupon card (ticket shape) ─────────────────────────────────────────────── */
+.coupon-card {
+    position: relative;
+    display: flex;
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.coupon-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+}
+
+.coupon-card--dim {
+    opacity: 0.7;
+}
+
+/* Ticket notch cutouts */
+.coupon-notch {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: #f3f4f6;
+    /* match page bg */
+    border-radius: 50%;
+    border: 1.5px solid #e5e7eb;
+    z-index: 2;
+}
+
+.coupon-notch--left {
+    left: -11px;
+}
+
+.coupon-notch--right {
+    right: -11px;
+}
+
+/* Left section */
+.coupon-left {
+    flex: 0 0 200px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-right: 2px dashed #e5e7eb;
+}
+
+.coupon-type-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+
+.pill-flat {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.pill-pct {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.coupon-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+
+.coupon-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.coupon-desc {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+    line-height: 1.4;
+}
+
+/* Divider */
+.coupon-divider {
+    width: 0;
+    align-self: stretch;
+}
+
+/* Right section */
+.coupon-right {
+    flex: 1;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.coupon-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.coupon-meta-label {
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.coupon-meta-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.text-red {
+    color: #ef4444;
+}
+
+.coupon-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.3px;
+}
+
+.cs-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cs-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.cs-expired {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Action buttons */
+.coupon-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.ca-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.15s;
+}
+
+.ca-edit {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.ca-edit:hover {
+    background: #dbeafe;
+}
+
+.ca-toggle {
+    font-size: 18px;
+    background: none;
+}
+
+.ca-on {
+    color: #10b981;
+}
+
+.ca-off {
+    color: #d1d5db;
+}
+
+.ca-toggle:hover {
+    opacity: 0.75;
+}
+
+.ca-delete {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.ca-delete:hover {
+    background: #fee2e2;
+}
+
+/* ── Loading / empty ─────────────────────────────────────────────────────────── */
+.coupon-loading,
+.coupon-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 12px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.coupon-empty i {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.coupon-empty h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.coupon-empty p {
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ── Modal overlay ───────────────────────────────────────────────────────────── */
+.cf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: cf-overlay-in 0.15s ease;
+}
+
+@keyframes cf-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.cf-modal {
+    background: #fff;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 580px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    animation: cf-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cf-modal-sm {
+    max-width: 420px;
+}
+
+@keyframes cf-modal-in {
+    from {
+        transform: scale(0.94);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.cf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.cf-modal-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.cf-close {
+    width: 30px;
+    height: 30px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.cf-close:hover {
+    background: #e5e7eb;
+}
+
+.cf-modal-body {
+    padding: 20px 24px;
+}
+
+/* Form fields */
+.cf-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 140px;
+}
+
+.cf-field-grow {
+    flex: 2;
+}
+
+.cf-field-full {
+    flex: 1 1 100%;
+    margin-bottom: 16px;
+}
+
+.cf-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.cf-field input,
+.cf-field select {
+    padding: 10px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fff;
+}
+
+.cf-field input:focus,
+.cf-field select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+/* Type toggle */
+.cf-type-toggle {
+    display: flex;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.cf-type-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.cf-type-btn.active {
+    background: #6366f1;
+    color: #fff;
+    font-weight: 600;
+}
+
+.cf-type-btn:not(.active):hover {
+    background: #f9fafb;
+}
+
+/* Generate button */
+.cf-gen-btn {
+    padding: 10px 16px;
+    background: #f3f4f6;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cf-gen-btn:hover {
+    background: #e5e7eb;
+}
+
+/* Checkbox */
+.cf-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+.cf-checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+/* Error */
+.cf-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Delete warning */
+.cf-delete-warn {
+    text-align: center;
+    padding: 16px 0 8px;
+}
+
+.cf-delete-warn i {
+    font-size: 36px;
+    color: #f59e0b;
+    margin-bottom: 12px;
+}
+
+.cf-delete-warn p {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: #374151;
+}
+
+.cf-delete-sub {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* Footer */
+.cf-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.cf-btn-cancel {
+    padding: 10px 20px;
+    background: none;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.cf-btn-cancel:hover {
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.cf-btn-save {
+    padding: 10px 24px;
+    background: #6366f1;
+    border: none;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.15s;
+}
+
+.cf-btn-save:hover:not(:disabled) {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+.cf-btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cf-btn-danger {
+    padding: 10px 20px;
+    background: #dc2626;
+    border: none;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.15s;
+}
+
+.cf-btn-danger:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+.cf-btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

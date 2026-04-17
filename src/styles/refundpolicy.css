@@ -1,0 +1,134 @@
+.privacy-section {
+  max-width: 1300px;
+  margin: 20px auto;
+  padding: 0 20px;
+  font-family: "Poppins", sans-serif;
+  color: #000000;
+}
+
+.privacy-banner {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.privacy-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.sub-text {
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 2;
+  margin-bottom: 25px;
+}
+
+.main-para {
+  font-size: 15px;
+  line-height: 2;
+  color: #000000;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .privacy-banner {
+    height: 250px;
+  }
+  .banner-overlay h1 {
+    font-size: 35px;
+  }
+  .lock-frame {
+    width: 45px;
+    height: 45px;
+  }
+  .lock-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.privacy-details-section {
+  padding: 40px 0;
+  background-color: #fff;
+  font-family: "Poppins", sans-serif;
+}
+
+.privacy-details-section .container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.policy-block {
+  margin-bottom: 30px;
+}
+
+.policy-block h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.policy-block p {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.7;
+  margin: 0;
+  text-align: justify;
+}
+
+.contact-info .contact-detail {
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.contact-info strong {
+  font-weight: 600;
+  color: #000000;
+}
+
+.last-updated {
+  margin-top: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.last-updated p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+@media (max-width: 768px) {
+  .privacy-details-section {
+    padding: 20px 0;
+  }
+
+  .policy-block h3 {
+    font-size: 17px;
+  }
+
+  .policy-block p {
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  .last-updated p {
+    font-size: 15px;
+  }
+}
