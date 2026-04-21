@@ -403,9 +403,9 @@ const OurProducts = () => {
 
           {/* Breadcrumb */}
           <nav className="prod-breadcrumb">
-            <span className="prod-breadcrumb-link" onClick={() => router.push('/')}>HOME</span>
+            <span className="prod-breadcrumb-link" onClick={() => router.push('/')}> HOME </span>
             <span>&gt;</span>
-            <strong>OUR PRODUCTS</strong>
+            <strong> OUR PRODUCTS </strong>
           </nav>
 
           <div className="prod-layout">

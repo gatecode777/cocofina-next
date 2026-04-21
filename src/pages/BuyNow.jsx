@@ -227,7 +227,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
   const total = subtotal + tax + shippingCharge - discount;
 
   const payMethods = [
-    { id: 'cod', icon: '💵', label: 'Cash on Delivery', desc: 'Pay when your order arrives' },
+    { id: 'cod', icon: '₹', label: 'Cash on Delivery', desc: 'Pay when your order arrives' },
     { id: 'prepaid', icon: '💳', label: 'Online Payment', desc: 'Coming soon — UPI / Card' },
   ];
 

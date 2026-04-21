@@ -1,4 +1,11 @@
 /* Admin Login Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .admin-login-container {
   min-height: 100vh;
   display: flex;

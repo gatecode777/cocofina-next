@@ -5,6 +5,12 @@
   --bg-gray: #f9f9f9;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .cart-page-container {
   max-width: 1200px;
   margin: 50px auto;

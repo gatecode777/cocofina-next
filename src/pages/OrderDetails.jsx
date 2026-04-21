@@ -318,7 +318,7 @@ const OrderDetail = () => {
                 <div className="od-payment-info">
                   <div className="od-payment-method">
                     <span className="od-payment-icon">
-                      {order.paymentMethod === 'cod' ? '💵' : '💳'}
+                      {order.paymentMethod === 'cod' ? '₹' : '💳'}
                     </span>
                     <div>
                       <span className="od-payment-label">

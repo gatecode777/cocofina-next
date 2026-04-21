@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Facebook, Youtube, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Youtube, Instagram, X } from 'lucide-react';
 import '../styles/footer.css';
 
 const Footer = () => {
@@ -34,10 +34,14 @@ const Footer = () => {
           </p>
 
           <div className="social-links">
-            <a href="#" className="social-icon"><Facebook size={18} /></a>
-            <a href="#" className="social-icon"><Youtube size={18} /></a>
-            <a href="#" className="social-icon"><Instagram size={18} /></a>
-            <a href="#" className="social-icon"><Twitter size={18} /></a>
+            <a href="https://www.facebook.com/cocofinasugar" target='_blank' className="social-icon"><Facebook size={18} /></a>
+            <a href="https://www.youtube.com" target='_blank' className="social-icon"><Youtube size={18} /></a>
+            <a href="https://www.instagram.com/cocofina_sugar/" target='_blank' className="social-icon"><Instagram size={18} /></a>
+            <a href="https://x.com" target='_blank' className="social-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M18.901 1.153h3.68l-8.042 9.193 9.462 12.501H16.73l-6.18-8.073-7.07 8.073H-.2l8.6-9.83L-.6 1.153h7.48l5.64 7.442 6.38-7.442zm-1.29 19.385h2.04L6.64 2.36H4.46l13.15 18.178z" />
+              </svg>
+            </a>
           </div>
         </div>
 

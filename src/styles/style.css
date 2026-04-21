@@ -8,6 +8,11 @@
     --cf-heading-font: 'Playfair Display', serif;
 }
 
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
 
 /* Hero Section */
 .cf-hero {
@@ -25,6 +30,11 @@
     object-fit: cover;
 
     border-radius: 8px;
+}
+
+.cf-send-btn{
+    border: none;
+    background-color: transparent;
 }
 
 /* Intro Section */
@@ -55,11 +65,8 @@
     font-size: 18px;
     max-width: 700px;
     margin: 0 auto 35px;
-
     color: #956767;
     line-height: 1.6;
-
-
 }
 
 .cf-btn-primary {
@@ -790,7 +797,6 @@
     font-size: 52px;
     line-height: 1.1;
     font-weight: 600;
-
     font-family: 'Manrope', sans-serif;
 }
 
@@ -883,7 +889,6 @@
     padding: 15px 15px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
     position: relative;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1054,7 +1059,6 @@
 /* Section Styles */
 .ctm-testimonial-wrapper {
     padding: 40px 10px;
-
     font-family: 'Inter', 'Segoe UI', sans-serif;
     overflow: hidden;
 }
@@ -1120,7 +1124,7 @@
     font-size: 17px;
     font-weight: 500;
     color: #000;
-    margin: 0;
+    /* margin: 0; */
     font-family: 'Afacad', sans-serif;
 }
 

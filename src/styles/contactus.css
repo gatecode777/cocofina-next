@@ -2,15 +2,18 @@
 
 /* --- Contact Page Styles --- */
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .cu-contact-page-wrapper {
     width: 100%;
-    /* padding: 20px 40px; */
+    padding: 20px 40px;
     overflow-x: hidden;
     background: #fff;
     font-family: 'DM Sans', sans-serif;
-    /* box-sizing: border-box; */
-    /* margin: 0; */
-    /* padding: 0; */
     box-sizing: border-box;
 }
 

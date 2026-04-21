@@ -103,7 +103,7 @@ const OrderDetailModal = ({ order, onClose, onCancel }) => {
           </div>
 
           <div className="mo-payment-method">
-            <span>{order.paymentMethod === 'cod' ? '💵 Cash on Delivery' : '💳 Online Payment'}</span>
+            <span>{order.paymentMethod === 'cod' ? '₹ Cash on Delivery' : '💳 Online Payment'}</span>
             <span className="mo-payment-status" style={{
               color: order.paymentStatus === 'paid' ? '#10b981' : '#f59e0b',
             }}>
