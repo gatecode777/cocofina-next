@@ -54,7 +54,7 @@
 }
 
 .cf-title-line {
-    /* width: 380px; */
+    width: 380px;
     height: 2px;
     background-color: var(--cf-brown);
     margin: 0 auto 25px;

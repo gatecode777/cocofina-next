@@ -29,6 +29,13 @@
     position: relative;
 }
 
+.cu-field-error {
+    color: #dc2626;
+    font-size: 14px;
+    margin-top: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
 .cu-hero-content {
     text-align: center;
     color: white;
