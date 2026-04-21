@@ -43,7 +43,7 @@ const ContactInfoSection = () => (
       </ContactInfoItem>
 
       <ContactInfoItem icon={Clock} label="Business Hours">
-        Monday – Sanday <br />
+        Monday – Sunday <br />
         10:00 AM – 6:00 PM
       </ContactInfoItem>
     </div>
