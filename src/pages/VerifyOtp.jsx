@@ -1,5 +1,6 @@
 'use client';
 
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -19,6 +20,7 @@ const VerifyOTPPage = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [resendMsg, setResendMsg] = useState('');
+  const [email, setEmail] = useState('');
 
   const inputRefs = useRef([]);
 
@@ -26,18 +28,25 @@ const VerifyOTPPage = () => {
   useEffect(() => {
     document.title = 'Verify OTP - Cocofina';
     window.scrollTo(0, 0);
-    if (!sessionStorage.getItem('resetEmail')) {
-      router.push('/forgot-password');
+
+    if (typeof window !== "undefined") {
+      const storedEmail = sessionStorage.getItem('resetEmail');
+
+      if (!storedEmail) {
+        router.push('/forgot-password');
+      } else {
+        setEmail(storedEmail);
+      }
     }
-    // Auto-focus first box
+
     inputRefs.current[0]?.focus();
   }, []);
 
   // Countdown timer
   useEffect(() => {
-    if (timeLeft <= 0) { 
-      setCanResend(true); 
-      return; 
+    if (timeLeft <= 0) {
+      setCanResend(true);
+      return;
     }
     const t = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(t);
@@ -76,7 +85,9 @@ const VerifyOTPPage = () => {
   // ── Resend OTP ────────────────────────────────────────────────────────────
   const handleResend = async () => {
     if (!canResend) return;
-    const email = sessionStorage.getItem('resetEmail');
+    const email = typeof window !== "undefined"
+      ? sessionStorage.getItem('resetEmail')
+      : null;
     setResending(true);
     setResendMsg('');
     setError('');
@@ -108,10 +119,12 @@ const VerifyOTPPage = () => {
       return;
     }
 
-    const email = sessionStorage.getItem('resetEmail');
-    if (!email) { 
-      router.push('/forgot-password'); 
-      return; 
+    const email = typeof window !== "undefined"
+      ? sessionStorage.getItem('resetEmail')
+      : null;
+    if (!email) {
+      router.push('/forgot-password');
+      return;
     }
 
     setSubmitting(true);
@@ -138,8 +151,6 @@ const VerifyOTPPage = () => {
       setSubmitting(false);
     }
   };
-
-  const email = sessionStorage.getItem('resetEmail') || '';
 
   return (
     <div className="verify-otp-wrapper">

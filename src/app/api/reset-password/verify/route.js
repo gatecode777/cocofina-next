@@ -1,4 +1,6 @@
 // src/app/api/reset-password/verify/route.js
+
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { connectDB } from '@/lib/db';

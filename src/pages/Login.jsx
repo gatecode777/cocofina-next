@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+export const dynamic = "force-dynamic";
+
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { userAuth } from '@/services/api';
 import '@/styles/login.css';
 
-const Login = () => {
+// Create a separate component that uses useSearchParams
+const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -16,9 +19,11 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Check if already logged in
   useEffect(() => {
+    setIsMounted(true);
     const token = localStorage.getItem('token');
     if (token) {
       const from = searchParams.get('from') || '/';
@@ -123,6 +128,25 @@ const Login = () => {
     setGoogleLoading(false);
   };
 
+  if (!isMounted) {
+    return (
+      <div className="login-wrapper">
+        <div className="login-container">
+          <div className="login-card">
+            <div className="form-section">
+              <div className="logo-wrapper">
+                <Link href="/">
+                  <img src="/cocofina.png" alt="Cocofina Logo" className="logo-img" />
+                </Link>
+              </div>
+              <div className="loading-spinner">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="login-wrapper">
       <div className="login-container">
@@ -223,6 +247,25 @@ const Login = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+// Main component with Suspense boundary
+const Login = () => {
+  return (
+    <Suspense fallback={
+      <div className="login-wrapper">
+        <div className="login-container">
+          <div className="login-card">
+            <div className="form-section">
+              <div className="loading-spinner">Loading login page...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 };
 

@@ -1,9 +1,12 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useEffect } from 'react';
-import '../styles/termsandconditions.css';
+import '@/styles/termsandconditions.css';
 
 const TermsAndConditions = () => {
   useEffect(() => {
-    document.title = "Terms & Conditions";
+    document.title = "Terms & Conditions - Cocofina";
     window.scrollTo(0, 0);
   }, []);
 
@@ -13,7 +16,7 @@ const TermsAndConditions = () => {
         <div className="privacy-banner">
           <img
             src="/TC.jpg"
-            alt="Privacy Policy Banner"
+            alt="Terms and Conditions Banner"
             className="banner-img"
           />
         </div>

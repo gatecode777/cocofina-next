@@ -1,9 +1,12 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useEffect } from 'react';
-import '../styles/howitsmade.css';
+import '@/styles/howitsmade.css';
 
 const HowItsMade = () => {
   useEffect(() => {
-    document.title = "How It's Made";
+    document.title = "How It's Made - Cocofina";
     window.scrollTo(0, 0);
   }, []);
 

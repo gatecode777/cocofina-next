@@ -1,11 +1,14 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
-import '../styles/faqs.css';
+import '@/styles/faqs.css';
 
 const FAQPage = () => {
     const [activeTab, setActiveTab] = useState('cocofina-faq');
 
     useEffect(() => {
-        document.title = "FAQ";
+        document.title = "FAQ - Cocofina";
         window.scrollTo(0, 0);
     }, []);
 
@@ -129,14 +132,6 @@ const FAQPage = () => {
                                 Cocofina Sugar is produced by collecting the nectar from coconut
                                 palm flowers and gently heating it to form natural sugar
                                 crystals. The process does not involve heavy chemical refining.
-                            </p>
-                        </div>
-                        <div className="faq-item">
-                            <h4>What is Cocofina Sugar?</h4>
-                            <p>
-                                Cocofina Sugar is a natural sweetener made from coconut nectar.
-                                It is a healthier alternative to regular refined sugar and
-                                retains natural minerals and nutrients from coconut sap.
                             </p>
                         </div>
                         <div className="faq-item">

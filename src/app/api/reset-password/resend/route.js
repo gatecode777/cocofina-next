@@ -1,4 +1,6 @@
 // src/app/api/reset-password/resend/route.js
+
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { connectDB } from '@/lib/db';

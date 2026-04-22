@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -137,15 +139,23 @@ const OrderDetailSkeleton = () => (
 const OrderDetail = () => {
   const params = useParams();
   const router = useRouter();
-  const id = params.id;
+  const id = params?.id; // Add optional chaining here
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [cancelMsg, setCancelMsg] = useState('');
+  const [isMounted, setIsMounted] = useState(false); // Add mounted state
+
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!isMounted || !id) return; // Don't proceed if not mounted or no id
+    
     document.title = 'Order Details - Cocofina';
     window.scrollTo(0, 0);
     const token = localStorage.getItem('token');
@@ -154,7 +164,7 @@ const OrderDetail = () => {
       return; 
     }
     fetchOrder();
-  }, [id]);
+  }, [id, isMounted]);
 
   const fetchOrder = async () => {
     try {
@@ -189,6 +199,15 @@ const OrderDetail = () => {
     }
   };
 
+  // Show loading during static generation or before mount
+  if (!isMounted || !id) {
+    return (
+      <main>
+        <div className="od-container"><OrderDetailSkeleton /></div>
+      </main>
+    );
+  }
+
   if (loading) return (
     <main>
       <div className="od-container"><OrderDetailSkeleton /></div>
@@ -207,8 +226,8 @@ const OrderDetail = () => {
     </main>
   );
 
-  const canCancel = ['placed', 'confirmed'].includes(order.status);
-  const s = STATUS[order.status] || STATUS.placed;
+  const canCancel = order && ['placed', 'confirmed'].includes(order.status);
+  const s = STATUS[order?.status] || STATUS.placed;
 
   return (
     <main>
@@ -221,16 +240,16 @@ const OrderDetail = () => {
             <span>›</span>
             <Link href="/my-orders">My Orders</Link>
             <span>›</span>
-            <span>{order.orderNumber}</span>
+            <span>{order?.orderNumber}</span>
           </div>
 
           <div className="od-header-row">
             <div>
-              <h1 className="od-title">{order.orderNumber}</h1>
-              <p className="od-subtitle">Placed on {fmtDate(order.placedAt || order.createdAt)}</p>
+              <h1 className="od-title">{order?.orderNumber}</h1>
+              <p className="od-subtitle">Placed on {fmtDate(order?.placedAt || order?.createdAt)}</p>
             </div>
             <div className="od-header-actions">
-              <StatusBadge status={order.status} />
+              <StatusBadge status={order?.status} />
               {canCancel && (
                 <button className="od-btn-cancel" onClick={handleCancel} disabled={cancelling}>
                   {cancelling ? <><i className="fas fa-spinner fa-spin"></i> Cancelling…</> : 'Cancel Order'}
@@ -240,8 +259,8 @@ const OrderDetail = () => {
           </div>
 
           {cancelMsg && (
-            <div className={`od-alert ${order.status === 'cancelled' ? 'od-alert--success' : 'od-alert--error'}`}>
-              <i className={`fas fa-${order.status === 'cancelled' ? 'check-circle' : 'exclamation-circle'}`}></i>
+            <div className={`od-alert ${order?.status === 'cancelled' ? 'od-alert--success' : 'od-alert--error'}`}>
+              <i className={`fas fa-${order?.status === 'cancelled' ? 'check-circle' : 'exclamation-circle'}`}></i>
               {cancelMsg}
             </div>
           )}
@@ -249,7 +268,7 @@ const OrderDetail = () => {
           {/* ── Progress timeline ────────────────────────────────────────── */}
           <div className="od-card od-timeline-card">
             <h2 className="od-card-title">Order Progress</h2>
-            <OrderTimeline order={order} />
+            {order && <OrderTimeline order={order} />}
           </div>
 
           {/* ── Main 2-col layout ────────────────────────────────────────── */}
@@ -262,10 +281,10 @@ const OrderDetail = () => {
               <div className="od-card">
                 <h2 className="od-card-title">
                   Items Ordered
-                  <span className="od-card-title-count">({order.items?.length} item{order.items?.length !== 1 ? 's' : ''})</span>
+                  <span className="od-card-title-count">({order?.items?.length} item{order?.items?.length !== 1 ? 's' : ''})</span>
                 </h2>
                 <div className="od-items">
-                  {order.items?.map((item, i) => (
+                  {order?.items?.map((item, i) => (
                     <div className="od-item" key={i}>
                       <div className="od-item-img">
                         <img
@@ -296,17 +315,17 @@ const OrderDetail = () => {
                     <i className="fas fa-map-marker-alt"></i>
                   </div>
                   <div className="od-address-info">
-                    <strong>{order.shippingAddress?.fullName}</strong>
-                    {order.shippingAddress?.label && (
+                    <strong>{order?.shippingAddress?.fullName}</strong>
+                    {order?.shippingAddress?.label && (
                       <span className="od-address-tag">{order.shippingAddress.label}</span>
                     )}
-                    <p>{order.shippingAddress?.phone}</p>
+                    <p>{order?.shippingAddress?.phone}</p>
                     <p>
-                      {order.shippingAddress?.line1}
-                      {order.shippingAddress?.line2 ? `, ${order.shippingAddress.line2}` : ''}
+                      {order?.shippingAddress?.line1}
+                      {order?.shippingAddress?.line2 ? `, ${order.shippingAddress.line2}` : ''}
                     </p>
                     <p>
-                      {order.shippingAddress?.city}, {order.shippingAddress?.state} — {order.shippingAddress?.pincode}
+                      {order?.shippingAddress?.city}, {order?.shippingAddress?.state} — {order?.shippingAddress?.pincode}
                     </p>
                   </div>
                 </div>
@@ -318,21 +337,21 @@ const OrderDetail = () => {
                 <div className="od-payment-info">
                   <div className="od-payment-method">
                     <span className="od-payment-icon">
-                      {order.paymentMethod === 'cod' ? '₹' : '💳'}
+                      {order?.paymentMethod === 'cod' ? '₹' : '💳'}
                     </span>
                     <div>
                       <span className="od-payment-label">
-                        {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
+                        {order?.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
                       </span>
                       <span className="od-payment-status"
-                        style={{ color: order.paymentStatus === 'paid' ? '#10b981' : '#f59e0b' }}>
-                        {order.paymentStatus?.charAt(0).toUpperCase() + order.paymentStatus?.slice(1)}
+                        style={{ color: order?.paymentStatus === 'paid' ? '#10b981' : '#f59e0b' }}>
+                        {order?.paymentStatus?.charAt(0).toUpperCase() + order?.paymentStatus?.slice(1)}
                       </span>
                     </div>
                   </div>
                   <div className="od-shipping-method">
-                    <span><i className="fas fa-truck"></i> {order.shippingMethod === 'express' ? 'Express Delivery' : 'Standard Delivery'}</span>
-                    <span>{order.shippingCharge === 0 ? 'Free' : fmtPrice(order.shippingCharge)}</span>
+                    <span><i className="fas fa-truck"></i> {order?.shippingMethod === 'express' ? 'Express Delivery' : 'Standard Delivery'}</span>
+                    <span>{order?.shippingCharge === 0 ? 'Free' : fmtPrice(order?.shippingCharge)}</span>
                   </div>
                 </div>
               </div>
@@ -345,46 +364,46 @@ const OrderDetail = () => {
                 <h2 className="od-card-title">Order Summary</h2>
                 <div className="od-summary">
                   <div className="od-summary-row">
-                    <span>Subtotal ({order.items?.reduce((s, i) => s + i.quantity, 0)} items)</span>
-                    <span>{fmtPrice(order.subtotal)}</span>
+                    <span>Subtotal ({order?.items?.reduce((s, i) => s + i.quantity, 0)} items)</span>
+                    <span>{fmtPrice(order?.subtotal)}</span>
                   </div>
                   <div className="od-summary-row">
                     <span>GST (5%)</span>
-                    <span>{fmtPrice(order.tax)}</span>
+                    <span>{fmtPrice(order?.tax)}</span>
                   </div>
                   <div className="od-summary-row">
                     <span>Shipping</span>
-                    <span>{order.shippingCharge === 0 ? 'Free' : fmtPrice(order.shippingCharge)}</span>
+                    <span>{order?.shippingCharge === 0 ? 'Free' : fmtPrice(order?.shippingCharge)}</span>
                   </div>
-                  {order.discount > 0 && (
+                  {order?.discount > 0 && (
                     <div className="od-summary-row od-summary-discount">
                       <span>
                         <i className="fas fa-tag"></i>
-                        {order.coupon?.code ? ` ${order.coupon.code}` : ' Coupon'}
+                        {order?.coupon?.code ? ` ${order.coupon.code}` : ' Coupon'}
                       </span>
-                      <span>−{fmtPrice(order.discount)}</span>
+                      <span>−{fmtPrice(order?.discount)}</span>
                     </div>
                   )}
                   <div className="od-summary-divider"></div>
                   <div className="od-summary-row od-summary-total">
                     <strong>Total Paid</strong>
-                    <strong style={{ color: s.color }}>{fmtPrice(order.total)}</strong>
+                    <strong style={{ color: s.color }}>{fmtPrice(order?.total)}</strong>
                   </div>
                 </div>
 
                 {/* Coupon detail */}
-                {order.coupon?.code && (
+                {order?.coupon?.code && (
                   <div className="od-coupon-applied">
                     <i className="fas fa-tag"></i>
                     <div>
                       <span className="od-coupon-code">{order.coupon.code}</span>
-                      <span className="od-coupon-saving">Saved {fmtPrice(order.discount)}</span>
+                      <span className="od-coupon-saving">Saved {fmtPrice(order?.discount)}</span>
                     </div>
                   </div>
                 )}
 
                 {/* Notes */}
-                {order.notes && (
+                {order?.notes && (
                   <div className="od-notes">
                     <i className="fas fa-sticky-note"></i>
                     <p>{order.notes}</p>

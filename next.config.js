@@ -17,7 +17,7 @@ const nextConfig = {
   reactStrictMode: false,
 
   // Required for mongoose to work in Next.js API routes
-  serverExternalPackages: ['mongoose', 'bcryptjs'],
+  // serverExternalPackages: ['mongoose', 'bcryptjs'],
 
   experimental: {
     // Needed for file upload (multer / formData parsing)

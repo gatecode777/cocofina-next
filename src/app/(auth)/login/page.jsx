@@ -1,3 +1,13 @@
 'use client';
+import { Suspense } from 'react';
 import Login from '../../../pages/Login';
-export default function Page() { return <Login />; }
+
+export const dynamic = 'force-dynamic';
+
+export default function Page() { 
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Login />
+    </Suspense>
+  );
+}

@@ -1,8 +1,12 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { productAPI, cartAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
 import '@/styles/productdetail.css';
@@ -105,7 +109,8 @@ const ReviewsSection = () => (
 const ProductDetail = () => {
   const params = useParams();
   const router = useRouter();
-  const slugOrId = params.slug;
+  const slugOrId = params?.slugOrId;
+  const [isMounted, setIsMounted] = useState(false);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -117,19 +122,22 @@ const ProductDetail = () => {
   const [showToast, setShowToast] = useState(false);
   const toastTimerRef = React.useRef(null);
 
+
   useEffect(() => {
-    if (!slugOrId) return;
+    setIsMounted(true);
+  }, []);
+
+
+  useEffect(() => {
+    if (!isMounted || !slugOrId) return;
     window.scrollTo(0, 0);
     const fetchProduct = async () => {
       try {
         setLoading(true);
         setError('');
-        let res;
-        try {
-          res = await productAPI.getBySlug(slugOrId);
-        } catch {
-          res = await productAPI.getById(slugOrId);
-        }
+
+        // Try to fetch product - use the correct API endpoint
+        const res = await productAPI.getById(slugOrId);
 
         if (res.data.success) {
           const p = res.data.product;
@@ -145,7 +153,8 @@ const ProductDetail = () => {
         } else {
           setError('Product not found.');
         }
-      } catch {
+      } catch (err) {
+        console.error('Fetch error:', err);
         setError('Product not found or unavailable.');
       } finally {
         setLoading(false);
@@ -167,7 +176,6 @@ const ProductDetail = () => {
       const res = await cartAPI.addToCart(product._id, 1, selectedVariant.weight);
       if (res.data.success) {
         triggerCartUpdate();
-        // Show toast — clear any existing timer first so rapid clicks reset it
         if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
         setShowToast(true);
         toastTimerRef.current = setTimeout(() => setShowToast(false), 2800);
@@ -184,6 +192,11 @@ const ProductDetail = () => {
     router.push('/cart');
   };
 
+
+  if (!isMounted || !slugOrId) {
+    return <main><ProductSkeleton /></main>;
+  }
+  
   if (loading) return <main><ProductSkeleton /></main>;
 
   if (error || !product) {
@@ -204,7 +217,6 @@ const ProductDetail = () => {
   const hasImages = images.length > 0;
   const isOutOfStock = product.stockStatus === 'Out of Stock';
   const isComingSoon = product.isComingSoon;
-  const isDisabled = isOutOfStock || isComingSoon;
 
   return (
     <main>
@@ -343,7 +355,6 @@ const ProductDetail = () => {
 
       <ReviewsSection />
 
-      {/* ── Floating cart toast ──────────────────────────────────────────────── */}
       <div className={`cart-toast ${showToast ? 'show' : ''}`}>
         <span className="cart-toast-icon">
           <svg viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">

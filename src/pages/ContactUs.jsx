@@ -1,13 +1,16 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Phone, Mail, Clock, ArrowUpRight, CheckCircle, AlertCircle } from 'lucide-react';
-import '../styles/contactus.css';
+import '@/styles/contactus.css';
 
 // Hero Banner Section Component
 const ContactHeroSection = () => (
   <div
     className="cu-hero-banner"
     style={{
-      backgroundImage: 'url("contact us.jpg.jpeg")'
+      backgroundImage: 'url("/contact us.jpg.jpeg")'
     }}
   >
     <div className="cu-hero-content"></div>
@@ -300,7 +303,7 @@ const ContactSupportSection = () => (
     <div className="cs-container">
       <div className="cs-image-box">
         <img
-          src="femalecontactus.png"
+          src="/femalecontactus.png"
           alt="Support Illustration"
           className="cs-main-img"
           loading="lazy"
@@ -358,15 +361,15 @@ const FAQSection = () => (
           Visit our FAQ page for quick answers about orders, shipping,
           and product details.
         </p>
-        <a href="/faq" className="cs-visit-btn">
+        <Link href="/faq" className="cs-visit-btn">
           Visit Now <ArrowUpRight size={18} />
-        </a>
+        </Link>
       </div>
 
       <div className="cs-faq-avatar">
         <div className="cs-avatar-circle">
           <img
-            src="male-contactus.png"
+            src="/male-contactus.png"
             alt="FAQ Character"
             loading="lazy"
           />

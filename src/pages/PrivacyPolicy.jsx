@@ -1,9 +1,11 @@
+'use client';
+
 import React, { useEffect } from 'react';
-import '../styles/privacypolicy.css';
+import '@/styles/privacypolicy.css';
 
 const PrivacyPolicy = () => {
   useEffect(() => {
-    document.title = "Privacy Policy";
+    document.title = "Privacy Policy - Cocofina";
     window.scrollTo(0, 0);
   }, []);
 

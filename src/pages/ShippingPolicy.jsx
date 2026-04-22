@@ -1,9 +1,12 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useEffect } from 'react';
-import '../styles/shippingpolicy.css';
+import '@/styles/shippingpolicy.css';
 
 const ShippingPolicy = () => {
   useEffect(() => {
-    document.title = "Shipping Policy";
+    document.title = "Shipping Policy - Cocofina";
     window.scrollTo(0, 0);
   }, []);
 
@@ -13,7 +16,7 @@ const ShippingPolicy = () => {
         <div className="privacy-banner">
           <img
             src="/Shiping.jpg"
-            alt="Privacy Policy Banner"
+            alt="Shipping Policy Banner"
             className="banner-img"
           />
         </div>

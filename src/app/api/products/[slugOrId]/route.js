@@ -1,4 +1,6 @@
 // src/app/api/products/[slugOrId]/route.js
+
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import mongoose from 'mongoose';

@@ -1,8 +1,11 @@
+
+
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import Blog from '@/models/Blog';
 import mongoose from 'mongoose';
+export const dynamic = "force-dynamic";
 
 export async function PUT(request, { params }) {
   try {

@@ -1,9 +1,12 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useEffect } from 'react';
-import '../styles/refundpolicy.css';
+import '@/styles/refundpolicy.css';
 
 const RefundPolicy = () => {
   useEffect(() => {
-    document.title = "Refund & Return Policy";
+    document.title = "Refund & Return Policy - Cocofina";
     window.scrollTo(0, 0);
   }, []);
 
@@ -13,7 +16,7 @@ const RefundPolicy = () => {
         <div className="privacy-banner">
           <img
             src="/Refund.jpg"
-            alt="Privacy Policy Banner"
+            alt="Refund Policy Banner"
             className="banner-img"
           />
         </div>

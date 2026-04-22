@@ -1,4 +1,6 @@
 // src/app/api/blogs/categories/route.js
+
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import Blog from '@/models/Blog';

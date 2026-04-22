@@ -1,6 +1,10 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
-import '../styles/benefits.css'; // Import your CSS files
+import Link from 'next/link';
+import '@/styles/benefits.css';
 
 // Hero Section Component
 const BenefitsHeroSection = () => (
@@ -8,7 +12,7 @@ const BenefitsHeroSection = () => (
     <div className="b-container">
       <div className="b-banner-wrapper">
         <img
-          src="benefits.jpg.jpeg"
+          src="/benefits.jpg.jpeg"
           alt="Cocofina Coconut Sugar"
           className="b-banner-img"
           loading="lazy"
@@ -45,42 +49,42 @@ const benefitsData = [
   {
     title: "Rich in Natural Minerals",
     description: "Unlike refined sugar, coconut sugar retains small amounts of minerals such as iron, zinc, calcium, and potassium that naturally occur in coconut blossom sap.",
-    imageSrc: "Benefits1.png",
+    imageSrc: "/Benefits1.png",
     cardType: "brown",
     imageAlt: "Rich in Natural Minerals"
   },
   {
     title: "Low Glycemic Index",
     description: "Coconut sugar has a lower glycemic index compared to regular refined sugar. This means it releases energy more gradually, helping avoid sudden spikes in blood sugar levels.",
-    imageSrc: "Benefits2.png",
+    imageSrc: "/Benefits2.png",
     cardType: "cream",
     imageAlt: "Low Glycemic Index"
   },
   {
     title: "Natural Source",
     description: "Cocofina Sugar is derived from the sap of coconut blossoms, making it a natural sweetener that comes directly from nature without heavy processing.",
-    imageSrc: "Benefits3.png",
+    imageSrc: "/Benefits3.png",
     cardType: "brown",
     imageAlt: "Natural Source"
   },
   {
     title: "No Chemicals or Additives",
     description: "Our coconut sugar is free from artificial preservatives, chemicals, and synthetic additives, ensuring a clean and pure sweetness in every spoon.",
-    imageSrc: "Benefits4.png",
+    imageSrc: "/Benefits4.png",
     cardType: "cream",
     imageAlt: "No Chemicals"
   },
   {
     title: "Better Flavor",
     description: "Coconut sugar has a naturally rich caramel-like taste that enhances beverages, desserts, and recipes without overpowering other ingredients.",
-    imageSrc: "Benefits5.png",
+    imageSrc: "/Benefits5.png",
     cardType: "brown",
     imageAlt: "Better Flavor"
   },
   {
     title: "Sustainable Production",
     description: "Harvesting coconut blossom sap does not require cutting down trees, making coconut sugar production a more environmentally friendly and sustainable process.",
-    imageSrc: "Benefits6.png",
+    imageSrc: "/Benefits6.png",
     cardType: "cream",
     imageAlt: "Sustainable Production"
   }
@@ -107,22 +111,22 @@ const BenefitsGridSection = () => (
 // Featured Recipes Data
 const recipesData = [
   {
-    image: "dailybevrage.jpg",
+    image: "/dailybevrage.jpg",
     title: "Daily Beverages",
     description: "Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour."
   },
   {
-    image: "baking.png",
+    image: "/baking.png",
     title: "Baking & Desserts",
     description: "Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite."
   },
   {
-    image: "indiansweet.png",
+    image: "/indiansweet.png",
     title: "Indian Sweets",
     description: "Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms."
   },
   {
-    image: "breakfast.png",
+    image: "/breakfast.png",
     title: "Breakfast Recipes",
     description: "Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness."
   }
@@ -144,7 +148,7 @@ const RecipeCard = ({ image, title, description }) => (
       <p className="cf-recipe-card-desc">{description}</p>
     </div>
     <div className="cf-recipe-action">
-      <a href="#" className="cf-recipe-btn">Recipes Here</a>
+      <Link href="/recipes" className="cf-recipe-btn">Recipes Here</Link>
     </div>
   </div>
 );

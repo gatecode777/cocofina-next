@@ -1,6 +1,9 @@
+'use client';
+
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Send } from 'lucide-react';
-import '../styles/aboutus.css'; // Import your CSS file
+import '@/styles/aboutus.css';
 
 // Hero Banner Section Component
 const AboutHeroSection = () => (
@@ -36,7 +39,7 @@ const MissionSection = () => (
         <div className="oms-image-col">
           <div className="oms-img-box">
             <img
-              src="Ourmisssion.jpg"
+              src="/Ourmisssion.jpg"
               alt="Our Mission Cocofina"
               loading="lazy"
             />
@@ -72,22 +75,22 @@ const WhyChooseCard = ({ icon, title, text }) => (
 const WhyChooseSection = () => {
   const features = [
     {
-      icon: "icon1.png",
+      icon: "/icon1.png",
       title: "100% Coconut Blossom Sap",
       text: "Made exclusively from fresh sap collected from coconut blossoms - nothing else added."
     },
     {
-      icon: "icon2.png",
+      icon: "/icon2.png",
       title: "No Chemicals or Preservatives",
       text: "Naturally processed without bleaching agents, additives, or artificial preservatives."
     },
     {
-      icon: "icon3.png",
+      icon: "/icon3.png",
       title: "Low Glycemic Index",
       text: "Releases energy slowly, helping maintain more balanced blood sugar levels than refined sugar."
     },
     {
-      icon: "icon4.png",
+      icon: "/icon4.png",
       title: "Sustainably Sourced",
       text: "Harvested using eco-friendly methods that support coconut farmers and protect nature."
     }
@@ -142,7 +145,7 @@ const PromiseSection = () => (
         <div className="ops-image-col">
           <div className="ops-img-box">
             <img
-              src="Ourpromise.jpg"
+              src="/Ourpromise.jpg"
               alt="Our Promise Cocofina"
               loading="lazy"
             />

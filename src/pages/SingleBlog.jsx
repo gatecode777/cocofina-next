@@ -1,5 +1,11 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
+
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -151,16 +157,16 @@ const RelatedCard = ({ blog }) => (
 // ── Share buttons ─────────────────────────────────────────────────────────────
 const ShareButtons = ({ title }) => {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  
+
   const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '');
   const text = encodeURIComponent(title);
-  
+
   return (
     <div className="blg-share-btns">
       <a href={`https://wa.me/?text=${text}%20${url}`} target="_blank" rel="noreferrer"
@@ -182,24 +188,29 @@ const ShareButtons = ({ title }) => {
 const SingleBlogPage = () => {
   const params = useParams();
   const router = useRouter();
-  const slug = params.slug;
+  const slug = params?.slug; // Add optional chaining here
 
   const [blog, setBlog] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isMounted, setIsMounted] = useState(false); // Add mounted state
 
   // Sidebar form
   const [form, setForm] = useState({ fullName: '', email: '', phone: '', location: '' });
   const [formSent, setFormSent] = useState(false);
   const [formSending, setFormSending] = useState(false);
 
+  // Set mounted state
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || !slug) return; // Don't fetch if not mounted or no slug
     window.scrollTo(0, 0);
-    if (slug) {
-      fetchBlog();
-    }
-  }, [slug]);
+    fetchBlog();
+  }, [slug, isMounted]);
 
   const fetchBlog = async () => {
     setLoading(true);
@@ -216,8 +227,8 @@ const SingleBlogPage = () => {
     } catch (err) {
       if (err.response?.status === 404) setError('Blog not found');
       else setError('Failed to load article. Please try again.');
-    } finally { 
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -229,6 +240,11 @@ const SingleBlogPage = () => {
     setFormSent(true);
     setFormSending(false);
   };
+
+  // Show loading during static generation or before mount
+  if (!isMounted || !slug) {
+    return <SingleBlogSkeleton />;
+  }
 
   if (loading) return <SingleBlogSkeleton />;
 
@@ -246,33 +262,34 @@ const SingleBlogPage = () => {
   );
 
   // Group content blocks into logical sections for rendering
-  const contentBlocks = blog.content || [];
+  const contentBlocks = blog?.content || [];
 
   return (
     <main>
-      {/* ── Hero / Header section ──────────────────────────────────────── */}
+      {/* Rest of your JSX remains exactly the same */}
+      {/* Make sure to add optional chaining for blog properties */}
       <section className="blg-hero-section">
         <div className="blg-container">
           <div className="blg-header-area">
-            {blog.category && (
+            {blog?.category && (
               <Link href={`/our-blogs?category=${blog.category.slug}`} className="category-tag">
                 {blog.category.name}
               </Link>
             )}
-            <h1 className="blg-main-title">{blog.title}</h1>
+            <h1 className="blg-main-title">{blog?.title}</h1>
             <div className="blg-meta-info">
-              <span>By {blog.author?.name || 'Cocofina'} — {fmtDate(blog.publishedAt || blog.createdAt)}</span>
-              <span className="blg-read-time">{blog.readTime} minute read</span>
+              <span>By {blog?.author?.name || 'Cocofina'} — {fmtDate(blog?.publishedAt || blog?.createdAt)}</span>
+              <span className="blg-read-time">{blog?.readTime} minute read</span>
             </div>
-            <ShareButtons title={blog.title} />
+            <ShareButtons title={blog?.title} />
           </div>
 
           {/* Cover image + sidebar form */}
           <div className="blg-media-grid">
             <div className="blg-img-box">
               <img
-                src={getCoverSrc(blog.coverImage)}
-                alt={blog.coverImageAlt || blog.title}
+                src={getCoverSrc(blog?.coverImage)}
+                alt={blog?.coverImageAlt || blog?.title}
                 className="blg-featured-img"
                 onError={(e) => { e.target.src = '/Blog1.jpg'; }}
               />
@@ -322,7 +339,7 @@ const SingleBlogPage = () => {
         <div className="blg-container">
 
           {/* Author card */}
-          {blog.author?.name && (
+          {blog?.author?.name && (
             <div className="blg-author-card">
               <div className="blg-author-flex">
                 <div className="blg-author-img">
@@ -344,7 +361,7 @@ const SingleBlogPage = () => {
           )}
 
           {/* Tags */}
-          {blog.tags?.length > 0 && (
+          {blog?.tags?.length > 0 && (
             <div className="blg-tags">
               {blog.tags.map((tag, idx) => (
                 <span key={idx} className="blg-tag">#{tag} </span>
