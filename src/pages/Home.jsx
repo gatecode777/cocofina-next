@@ -211,7 +211,7 @@ const HeroSection = () => {
 const IntroSection = () => (
   <section className="cf-intro">
     <div className="cf-container">
-      <h2 className="cf-intro-title">Sweeten Your Life Naturally</h2>
+      <h1 className="cf-intro-title">Sweeten Your Life Naturally</h1>
       <div className="cf-title-line"></div>
       <p className="cf-intro-desc">
         Discover the rich caramel notes of premium organic coconut sugar, sourced

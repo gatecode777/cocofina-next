@@ -21,6 +21,7 @@
     width: 100%;
     display: block;
     line-height: 0;
+    margin-top: 20px;
 }
 
 .recipes .banner img {
