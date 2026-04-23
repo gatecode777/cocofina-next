@@ -477,7 +477,6 @@
     letter-spacing: 2px;
     font-weight: 500;
     display: block;
-    margin-bottom: -30px;
     font-family: 'Afacad', sans-serif;
     text-transform: uppercase;
 }
@@ -487,7 +486,7 @@
     font-size: 52px;
     line-height: 1.1;
     font-weight: 600;
-
+    margin-bottom: 20px;
     font-family: 'Manrope', sans-serif;
 }
 

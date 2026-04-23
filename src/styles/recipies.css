@@ -1,0 +1,260 @@
+/* ===============================
+       ALL SCOPED UNDER .recipes
+    =============================== */
+
+.recipes *,
+.recipes *::before,
+.recipes *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.recipes {
+    font-family: 'Lato', sans-serif;
+    /* background-color: #f0ead8; */
+    width: 100%;
+}
+
+/* ---- Banner ---- */
+.recipes .banner {
+    width: 100%;
+    display: block;
+    line-height: 0;
+}
+
+.recipes .banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ---- Page content ---- */
+.recipes .content {
+    padding: 40px 24px 56px;
+}
+
+.recipes .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 40px);
+    font-weight: 500;
+    color: #2c1a0e;
+    text-align: center;
+    margin-top: 45px;
+    margin-bottom: 40px;
+}
+
+/* ---- Grid: 3 columns ---- */
+.recipes .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1500px;
+    margin: 0 auto 20px;
+}
+
+/* ================================
+       CARD
+    ================================ */
+
+.recipes .card {
+    /* border-radius: 20px; */
+    padding: 28px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 50px;
+}
+
+.recipes .card.light {
+    background-color: #f5f5d5;
+}
+
+.recipes .card.dark {
+    background-color: #6e3526;
+}
+
+/* ================================
+       HALF-CIRCLE DECO — right side
+       with icon image inside
+    ================================ */
+
+.recipes .card-deco-wrap {
+    position: absolute;
+    right: -56px;
+    top: 60%;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 170px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* icon should appear in left half (visible area) */
+    padding-right: 46px;
+}
+
+.recipes .card.light .card-deco-wrap {
+    background-color: #e8e4c0;
+}
+
+.recipes .card.dark .card-deco-wrap {
+    /* background-color: rgba(255, 255, 255, 0.10); */
+    background-color: #FFFADA;
+}
+
+.recipes .card-deco-wrap img {
+    width: clamp(36px, 4.5vw, 52px);
+    height: clamp(36px, 4.5vw, 52px);
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+/* ---- Drink image top-center ---- */
+.recipes .card-img {
+    width: clamp(90px, 13vw, 125px);
+    height: clamp(90px, 13vw, 125px);
+    object-fit: contain;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ---- Card title ---- */
+.recipes .card-title {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(18px, 2vw, 30px);
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 28px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.recipes .card.light .card-title {
+    color: #8b4513;
+}
+
+.recipes .card.dark .card-title {
+    color: #f5ebe0;
+}
+
+/* ---- Body ---- */
+.recipes .card-body {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    /* give space so text doesn't go under the deco circle */
+    padding-right: 48px;
+}
+
+.recipes .card-heading {
+    font-size: clamp(12px, 1.6vw, 18px);
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.recipes .card.light .card-heading {
+    color: #2c1a0e;
+}
+
+.recipes .card.dark .card-heading {
+    color: #f5ebe0;
+}
+
+.recipes .card-list {
+    list-style: none;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.recipes .card-list li {
+    font-size: clamp(11px, 1.5vw, 16px);
+    line-height: 1.78;
+    font-weight: 400;
+}
+
+.recipes .card.light .card-list li {
+    color: #2c1a0e;
+}
+
+.recipes .card.dark .card-list li {
+    color: #f0dece;
+}
+
+.recipes .card-method-text {
+    font-size: clamp(11px, 1.5vw, 16px);
+    line-height: 1.7;
+    font-weight: 400;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.recipes .card.light .card-method-text {
+    color: #2c1a0e;
+}
+
+.recipes .card.dark .card-method-text {
+    color: #f0dece;
+}
+
+/* Tagline — bold, bottom */
+.recipes .card-tagline {
+    font-size: clamp(11px, 1.5vw, 18px);
+    font-weight: 700;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.recipes .card.light .card-tagline {
+    color: #2c1a0e;
+}
+
+.recipes .card.dark .card-tagline {
+    color: #f0dece;
+}
+
+/* ========================
+       NOTE
+    ======================== */
+
+.recipes .note {
+    max-width: 1500px;
+    margin: 4px auto 0;
+    font-size: clamp(17px, 1.9vw, 17px);
+    color: #c07030;
+    line-height: 1.75;
+}
+
+.recipes .note strong {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* ========================
+       RESPONSIVE
+    ======================== */
+
+@media (max-width: 780px) {
+    .recipes .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .recipes .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recipes .content {
+        padding: 28px 14px 40px;
+    }
+}

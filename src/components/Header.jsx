@@ -182,7 +182,7 @@ const Header = () => {
         {/* Logo */}
         <div className="cf-logo">
           <Link href="/" onClick={closeMobileMenu}>
-            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '100px', width: 'auto' }} />
+            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '75px', width: 'auto' }} />
           </Link>
         </div>
 
@@ -328,7 +328,7 @@ const Header = () => {
                   </div>
                 </div>
                 <div className="dropdown-divider"></div>
-                <Link href="/profile" className="dropdown-link" onClick={() => setIsUserDropdownOpen(false)}>
+                <Link href="/my-profile" className="dropdown-link" onClick={() => setIsUserDropdownOpen(false)}>
                   <User size={15} /> My Profile
                 </Link>
                 <Link href="/my-orders" className="dropdown-link" onClick={() => setIsUserDropdownOpen(false)}>
@@ -373,7 +373,7 @@ const Header = () => {
           <div className="mobile-menu-divider"></div>
           {isLoggedIn ? (
             <>
-              <Link href="/profile"   className="mobile-menu-user-link" onClick={closeMobileMenu}><User size={14} /> My Profile</Link>
+              <Link href="/my-profile"   className="mobile-menu-user-link" onClick={closeMobileMenu}><User size={14} /> My Profile</Link>
               <Link href="/my-orders" className="mobile-menu-user-link" onClick={closeMobileMenu}><Package size={14} /> My Orders</Link>
               <Link href="/cart"      className="mobile-menu-user-link" onClick={closeMobileMenu}>
                 <ShoppingBasket size={14} /> Cart
