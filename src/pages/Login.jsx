@@ -71,7 +71,7 @@ const LoginForm = () => {
     try {
       console.log('Sending Google token to backend...');
       
-      const response = await fetch('/api/users/google-login', {
+      const response = await fetch('/api/auth/google-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
