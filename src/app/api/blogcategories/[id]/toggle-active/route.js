@@ -5,11 +5,16 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import BlogCategory from '@/models/BlogCategory';
+import { log } from 'console';
 
 export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const cat = await BlogCategory.findById(params.id);
@@ -18,6 +23,14 @@ export async function PUT(request, { params }) {
 
     cat.isActive = !cat.isActive;
     await cat.save();
+
+    await logActivity(request, admin, {
+      action: 'toggle_status',
+      module: 'blog_categories',
+      description: `${cat.isActive ? 'Activated' : 'Deactivated'} category "${cat.name}"`,
+      targetId: cat._id,
+      targetName: cat.name,
+    });
 
     return NextResponse.json({
       success:  true,

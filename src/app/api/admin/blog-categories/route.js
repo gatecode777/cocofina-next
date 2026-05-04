@@ -34,6 +34,10 @@ export async function POST(request) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.create)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+    
     await connectDB();
     const { name, description, order, isActive } = await request.json();
     if (!name?.trim()) return NextResponse.json({ success: false, message: 'Name is required' }, { status: 400 });

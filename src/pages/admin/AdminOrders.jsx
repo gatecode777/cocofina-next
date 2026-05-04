@@ -202,7 +202,6 @@ const AdminOrders = () => {
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
-          {perms.edit && (
             <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="filter-select">
               <option value="all">All Status</option>
               <option value="placed">Placed</option>
@@ -212,7 +211,6 @@ const AdminOrders = () => {
               <option value="delivered">Delivered</option>
               <option value="cancelled">Cancelled</option>
             </select>
-          )}
         </div>
 
         {/* Table */}

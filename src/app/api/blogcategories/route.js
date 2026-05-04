@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { saveFile } from '@/lib/apiHelpers';
+import { logActivity } from '@/lib/logActivity';
 import BlogCategory from '@/models/BlogCategory';
 import Blog from '@/models/Blog';
 
@@ -48,6 +49,9 @@ export async function POST(request) {
     // 1. Auth check
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blog_categories?.create)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
 
     // 2. Connect DB
     await connectDB();
@@ -102,6 +106,14 @@ export async function POST(request) {
 
     // 8. Create — this is where next() missing causes silent hang
     const category = await BlogCategory.create(catData);
+
+    await logActivity(request, admin, {
+      action: 'create',
+      module: 'blog_categories',
+      description: `Created blog category "${category.name}"`,
+      targetId: category._id,
+      targetName: category.name,
+    });
 
     return NextResponse.json(
       { success: true, message: 'Blog category created', category },

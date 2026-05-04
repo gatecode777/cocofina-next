@@ -13,6 +13,9 @@ export async function PUT(request, { params }) {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
 
+    if (admin.role !== 'super_admin' && !admin.permissions?.orders?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     // 2. Connect DB
     await connectDB();
 

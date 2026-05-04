@@ -11,6 +11,10 @@ export async function GET(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.coupons?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const coupon = await Coupon.findById(params.id).lean();
     if (!coupon) return NextResponse.json({ success: false, message: 'Coupon not found' }, { status: 404 });
@@ -33,6 +37,10 @@ export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.coupons?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const coupon = await Coupon.findById(params.id);
@@ -67,6 +75,10 @@ export async function DELETE(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.coupons?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const coupon = await Coupon.findByIdAndDelete(params.id);
     if (!coupon) return NextResponse.json({ success: false, message: 'Coupon not found' }, { status: 404 });

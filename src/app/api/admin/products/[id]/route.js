@@ -27,6 +27,10 @@ export async function GET(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.products?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const product = await Product.findById(params.id).populate('category', 'name slug').lean();
@@ -56,6 +60,10 @@ export async function PUT(request, { params }) {
   try {
     const authResult = await requireAdmin(request);
     if (authResult.error) return authResult.error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.products?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     admin = authResult.admin;
 
     await connectDB();
@@ -140,6 +148,10 @@ export async function DELETE(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.products?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const product = await Product.findById(params.id);
@@ -160,6 +172,10 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (err) {
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.products?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }
 }

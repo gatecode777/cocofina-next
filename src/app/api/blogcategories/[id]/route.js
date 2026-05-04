@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import { saveFile, deleteFile } from '@/lib/apiHelpers';
 import BlogCategory from '@/models/BlogCategory';
 import Blog from '@/models/Blog';
@@ -11,10 +12,20 @@ import Blog from '@/models/Blog';
 export async function GET(request, { params }) {
   try {
     await connectDB();
+
     const cat = await BlogCategory.findById(params.id).lean();
     if (!cat)
       return NextResponse.json({ success: false, message: 'Category not found' }, { status: 404 });
     const blogCount = await Blog.countDocuments({ category: cat._id, status: 'published' });
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'blog_categories',
+      description: `Viewed blog category "${cat.name}"`,
+      targetId: cat._id,
+      targetName: cat.name,
+    }); 
+
     return NextResponse.json({ success: true, category: { ...cat, blogCount } });
   } catch (err) {
     console.error('GET /api/blogcategories/:id error:', err);
@@ -26,6 +37,10 @@ export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const cat = await BlogCategory.findById(params.id);
@@ -68,6 +83,15 @@ export async function PUT(request, { params }) {
     }
 
     await cat.save();
+
+    await logActivity(request, admin, {
+      action: 'edit',
+      module: 'blog_categories',
+      description: `Updated category "${cat.name}"`,
+      targetId: cat._id,
+      targetName: cat.name,
+    });
+
     return NextResponse.json({ success: true, message: 'Category updated', category: cat });
   } catch (err) {
     console.error('PUT /api/blogcategories/:id error:', err);
@@ -81,6 +105,10 @@ export async function DELETE(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const count = await Blog.countDocuments({ category: params.id });

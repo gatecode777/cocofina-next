@@ -221,11 +221,11 @@ const AdminUsers = () => {
             <h1>Users Management</h1>
             <p>Manage all registered users ({totalUsers} total)</p>
           </div>
-          {perms.create && (
+          {/* {perms.create && (
             <button className="btn-primary" onClick={() => alert('Add user feature coming soon')}>
               <i className="fas fa-user-plus"></i> Add New User
             </button>
-          )}
+          )} */}
         </div>
 
         {error && (

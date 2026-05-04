@@ -80,6 +80,10 @@ export async function DELETE(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.users?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const user = await User.findByIdAndDelete(params.id);
     if (!user) return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });

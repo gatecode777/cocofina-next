@@ -11,6 +11,10 @@ export async function GET(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.orders?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const order = await Order.findById(params.id).populate('user', 'firstName lastName email phone').lean();
     if (!order) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
@@ -33,6 +37,10 @@ export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.orders?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const { status, paymentStatus } = await request.json();

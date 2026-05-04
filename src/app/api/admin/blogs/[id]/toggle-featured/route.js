@@ -11,6 +11,10 @@ export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogs?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const blog = await Blog.findById(params.id);
     if (!blog) return NextResponse.json({ success: false, message: 'Blog not found' }, { status: 404 });

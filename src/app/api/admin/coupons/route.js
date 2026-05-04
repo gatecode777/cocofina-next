@@ -61,6 +61,10 @@ export async function POST(request) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.coupons?.create)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     let { code, description, type, value, maxDiscount, minOrderValue,

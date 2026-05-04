@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import { saveFile, deleteFile } from '@/lib/apiHelpers';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
@@ -59,6 +60,15 @@ export async function PUT(request, { params }) {
     }
 
     await category.save();
+
+    await logActivity(request, admin, {
+      action: 'update',
+      module: 'categories',
+      description: `Updated category "${category.name}"`,
+      targetId: category._id,
+      targetName: category.name,
+    });
+
     return NextResponse.json({ success: true, message: 'Category updated', category });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Failed to update category' }, { status: 500 });
@@ -79,6 +89,15 @@ export async function DELETE(request, { params }) {
 
     await deleteFile(category.image, 'categories');
     await category.deleteOne();
+
+    await logActivity(request, admin, {
+      action: 'delete',
+      module: 'categories',
+      description: `Deleted category "${category.name}"`,
+      targetId: category._id,
+      targetName: category.name,
+    });
+
     return NextResponse.json({ success: true, message: 'Category deleted' });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Failed to delete category' }, { status: 500 });

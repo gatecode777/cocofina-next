@@ -12,6 +12,10 @@ export async function PUT(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.edit)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const cat = await BlogCategory.findById(params.id);
     if (!cat) return NextResponse.json({ success: false, message: 'Category not found' }, { status: 404 });
@@ -41,6 +45,10 @@ export async function DELETE(request, { params }) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.blogCategories?.delete)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
     const count = await Blog.countDocuments({ category: params.id });
     if (count > 0) return NextResponse.json({ success: false, message: `Cannot delete — ${count} blog(s) use this category` }, { status: 400 });
