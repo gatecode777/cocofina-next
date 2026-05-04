@@ -7,6 +7,14 @@ import { toast } from 'react-toastify';
 import { orderAPI } from '@/services/api';
 import '@/styles/admin/AdminOrders.css';
 
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
+
 // ── Status config matching Order schema enum ───────────────────────────────────
 const STATUS_CONFIG = {
   placed: { color: '#f59e0b', bg: '#fef3c7', label: 'Placed' },
@@ -54,6 +62,11 @@ const AdminOrders = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [statusForm, setStatusForm] = useState({ status: '', paymentStatus: '' });
   const [statusSaving, setStatusSaving] = useState(false);
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('orders'));
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -189,15 +202,17 @@ const AdminOrders = () => {
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
-          <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="filter-select">
-            <option value="all">All Status</option>
-            <option value="placed">Placed</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+          {perms.edit && (
+            <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="filter-select">
+              <option value="all">All Status</option>
+              <option value="placed">Placed</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          )}
         </div>
 
         {/* Table */}
@@ -282,12 +297,16 @@ const AdminOrders = () => {
 
                     <td>
                       <div className="action-buttons-a">
-                        <button className="btn-action btn-view" onClick={() => openDetailsModal(order)} title="View Details">
-                          <i className="fas fa-eye"></i>
-                        </button>
-                        <button className="btn-action btn-edit" onClick={() => openStatusModal(order)} title="Update Status">
-                          <i className="fas fa-edit"></i>
-                        </button>
+                        {perms.view && (
+                          <button className="btn-action btn-view" onClick={() => openDetailsModal(order)} title="View Details">
+                            <i className="fas fa-eye"></i>
+                          </button>
+                        )}
+                        {perms.edit && (
+                          <button className="btn-action btn-edit" onClick={() => openStatusModal(order)} title="Update Status">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

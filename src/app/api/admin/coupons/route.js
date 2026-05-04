@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import Coupon from '@/models/Coupon';
 
 const generateCode = () => {
@@ -42,6 +43,12 @@ export async function GET(request) {
       isExpired:   c.expiryDate ? now > new Date(c.expiryDate) : false,
       isExhausted: c.usageLimit !== null && c.usedCount >= c.usageLimit,
     }));
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'coupons',
+      description: `Viewed coupons (page ${page})`,
+    });
 
     return NextResponse.json({ success: true, coupons: enriched, total, totalPages: Math.ceil(total / limit) });
   } catch (err) {

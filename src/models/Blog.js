@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 
 // ── Content block schema (for rich structured content) ────────────────────────
+// ── Content block schema (for rich structured content) ────────────────────────
 const contentBlockSchema = new mongoose.Schema({
   type: {
     type: String,
@@ -14,12 +15,18 @@ const contentBlockSchema = new mongoose.Schema({
   // For lists
   items: [{ type: String }],
   // For image
-  imageFile:  { type: String, default: '' }, // filename in uploads/blogs/
+  imageFile:  { type: String, default: '' },
   imageAlt:   { type: String, default: '' },
   imageCaption: { type: String, default: '' },
   // For table
   tableHeaders: [{ type: String }],
   tableRows: [[{ type: String }]],
+  // NEW: For inline links in text
+  links: [{
+    text: { type: String, default: '' },      // The text to be linked
+    url: { type: String, default: '' },       // The URL to link to
+    openInNewTab: { type: Boolean, default: true } // Open in new tab?
+  }],
 }, { _id: false });
 
 // ── Main Blog schema ──────────────────────────────────────────────────────────

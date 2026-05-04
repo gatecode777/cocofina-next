@@ -7,6 +7,14 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { adminProductAPI } from '@/services/api';
 import '@/styles/admin/AdminProducts.css';
 
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
+
 const AdminProducts = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
@@ -20,8 +28,12 @@ const AdminProducts = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState('');
-
+  const [perms, setPerms] = useState({});
   const searchTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    setPerms(getAdminPerms('products'));
+  }, []);
 
   useEffect(() => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -100,9 +112,11 @@ const AdminProducts = () => {
             <h1>Products Management</h1>
             <p>Manage your product catalog ({totalProducts} total)</p>
           </div>
-          <Link href="/admin/products/new" className="btn-primary">
-            <i className="fas fa-plus"></i> Add New Product
-          </Link>
+          {perms.create && (
+            <Link href="/admin/products/new" className="btn-primary">
+              <i className="fas fa-plus"></i> Add New Product
+            </Link>
+          )}
         </div>
 
         {error && (
@@ -208,21 +222,27 @@ const AdminProducts = () => {
                   </div>
 
                   <div className="product-actions">
-                    <Link href={`/admin/products/edit/${product._id}`} className="btn-action btn-edit">
-                      <i className="fas fa-edit"></i> Edit
-                    </Link>
-                    <button
-                      className="btn-action btn-view"
-                      onClick={() => window.open(`/products/${product.slug || product._id}`, '_blank')}
-                    >
-                      <i className="fas fa-eye"></i> View
-                    </button>
-                    <button
-                      className="btn-action btn-delete"
-                      onClick={() => { setSelectedProduct(product); setShowDeleteModal(true); }}
-                    >
-                      <i className="fas fa-trash"></i>
-                    </button>
+                    {perms.edit && (
+                      <Link href={`/admin/products/edit/${product._id}`} className="btn-action btn-edit">
+                        <i className="fas fa-edit"></i> Edit
+                      </Link>
+                    )}
+                    {perms.view && (
+                      <button
+                        className="btn-action btn-view"
+                        onClick={() => window.open(`/products/${product.slug || product._id}`, '_blank')}
+                      >
+                        <i className="fas fa-eye"></i> View
+                      </button>
+                    )}
+                    {perms.delete && (
+                      <button
+                        className="btn-action btn-delete"
+                        onClick={() => { setSelectedProduct(product); setShowDeleteModal(true); }}
+                      >
+                        <i className="fas fa-trash"></i> Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -230,11 +250,16 @@ const AdminProducts = () => {
           })}
         </div>
 
+          
         {products.length === 0 && !loading && !error && (
           <div className="no-data">
             <i className="fas fa-box-open"></i>
             <p>No products found</p>
-            <Link href="/admin/products/new" className="btn-primary">Add Your First Product</Link>
+            {perms.create && (
+              <Link href="/admin/products/new" className="btn-primary">
+                <i className="fas fa-plus"></i> Add Your First Product
+              </Link>
+            )}
           </div>
         )}
 

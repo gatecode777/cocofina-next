@@ -586,6 +586,9 @@
     .acc-form-row {
         grid-template-columns: 1fr;
     }
+    .user-main {
+        display: block;
+    }
 }
 
 /* Disabled input */

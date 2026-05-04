@@ -1,7 +1,6 @@
 'use client';
 
-export const dynamic = "force-dynamic";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { addressAPI } from '@/services/api';
 import '@/styles/addresses.css';
@@ -13,15 +12,112 @@ const emptyForm = {
   isDefault: false,
 };
 
-// ── Address Form (add / edit) ──────────────────────────────────────────────────
+// ── Pincode lookup function ─────────────────────────────────────────────────
+const fetchPincodeDetails = async (pincode) => {
+  try {
+    const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+    const data = await response.json();
+    
+    if (data && data[0] && data[0].Status === 'Success') {
+      const postOffices = data[0].PostOffice;
+      if (postOffices && postOffices.length > 0) {
+        const firstOffice = postOffices[0];
+        return {
+          city: firstOffice.District || firstOffice.Taluk || '',
+          state: firstOffice.State || '',
+          success: true
+        };
+      }
+    }
+    return { city: '', state: '', success: false, message: 'Pincode not found' };
+  } catch (error) {
+    console.error('Pincode lookup error:', error);
+    return { city: '', state: '', success: false, message: 'Failed to fetch pincode details' };
+  }
+};
+
+// ── Address Form (add / edit) with pincode lookup ────────────────────────────
 const AddressForm = ({ initial, onSave, onCancel, saving, error }) => {
   const [form, setForm] = useState(initial || emptyForm);
   const [errors, setErrors] = useState({});
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [pincodeStatus, setPincodeStatus] = useState({ type: '', message: '' });
+  const lastFetchedPincode = useRef(''); // Track last fetched pincode
 
   const handle = (e) => {
     const { name, value, type, checked } = e.target;
     setForm(p => ({ ...p, [name]: type === 'checkbox' ? checked : value }));
     if (errors[name]) setErrors(p => ({ ...p, [name]: '' }));
+    
+    // Clear pincode status when user types
+    if (name === 'pincode') {
+      setPincodeStatus({ type: '', message: '' });
+    }
+  };
+
+  // Handle pincode blur - fetch city and state
+  const handlePincodeBlur = async () => {
+    const pincode = form.pincode.trim();
+    
+    // Validate pincode format (6 digits)
+    if (!pincode || !/^\d{6}$/.test(pincode)) {
+      return;
+    }
+    
+    // Don't lookup if we already fetched this same pincode
+    if (lastFetchedPincode.current === pincode) {
+      return;
+    }
+    
+    setIsLookingUp(true);
+    setPincodeStatus({ type: 'info', message: 'Fetching location details...' });
+    
+    const result = await fetchPincodeDetails(pincode);
+    
+    if (result.success) {
+      setForm(prev => ({
+        ...prev,
+        city: result.city || prev.city,
+        state: result.state || prev.state,
+      }));
+      setPincodeStatus({ type: 'success', message: `Location found: ${result.city}, ${result.state}` });
+      lastFetchedPincode.current = pincode; // Store the fetched pincode
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setPincodeStatus(prev => prev.type === 'success' ? { type: '', message: '' } : prev);
+      }, 3000);
+    } else {
+      setPincodeStatus({ type: 'error', message: result.message || 'Could not fetch location. Please enter manually.' });
+      lastFetchedPincode.current = ''; // Reset on error
+    }
+    
+    setIsLookingUp(false);
+  };
+
+  // Handle pincode change - reset fetched status when pincode is manually changed
+  const handlePincodeChange = (e) => {
+    const newPincode = e.target.value;
+    setForm(p => ({ ...p, pincode: newPincode }));
+    
+    // If pincode is cleared or shortened, reset the fetched flag
+    if (newPincode.length < 6) {
+      lastFetchedPincode.current = '';
+      setPincodeStatus({ type: '', message: '' });
+    }
+    
+    if (errors.pincode) setErrors(p => ({ ...p, pincode: '' }));
+  };
+
+  // Manual override for city and state - reset pincode fetched flag
+  const handleCityStateChange = (e) => {
+    const { name, value } = e.target;
+    setForm(p => ({ ...p, [name]: value }));
+    if (errors[name]) setErrors(p => ({ ...p, [name]: '' }));
+    // Reset fetched pincode when user manually edits city/state
+    if (lastFetchedPincode.current) {
+      lastFetchedPincode.current = '';
+    }
   };
 
   const validate = () => {
@@ -94,22 +190,43 @@ const AddressForm = ({ initial, onSave, onCancel, saving, error }) => {
 
       <div className="addr-field-row">
         <div className="addr-field">
+          <label>Pincode *</label>
+          <div className="pincode-wrapper">
+            <input 
+              name="pincode" 
+              value={form.pincode} 
+              onChange={handlePincodeChange}
+              onBlur={handlePincodeBlur}
+              placeholder="302020" 
+              maxLength={6} 
+              className={errors.pincode ? 'err' : ''} 
+            />
+            {isLookingUp && (
+              <i className="fas fa-spinner fa-spin pincode-spinner"></i>
+            )}
+          </div>
+          {errors.pincode && <span className="addr-err">{errors.pincode}</span>}
+          {pincodeStatus.message && (
+            <div className={`pincode-status pincode-status-${pincodeStatus.type}`}>
+              <i className={`fas fa-${pincodeStatus.type === 'success' ? 'check-circle' : pincodeStatus.type === 'error' ? 'exclamation-circle' : 'info-circle'}`}></i>
+              {pincodeStatus.message}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="addr-field-row">
+        <div className="addr-field">
           <label>City *</label>
-          <input name="city" value={form.city} onChange={handle}
+          <input name="city" value={form.city} onChange={handleCityStateChange}
             placeholder="Jaipur" className={errors.city ? 'err' : ''} />
           {errors.city && <span className="addr-err">{errors.city}</span>}
         </div>
         <div className="addr-field">
           <label>State *</label>
-          <input name="state" value={form.state} onChange={handle}
+          <input name="state" value={form.state} onChange={handleCityStateChange}
             placeholder="Rajasthan" className={errors.state ? 'err' : ''} />
           {errors.state && <span className="addr-err">{errors.state}</span>}
-        </div>
-        <div className="addr-field addr-field--sm">
-          <label>Pincode *</label>
-          <input name="pincode" value={form.pincode} onChange={handle}
-            placeholder="302020" maxLength={6} className={errors.pincode ? 'err' : ''} />
-          {errors.pincode && <span className="addr-err">{errors.pincode}</span>}
         </div>
       </div>
 
@@ -190,12 +307,12 @@ const AddressesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [editData, setEditData] = useState(null);   // null = add, object = edit
+  const [editData, setEditData] = useState(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
-  const [deleting, setDeleting] = useState(null);   // address._id being deleted
-  const [settling, setSettling] = useState(null);   // address._id being set default
-  const [toast, setToast] = useState('');     // quick success message
+  const [deleting, setDeleting] = useState(null);
+  const [settling, setSettling] = useState(null);
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
     document.title = 'My Addresses - Cocofina';
@@ -227,13 +344,9 @@ const AddressesPage = () => {
     setTimeout(() => setToast(''), 3000);
   };
 
-  // ── Add ────────────────────────────────────────────────────────────────────
   const openAdd = () => { setEditData(null); setFormError(''); setShowForm(true); };
-
-  // ── Edit ───────────────────────────────────────────────────────────────────
   const openEdit = (addr) => { setEditData(addr); setFormError(''); setShowForm(true); };
 
-  // ── Save (add or update) ───────────────────────────────────────────────────
   const handleSave = async (formData) => {
     setSaving(true);
     setFormError('');
@@ -259,7 +372,6 @@ const AddressesPage = () => {
     }
   };
 
-  // ── Delete ─────────────────────────────────────────────────────────────────
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this address?')) return;
     setDeleting(id);
@@ -276,7 +388,6 @@ const AddressesPage = () => {
     }
   };
 
-  // ── Set default ────────────────────────────────────────────────────────────
   const handleSetDefault = async (id) => {
     setSettling(id);
     try {
@@ -292,10 +403,8 @@ const AddressesPage = () => {
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <main>
-      {/* Header */}
       <div className="addr-page-header">
         <div>
           <h1 className="addr-page-title">My Addresses</h1>
@@ -314,15 +423,12 @@ const AddressesPage = () => {
       </div>
       <div className="my-account-wrapper-ad">
         <div className="addr-container">
-
-          {/* Toast */}
           {toast && (
             <div className="addr-toast">
               <i className="fas fa-check-circle"></i> {toast}
             </div>
           )}
 
-          {/* Global error */}
           {error && (
             <div className="addr-global-error">
               <i className="fas fa-exclamation-circle"></i> {error}
@@ -330,7 +436,6 @@ const AddressesPage = () => {
             </div>
           )}
 
-          {/* Add / Edit form panel */}
           {showForm && (
             <div className="addr-form-panel">
               <div className="addr-form-panel-header">
@@ -346,7 +451,6 @@ const AddressesPage = () => {
             </div>
           )}
 
-          {/* Address list */}
           {loading ? (
             <div className="addr-loading">
               {[1, 2].map(i => (

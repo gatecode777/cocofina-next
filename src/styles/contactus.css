@@ -9,8 +9,10 @@
 }
 
 .cu-contact-page-wrapper {
-    width: 100%;
-    padding: 20px 40px;
+    max-width: 1400px;
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 8px;
     overflow-x: hidden;
     background: #fff;
     font-family: 'DM Sans', sans-serif;

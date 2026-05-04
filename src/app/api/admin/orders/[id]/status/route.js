@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { requireAdmin } from '@/lib/auth';
 import Order from '@/models/Order';
 
@@ -20,8 +21,8 @@ export async function PUT(request, { params }) {
     const { status, paymentStatus } = body;
 
     // 4. Validation
-    const allowedStatuses = ['placed','confirmed','processing','shipped','delivered','cancelled'];
-    const allowedPayment  = ['pending','paid','failed','refunded'];
+    const allowedStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const allowedPayment = ['pending', 'paid', 'failed', 'refunded'];
 
     if (status && !allowedStatuses.includes(status)) {
       return NextResponse.json(
@@ -62,6 +63,14 @@ export async function PUT(request, { params }) {
 
     // 7. Save
     await order.save();
+
+    await logActivity(request, admin, {
+      action: 'toggle_status',
+      module: 'orders',
+      description: `Updated order #${order.orderNumber}`,
+      targetId: order._id,
+      targetName: `Order #${order.orderNumber}`,
+    });
 
     // 8. Response
     return NextResponse.json({

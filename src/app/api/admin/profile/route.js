@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { requireAdmin } from '@/lib/auth';
 import { saveFile, deleteFile } from '@/lib/apiHelpers';
 import Admin from '@/models/Admin';
@@ -14,6 +15,13 @@ export async function GET(request) {
     if (error) return error;
     await connectDB();
     const fresh = await Admin.findById(admin._id);
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'profile',
+      description: 'Viewed admin profile',
+    });
+
     return NextResponse.json({ success: true, admin: fresh });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
@@ -52,6 +60,13 @@ export async function PUT(request) {
     }
 
     await admin.save();
+    
+    await logActivity(request, admin, {
+      action: 'edit',
+      module: 'profile',
+      description: 'Updated admin profile',
+    });
+
     return NextResponse.json({ success: true, message: 'Profile updated', admin });
   } catch (err) {
     console.error('Admin profile update error:', err);

@@ -562,3 +562,46 @@
     font-size: 14px;
     margin: 0 0 20px;
 }
+
+/* Pincode lookup styles */
+.pincode-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pincode-spinner {
+  position: absolute;
+  right: 10px;
+  color: #3b82f6;
+  font-size: 14px;
+}
+
+.pincode-status {
+  font-size: 12px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pincode-status-success {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.pincode-status-error {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.pincode-status-info {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.pincode-status i {
+  font-size: 12px;
+}

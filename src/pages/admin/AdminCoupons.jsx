@@ -6,6 +6,14 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
 import '@/styles/admin/AdminCoupons.css';
 
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 const isExpired = (c) => c.expiryDate && new Date() > new Date(c.expiryDate);
@@ -22,9 +30,9 @@ const req = async (method, url, body) => {
   const token = localStorage.getItem('adminToken');
   const res = await fetch(url, {
     method,
-    headers: { 
-      'Content-Type': 'application/json', 
-      'Authorization': `Bearer ${token}` 
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
@@ -33,18 +41,25 @@ const req = async (method, url, body) => {
 
 // ── Coupon Card ────────────────────────────────────────────────────────────────
 const CouponCard = ({ coupon, onEdit, onDelete, onToggle }) => {
-  const expired   = isExpired(coupon);
-  const exhausted = isExhausted(coupon);
-  const inactive  = !coupon.isActive;
-  const invalid   = expired || exhausted || inactive;
 
-  const statusLabel = expired   ? 'Expired'
-                    : exhausted ? 'Exhausted'
-                    : inactive  ? 'Inactive'
-                    : 'Active';
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('coupons'));
+  }, []);
+
+  const expired = isExpired(coupon);
+  const exhausted = isExhausted(coupon);
+  const inactive = !coupon.isActive;
+  const invalid = expired || exhausted || inactive;
+
+  const statusLabel = expired ? 'Expired'
+    : exhausted ? 'Exhausted'
+      : inactive ? 'Inactive'
+        : 'Active';
   const statusClass = expired || exhausted ? 'cs-expired'
-                    : inactive              ? 'cs-inactive'
-                    : 'cs-active';
+    : inactive ? 'cs-inactive'
+      : 'cs-active';
 
   return (
     <div className={`coupon-card ${invalid ? 'coupon-card--dim' : ''}`}>
@@ -92,12 +107,18 @@ const CouponCard = ({ coupon, onEdit, onDelete, onToggle }) => {
 
         {/* Actions */}
         <div className="coupon-actions">
-          <button className="ca-btn ca-edit"   onClick={() => onEdit(coupon)}   title="Edit"><i className="fas fa-pen"></i></button>
-          <button className={`ca-btn ca-toggle ${coupon.isActive ? 'ca-on' : 'ca-off'}`}
-            onClick={() => onToggle(coupon)} title={coupon.isActive ? 'Deactivate' : 'Activate'}>
-            <i className={`fas fa-${coupon.isActive ? 'toggle-on' : 'toggle-off'}`}></i>
-          </button>
-          <button className="ca-btn ca-delete" onClick={() => onDelete(coupon)} title="Delete"><i className="fas fa-trash"></i></button>
+          {perms.edit &&
+            <button className="ca-btn ca-edit" onClick={() => onEdit(coupon)} title="Edit"><i className="fas fa-pen"></i></button>
+          }
+          {perms.edit &&
+            <button className={`ca-btn ca-toggle ${coupon.isActive ? 'ca-on' : 'ca-off'}`}
+              onClick={() => onToggle(coupon)} title={coupon.isActive ? 'Deactivate' : 'Activate'}>
+              <i className={`fas fa-${coupon.isActive ? 'toggle-on' : 'toggle-off'}`}></i>
+            </button>
+          }
+          {perms.delete &&
+            <button className="ca-btn ca-delete" onClick={() => onDelete(coupon)} title="Delete"><i className="fas fa-trash"></i></button>
+          }
         </div>
       </div>
     </div>
@@ -106,9 +127,9 @@ const CouponCard = ({ coupon, onEdit, onDelete, onToggle }) => {
 
 // ── Form Modal ─────────────────────────────────────────────────────────────────
 const CouponFormModal = ({ editData, onClose, onSaved }) => {
-  const [form, setForm]     = useState(editData || emptyForm);
+  const [form, setForm] = useState(editData || emptyForm);
   const [saving, setSaving] = useState(false);
-  const [error,  setError]  = useState('');
+  const [error, setError] = useState('');
   const isEdit = Boolean(editData?._id);
 
   const handleInput = (e) => {
@@ -124,23 +145,23 @@ const CouponFormModal = ({ editData, onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.type)  { setError('Type is required'); return; }
+    if (!form.type) { setError('Type is required'); return; }
     if (!form.value) { setError('Discount value is required'); return; }
     if (form.type === 'percentage' && parseFloat(form.value) > 100) { setError('Percentage cannot exceed 100'); return; }
 
     const payload = { ...form };
     // Clean up empty optional fields
-    if (!payload.code?.trim())     delete payload.code;
-    if (!payload.maxDiscount)      payload.maxDiscount   = null;
-    if (!payload.usageLimit)       payload.usageLimit    = null;
-    if (!payload.expiryDate)       payload.expiryDate    = null;
-    if (!payload.minOrderValue)    payload.minOrderValue = 0;
+    if (!payload.code?.trim()) delete payload.code;
+    if (!payload.maxDiscount) payload.maxDiscount = null;
+    if (!payload.usageLimit) payload.usageLimit = null;
+    if (!payload.expiryDate) payload.expiryDate = null;
+    if (!payload.minOrderValue) payload.minOrderValue = 0;
 
     setSaving(true);
     setError('');
     try {
       const data = isEdit
-        ? await req('PUT',  `/api/admin/coupons/${editData._id}`, payload)
+        ? await req('PUT', `/api/admin/coupons/${editData._id}`, payload)
         : await req('POST', '/api/admin/coupons', payload);
 
       if (data.success) {
@@ -278,12 +299,12 @@ const DeleteModal = ({ coupon, onClose, onDeleted }) => {
   const handleDelete = async () => {
     setDeleting(true);
     const data = await req('DELETE', `/api/admin/coupons/${coupon._id}`);
-    if (data.success) { 
-      toast.success('Coupon deleted'); 
-      onDeleted(); 
-    } else { 
-      toast.error(data.message || 'Delete failed'); 
-      setDeleting(false); 
+    if (data.success) {
+      toast.success('Coupon deleted');
+      onDeleted();
+    } else {
+      toast.error(data.message || 'Delete failed');
+      setDeleting(false);
     }
   };
 
@@ -322,6 +343,11 @@ const AdminCoupons = () => {
   const [editData, setEditData] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [stats, setStats] = useState({ total: 0, active: 0, expired: 0 });
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('coupons'));
+  }, []);
 
   const debounceRef = useRef(null);
 
@@ -338,15 +364,15 @@ const AdminCoupons = () => {
         const expired = data.coupons.filter(c => isExpired(c) || isExhausted(c)).length;
         setStats({ total, active, expired });
       }
-    } catch { 
-      toast.error('Failed to load coupons'); 
-    } finally { 
-      setLoading(false); 
+    } catch {
+      toast.error('Failed to load coupons');
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => { 
-    fetchCoupons(); 
+  useEffect(() => {
+    fetchCoupons();
   }, []);
 
   const handleSearch = (val) => {
@@ -398,9 +424,11 @@ const AdminCoupons = () => {
             <h1>Coupons</h1>
             <p>Create and manage discount coupons</p>
           </div>
-          <button className="btn-primary" onClick={openCreate}>
-            <i className="fas fa-plus"></i> New Coupon
-          </button>
+          {perms.create && (
+            <button className="btn-primary" onClick={openCreate}>
+              <i className="fas fa-plus"></i> New Coupon
+            </button>
+          )}
         </div>
 
         {/* Stats strip */}
@@ -451,9 +479,11 @@ const AdminCoupons = () => {
             <i className="fas fa-ticket-alt"></i>
             <h3>No coupons found</h3>
             <p>Create your first coupon to offer discounts to customers.</p>
-            <button className="btn-primary" onClick={openCreate}>
-              <i className="fas fa-plus"></i> Create Coupon
-            </button>
+            {perms.create && (
+              <button className="btn-primary" onClick={openCreate}>
+                <i className="fas fa-plus"></i> Create Coupon
+              </button>
+            )}
           </div>
         ) : (
           <div className="coupons-grid">

@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import Product from '@/models/Product';
 
 export async function PUT(request, { params }) {
@@ -18,6 +19,15 @@ export async function PUT(request, { params }) {
 
     const product = await Product.findByIdAndUpdate(params.id, { status }, { new: true });
     if (!product) return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
+
+    await logActivity(request, admin, {
+      action: 'toggle_status',
+      module: 'products',
+      description: `Changed status of product "${product.name}" to "${status}"`,
+      targetId: product._id,
+      targetName: product.name,
+    });
+
     return NextResponse.json({ success: true, product });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

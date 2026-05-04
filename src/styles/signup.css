@@ -89,7 +89,7 @@
 
 .input-icon-container {
   position: relative;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .input-icon-container i {
@@ -132,7 +132,6 @@
   color: #ff4444;
   font-size: 11px;
   margin-top: 5px;
-  margin-left: 45px;
 }
 
 .eye-toggle {

@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import Blog from '@/models/Blog';
 import mongoose from 'mongoose';
 export const dynamic = "force-dynamic";
@@ -40,11 +41,19 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ success: false, message: 'Blog not found' }, { status: 404 });
     }
     
+    await logActivity(request, admin, {
+      action: 'toggle_status',
+      module: 'blogs',
+      description: `Updated blog status to "${blog.status}"`,
+      targetId: blog._id,
+      targetName: blog.title,
+    });
+
     console.log('Updated blog status to:', blog.status);
     
     return NextResponse.json({ 
       success: true, 
-      message: `Blog ${status}`, 
+      message: `Blog status updated to ${status}`, 
       blog 
     });
     

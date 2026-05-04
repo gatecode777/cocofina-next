@@ -10,9 +10,8 @@
 }
 
 .b-container {
-    max-width: 1350px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 5px;
     box-sizing: border-box;
 }
 
@@ -25,7 +24,7 @@
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 12px;
+    border-radius: 8px;
     object-fit: cover;
 }
 
@@ -211,7 +210,7 @@
   margin-bottom: 60px;
 }
 
-.cf-recipes-title {
+.cf-recipes-title-b {
   font-family: "Playfair Display", serif;
   font-size: 48px;
   color: #814a30;
@@ -414,7 +413,7 @@
     flex: 0 0 calc((100% - 25px) / 2);
   }
 
-  .cf-recipes-title {
+  .cf-recipes-title-b {
     font-size: 38px;
   }
 
@@ -434,7 +433,7 @@
     padding: 15px;
   }
 
-  .cf-recipes-title {
+  .cf-recipes-title-b {
     font-size: 32px;
   }
 

@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { requireAdmin } from '@/lib/auth';
 import Order from '@/models/Order';
 
@@ -13,6 +14,15 @@ export async function GET(request, { params }) {
     await connectDB();
     const order = await Order.findById(params.id).populate('user', 'firstName lastName email phone').lean();
     if (!order) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'orders',
+      description: `Viewed order #${order.orderNumber}`,
+      targetId: order._id,
+      targetName: `Order #${order.orderNumber}`,
+    });
+
     return NextResponse.json({ success: true, order });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
@@ -48,6 +58,15 @@ export async function PUT(request, { params }) {
     if (paymentStatus) order.paymentStatus = paymentStatus;
 
     await order.save();
+
+    await logActivity(request, admin, {
+      action: 'edit',
+      module: 'orders',
+      description: `Updated order #${order.orderNumber}`,
+      targetId: order._id,
+      targetName: `Order #${order.orderNumber}`,
+    });
+    
     return NextResponse.json({ success: true, message: 'Order updated', order });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

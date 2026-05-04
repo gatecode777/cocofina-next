@@ -27,14 +27,15 @@ const getLowestVariant = (product) => {
   );
 };
 
-// ── Hero Slider Styles (to be added to your style.css) ─────────────────────────
-// Add these styles to your global CSS file:
 const heroSliderStyles = `
 /* Hero Slider Styles */
 .cf-hero {
-  width: 100%;
+  max-width: 1400px;
   overflow: hidden;
   position: relative;
+  margin: auto;
+  margin-top: 20px;
+  border-radius: 8px;
 }
 
 .cf-hero-banner {
@@ -45,7 +46,8 @@ const heroSliderStyles = `
 .cf-slider {
   position: relative;
   width: 100%;
-  height: 650px; /* Adjust as needed */
+  height: 650px;
+  overflow: hidden;
 }
 
 .cf-slide {
@@ -54,15 +56,7 @@ const heroSliderStyles = `
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  visibility: hidden;
-}
-
-.cf-slide.active {
-  opacity: 1;
-  visibility: visible;
-  z-index: 1;
+  will-change: transform;
 }
 
 .cf-hero-img {
@@ -101,10 +95,46 @@ const heroSliderStyles = `
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-/* Responsive */
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .cf-slider {
+    height: 550px;
+  }
+  
+  .cf-dots {
+    bottom: 15px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 992px) {
+  .cf-slider {
+    height: 450px;
+  }
+  
+  .cf-dots {
+    bottom: 12px;
+    gap: 8px;
+  }
+  
+  .cf-dot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .cf-dot.active {
+    width: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .cf-slider {
-    height: 300px;
+    height: 350px;
+  }
+  
+  .cf-dots {
+    bottom: 10px;
+    gap: 8px;
   }
   
   .cf-dot {
@@ -116,26 +146,106 @@ const heroSliderStyles = `
     width: 16px;
   }
 }
+
+@media (max-width: 576px) {
+  .cf-slider {
+    height: 250px;
+  }
+  
+  .cf-dots {
+    bottom: 8px;
+    gap: 6px;
+  }
+  
+  .cf-dot {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .cf-dot.active {
+    width: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cf-slider {
+    height: 145px;
+  }
+
+  .cf-hero-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .cf-dots {
+    bottom: 6px;
+    gap: 5px;
+  }
+  
+  .cf-dot {
+    width: 5px;
+    height: 5px;
+  }
+  
+  .cf-dot.active {
+    width: 10px;
+  }
+}
+
+/* Optional: Add touch/swipe support indicator for mobile */
+@media (max-width: 768px) {
+  .cf-hero::after {
+    content: '';
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .cf-hero:hover::after {
+    opacity: 1;
+  }
+}
 `;
 
-// Hero Section with working auto slider
+// Hero Section with responsive slide effect
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
   const slides = [
     { id: 0, src: "/banner.png", alt: "Banner 1" },
-    { id: 1, src: "/AbtOurProduct.png", alt: "Banner 2" },
-    { id: 2, src: "/How.png", alt: "Banner 3" }
+    { id: 1, src: "/banner.png", alt: "Banner 2" },
+    { id: 2, src: "/banner.png", alt: "Banner 3" }
   ];
   const intervalRef = useRef(null);
   const totalSlides = slides.length;
 
-  const goToSlide = useCallback((index) => {
-    setCurrentSlide((index + totalSlides) % totalSlides);
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
   }, [totalSlides]);
 
-  const nextSlide = useCallback(() => {
-    goToSlide(currentSlide + 1);
-  }, [currentSlide, goToSlide]);
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  }, [totalSlides]);
+
+  const goToSlide = useCallback((index) => {
+    setCurrentSlide(index);
+  }, []);
 
   // Auto-slide effect
   useEffect(() => {
@@ -166,7 +276,32 @@ const HeroSection = () => {
     }
   };
 
-  // Inject styles (optional - or add to your CSS file)
+  // Touch/swipe handlers for mobile
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      // Swipe left - next slide
+      nextSlide();
+    }
+
+    if (touchStart - touchEnd < -50) {
+      // Swipe right - previous slide
+      prevSlide();
+    }
+
+    // Reset touch values
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  // Inject styles
   useEffect(() => {
     if (typeof document !== 'undefined' && !document.getElementById('hero-slider-styles')) {
       const styleSheet = document.createElement("style");
@@ -177,18 +312,30 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="cf-hero" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <section
+      className="cf-hero"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="cf-hero-banner">
         <div className="cf-slider">
           {slides.map((slide, index) => (
             <div
               key={slide.id}
               className={`cf-slide ${index === currentSlide ? 'active' : ''}`}
+              style={{
+                transform: `translateX(${100 * (index - currentSlide)}%)`,
+                transition: 'transform 0.5s ease-in-out'
+              }}
             >
               <img
                 src={slide.src}
                 alt={slide.alt}
                 className="cf-hero-img"
+                loading="lazy"
               />
             </div>
           ))}
@@ -200,6 +347,8 @@ const HeroSection = () => {
               key={index}
               className={`cf-dot ${index === currentSlide ? 'active' : ''}`}
               onClick={() => goToSlide(index)}
+              role="button"
+              aria-label={`Go to slide ${index + 1}`}
             ></span>
           ))}
         </div>
@@ -340,6 +489,8 @@ const ProductsSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -396,7 +547,7 @@ const StorySection = () => (
     <div className="cf-container">
       <div className="cf-story-card">
         <div className="cf-story-image-side">
-          <img src="/Ourstory.png" alt="Our Story Book" className="cf-story-main-img" />
+          <img src="/our_story.png" alt="Our Story Book" className="cf-story-main-img" />
         </div>
         <div className="cf-story-content-side">
           <div className="cf-story-header">
@@ -451,7 +602,7 @@ const AboutProductSection = () => (
       </div>
       <div className="cf-about-visual">
         <div className="cf-about-bg-box"></div>
-        <img src="/AbtOurProduct.png" alt="Cocofina Coconut Sugar Ingredients" className="cf-about-main-img" />
+        <img src="/ingredient banner.png" alt="Cocofina Coconut Sugar Ingredients" className="cf-about-main-img" />
       </div>
     </div>
   </section>
@@ -733,6 +884,20 @@ const TestimonialsSection = () => {
   const swiperRef = useRef(null);
   const swiperInst = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const updatePagination = useCallback(() => {
+    if (!swiperInst.current) return;
+
+    const swiper = swiperInst.current;
+
+    const total = swiper.snapGrid.length;
+    const current = swiper.snapIndex + 1;
+
+    setTotalPages(total);
+    setCurrentPage(current);
+  }, []);
 
   useEffect(() => {
     if (!swiperRef.current) return;
@@ -750,12 +915,39 @@ const TestimonialsSection = () => {
         prevEl: '.ctm-arrow-prev',
       },
       on: {
-        slideChange() { setActiveIndex(this.activeIndex); },
+        init: function () {
+          setActiveIndex(this.activeIndex);
+          updatePagination();
+        },
+        slideChange: function () {
+          setActiveIndex(this.activeIndex);
+          // setTimeout(() => updatePagination(), 50); // Small delay to ensure Swiper has updated
+        },
+        resize: function () {
+          updatePagination();
+        },
       },
     });
 
-    return () => { if (swiperInst.current) swiperInst.current.destroy(true, true); };
-  }, []);
+    return () => {
+      if (swiperInst.current) {
+        swiperInst.current.destroy(true, true);
+      }
+    };
+  }, [updatePagination]);
+
+  // Force update when activeIndex changes
+  useEffect(() => {
+    if (swiperInst.current) {
+      updatePagination();
+    }
+  }, [activeIndex, updatePagination]);
+
+  const goToPage = (pageIndex) => {
+    if (swiperInst.current) {
+      swiperInst.current.slideTo(pageIndex);
+    }
+  };
 
   return (
     <section className="ctm-testimonial-wrapper">
@@ -789,11 +981,11 @@ const TestimonialsSection = () => {
             </button>
 
             <div className="ctm-custom-pagination">
-              {testimonials.map((_, i) => (
+              {Array.from({ length: totalPages }).map((_, i) => (
                 <span
                   key={i}
-                  className={`ctm-num ${i === activeIndex ? 'active' : ''}`}
-                  onClick={() => swiperInst.current?.slideTo(i)}
+                  className={`ctm-num ${currentPage === i + 1 ? 'active' : ''}`}
+                  onClick={() => goToPage(i)}
                 >
                   {(i + 1).toString().padStart(2, '0')}
                 </span>
@@ -815,6 +1007,26 @@ const TestimonialsSection = () => {
 // ── Main Page ──────────────────────────────────────────────────────────────────
 const HomePage = () => {
   useEffect(() => { document.title = 'Cocofina Sugar'; }, []);
+
+  useEffect(() => {
+    const selectors =
+      ".cf-product-card, .cf-feature-card, .cf-title-underline-center, .cf-products-main-title, .cf-about-title, .cf-about-underline, .cf-recipes-title";
+
+    const elements = document.querySelectorAll(selectors);
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("reveal");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    elements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <main className="cf-main">

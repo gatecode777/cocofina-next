@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import Order from '@/models/Order';
 import '@/models/User';
 
@@ -32,6 +33,12 @@ export async function GET(request) {
     const orders = await Order.find(filter)
       .populate('user', 'firstName lastName email')
       .sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'orders',
+      description: `Viewed orders (page ${page})`,
+    });
 
     return NextResponse.json({ success: true, orders, totalOrders: total, totalPages: Math.ceil(total / limit), currentPage: page });
   } catch (err) {

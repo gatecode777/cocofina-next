@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { logActivity } from '@/lib/logActivity';
 import { saveFile } from '@/lib/apiHelpers';
 import Blog from '@/models/Blog';
 import BlogCategory from '@/models/BlogCategory';
@@ -37,6 +38,12 @@ export async function GET(request) {
       .populate('category', 'name slug')  // Changed from 'blogCategory' to 'category'
       .sort({ createdAt: -1 }).skip(skip).limit(limit)
       .select('-content').lean();
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'blogs',
+      description: `Viewed blogs (page ${page})`,
+    });
 
     return NextResponse.json({ success: true, blogs, total, totalPages: Math.ceil(total / limit) });
   } catch (err) {
@@ -105,6 +112,14 @@ export async function POST(request) {
         designation: authorDesignation 
       },
       seo,
+    });
+
+    await logActivity(request, admin, {
+      action: 'create',
+      module: 'blogs',
+      description: `Created blog "${blog.title}"`,
+      targetId: blog._id,
+      targetName: blog.title,
     });
 
     return NextResponse.json({ success: true, message: 'Blog created', blog }, { status: 201 });

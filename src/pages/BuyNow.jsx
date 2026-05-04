@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { cartAPI, addressAPI, orderAPI } from '@/services/api';
@@ -13,6 +12,30 @@ const getImageSrc = (item) => {
   return '/cocofinaproduct.png';
 };
 
+// ── Pincode lookup function ─────────────────────────────────────────────────
+const fetchPincodeDetails = async (pincode) => {
+  try {
+    const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+    const data = await response.json();
+
+    if (data && data[0] && data[0].Status === 'Success') {
+      const postOffices = data[0].PostOffice;
+      if (postOffices && postOffices.length > 0) {
+        const firstOffice = postOffices[0];
+        return {
+          city: firstOffice.District || firstOffice.Taluk || '',
+          state: firstOffice.State || '',
+          success: true
+        };
+      }
+    }
+    return { city: '', state: '', success: false, message: 'Pincode not found' };
+  } catch (error) {
+    console.error('Pincode lookup error:', error);
+    return { city: '', state: '', success: false, message: 'Failed to fetch pincode details' };
+  }
+};
+
 // ── Empty address form state ───────────────────────────────────────────────────
 const emptyForm = {
   label: 'Home', fullName: '', phone: '',
@@ -20,7 +43,7 @@ const emptyForm = {
   isDefault: false,
 };
 
-// ── Step 1: Address ────────────────────────────────────────────────────────────
+// ── Step 1: Address with Pincode Lookup ────────────────────────────────────────
 const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh }) => {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -28,13 +51,78 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [deleting, setDeleting] = useState(null);
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [pincodeStatus, setPincodeStatus] = useState({ type: '', message: '' });
+
+  const lastFetchedPincode = React.useRef('');
 
   const handleInput = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((p) => ({ ...p, [name]: type === 'checkbox' ? checked : value }));
+    if (name === 'pincode') {
+      setPincodeStatus({ type: '', message: '' });
+      // Reset last fetched pincode when user types
+      if (value.length < 6) {
+        lastFetchedPincode.current = '';
+      }
+    }
   };
 
-  const openAdd = () => { setForm(emptyForm); setEditId(null); setFormError(''); setShowForm(true); };
+  // Handle pincode blur - fetch city and state
+  const handlePincodeBlur = async () => {
+    const pincode = form.pincode.trim();
+
+    if (!pincode || !/^\d{6}$/.test(pincode)) {
+      return;
+    }
+
+    // Don't lookup if we already fetched this same pincode
+    if (lastFetchedPincode.current === pincode) {
+      return;
+    }
+
+    setIsLookingUp(true);
+    setPincodeStatus({ type: 'info', message: 'Fetching location details...' });
+
+    const result = await fetchPincodeDetails(pincode);
+
+    if (result.success) {
+      setForm(prev => ({
+        ...prev,
+        city: result.city || prev.city,
+        state: result.state || prev.state,
+      }));
+      setPincodeStatus({ type: 'success', message: `Location found: ${result.city}, ${result.state}` });
+      lastFetchedPincode.current = pincode;
+
+      setTimeout(() => {
+        setPincodeStatus(prev => prev.type === 'success' ? { type: '', message: '' } : prev);
+      }, 3000);
+    } else {
+      setPincodeStatus({ type: 'error', message: result.message || 'Could not fetch location. Please enter manually.' });
+      lastFetchedPincode.current = '';
+    }
+
+    setIsLookingUp(false);
+  };
+
+  const handleCityStateChange = (e) => {
+    const { name, value } = e.target;
+    setForm(p => ({ ...p, [name]: value }));
+    // Reset fetched pincode when user manually edits city/state
+    if (lastFetchedPincode.current) {
+      lastFetchedPincode.current = '';
+    }
+  };
+
+  const openAdd = () => {
+    setForm(emptyForm);
+    setEditId(null);
+    setFormError('');
+    setPincodeStatus({ type: '', message: '' });
+    setShowForm(true);
+  };
+
   const openEdit = (addr) => {
     setForm({
       label: addr.label, fullName: addr.fullName, phone: addr.phone,
@@ -43,6 +131,7 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
     });
     setEditId(addr._id);
     setFormError('');
+    setPincodeStatus({ type: '', message: '' });
     setShowForm(true);
   };
 
@@ -99,8 +188,10 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
             <div className="address-info">
               <h3>
                 {addr.fullName}
-                <span className="tag">{addr.label}</span>
-                {addr.isDefault && <span className="tag tag-default">Default</span>}
+                <div className="address-labels-c">
+                  <span className="tag">{addr.label}</span>
+                  {addr.isDefault && <span className="tag tag-default">Default</span>}
+                </div>
               </h3>
               <p>{addr.phone}</p>
               <p>{addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}, {addr.city}, {addr.state} - {addr.pincode}</p>
@@ -159,20 +250,42 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
                 <input name="line2" value={form.line2} onChange={handleInput} placeholder="Near City Mall (optional)" />
               </div>
             </div>
+
+            {/* Pincode field with lookup */}
             <div className="bn-form-row">
               <div className="bn-field">
-                <label>City *</label>
-                <input name="city" value={form.city} onChange={handleInput} placeholder="Jaipur" />
-              </div>
-              <div className="bn-field">
-                <label>State *</label>
-                <input name="state" value={form.state} onChange={handleInput} placeholder="Rajasthan" />
-              </div>
-              <div className="bn-field">
                 <label>Pincode *</label>
-                <input name="pincode" value={form.pincode} onChange={handleInput} placeholder="302020" maxLength={6} />
+                <div className="pincode-wrapper">
+                  <input
+                    name="pincode"
+                    value={form.pincode}
+                    onChange={handleInput}
+                    onBlur={handlePincodeBlur}
+                    placeholder="302020"
+                    maxLength={6}
+                  />
+                  {isLookingUp && (
+                    <i className="fas fa-spinner fa-spin pincode-spinner"></i>
+                  )}
+                </div>
+                {pincodeStatus.message && (
+                  <div className={`pincode-status pincode-status-${pincodeStatus.type}`}>
+                    <i className={`fas fa-${pincodeStatus.type === 'success' ? 'check-circle' : pincodeStatus.type === 'error' ? 'exclamation-circle' : 'info-circle'}`}></i>
+                    {pincodeStatus.message}
+                  </div>
+                )}
               </div>
             </div>
+
+            <div className="bn-field">
+              <label>City *</label>
+              <input name="city" value={form.city} onChange={handleCityStateChange} placeholder="Jaipur" />
+            </div>
+            <div className="bn-field">
+              <label>State *</label>
+              <input name="state" value={form.state} onChange={handleCityStateChange} placeholder="Rajasthan" />
+            </div>
+
             <label className="bn-checkbox">
               <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={handleInput} />
               Set as default address
@@ -194,7 +307,6 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
 const StepShipping = ({ selected, setSelected }) => {
   const methods = [
     { id: 'free', label: 'Free Delivery', desc: 'Standard delivery, 5–7 working days', price: 'Free', badge: '' },
-    // { id: 'express', label: 'Express — ₹50', desc: 'Get your order as fast as possible', price: '₹50', badge: 'Fast' },
   ];
   return (
     <div className="step-body">
@@ -336,9 +448,9 @@ const BuyNowPage = () => {
     document.title = 'Checkout - Cocofina';
     window.scrollTo(0, 0);
     const token = localStorage.getItem('token');
-    if (!token) { 
-      router.push('/login'); 
-      return; 
+    if (!token) {
+      router.push('/login');
+      return;
     }
     fetchAddresses();
     fetchCart();
@@ -363,9 +475,9 @@ const BuyNowPage = () => {
       const res = await cartAPI.getCart();
       if (res.data.success) {
         const items = res.data.cart?.items || [];
-        if (items.length === 0) { 
-          router.push('/cart'); 
-          return; 
+        if (items.length === 0) {
+          router.push('/cart');
+          return;
         }
 
         // Build snapshot with price from variant
@@ -381,7 +493,7 @@ const BuyNowPage = () => {
           };
         });
         setCartItems(snapshots);
-        
+
         // Retrieve coupon from sessionStorage
         const savedCoupon = sessionStorage.getItem('appliedCoupon');
         if (savedCoupon) {
@@ -397,8 +509,8 @@ const BuyNowPage = () => {
     } catch (err) {
       console.error('Error fetching cart:', err);
       router.push('/cart');
-    } finally { 
-      setCartLoading(false); 
+    } finally {
+      setCartLoading(false);
     }
   };
 
@@ -407,9 +519,9 @@ const BuyNowPage = () => {
     setStepError('');
 
     if (currentStep === 0) {
-      if (!selectedAddr) { 
-        setStepError('Please select or add a delivery address.'); 
-        return; 
+      if (!selectedAddr) {
+        setStepError('Please select or add a delivery address.');
+        return;
       }
       setCurrentStep(1);
     } else if (currentStep === 1) {
@@ -428,9 +540,9 @@ const BuyNowPage = () => {
   // ── Place order ────────────────────────────────────────────────────────────
   const placeOrder = async () => {
     const address = addresses.find((a) => a._id === selectedAddr);
-    if (!address) { 
-      setStepError('Please select a delivery address.'); 
-      return; 
+    if (!address) {
+      setStepError('Please select a delivery address.');
+      return;
     }
 
     try {
@@ -458,7 +570,7 @@ const BuyNowPage = () => {
       };
 
       const res = await orderAPI.createOrder(orderData);
-      
+
       // Clear coupon from sessionStorage after successful order
       sessionStorage.removeItem('appliedCoupon');
       triggerCartUpdate();

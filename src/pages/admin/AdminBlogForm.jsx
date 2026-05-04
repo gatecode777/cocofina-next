@@ -27,8 +27,72 @@ const emptyBlock = (type = 'paragraph') => ({
 // Helper function to get auth token
 const tok = () => localStorage.getItem('adminToken');
 
+const LinkEditor = ({ isOpen, onClose, onSave, initialText, initialUrl, initialNewTab }) => {
+  const [text, setText] = useState(initialText || '');
+  const [url, setUrl] = useState(initialUrl || '');
+  const [openInNewTab, setOpenInNewTab] = useState(initialNewTab !== false);
+
+  const handleSave = () => {
+    if (!text.trim() || !url.trim()) {
+      toast.error('Please enter both link text and URL');
+      return;
+    }
+    onSave({ text: text.trim(), url: url.trim(), openInNewTab });
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container link-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Add/Edit Link</h2>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label>Link Text *</label>
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="e.g., Click here"
+            />
+          </div>
+          <div className="form-group">
+            <label>URL *</label>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://example.com or /internal-page"
+            />
+          </div>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={openInNewTab}
+              onChange={(e) => setOpenInNewTab(e.target.checked)}
+            />
+            <span>Open in new tab</span>
+          </label>
+        </div>
+        <div className="modal-footer">
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn-primary" onClick={handleSave}>Save Link</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ── Block editor ────────────────────────────────────────────────────────────────
 const BlockEditor = ({ block, index, onChange, onRemove, onMoveUp, onMoveDown, isFirst, isLast }) => {
+  const [showLinkEditor, setShowLinkEditor] = useState(false);
+  const [editingLinkIndex, setEditingLinkIndex] = useState(null);
+  const [selectedText, setSelectedText] = useState('');
+
   const update = (patch) => onChange(index, { ...block, ...patch });
 
   const addListItem = () => update({ items: [...(block.items || ['']), ''] });
@@ -56,6 +120,55 @@ const BlockEditor = ({ block, index, onChange, onRemove, onMoveUp, onMoveDown, i
     update({ tableRows: rows });
   };
 
+  // Link management functions
+  const addLink = () => {
+    setEditingLinkIndex(null);
+    setSelectedText('');
+    setShowLinkEditor(true);
+  };
+
+  const editLink = (linkIndex) => {
+    setEditingLinkIndex(linkIndex);
+    setShowLinkEditor(true);
+  };
+
+  const removeLink = (linkIndex) => {
+    const links = [...(block.links || [])];
+    links.splice(linkIndex, 1);
+    update({ links });
+    toast.success('Link removed');
+  };
+
+  const handleSaveLink = (linkData) => {
+    const links = [...(block.links || [])];
+    if (editingLinkIndex !== null) {
+      links[editingLinkIndex] = linkData;
+    } else {
+      links.push(linkData);
+    }
+    update({ links });
+    toast.success(editingLinkIndex !== null ? 'Link updated' : 'Link added');
+  };
+
+  const renderTextWithLinks = () => {
+    const text = block.text || '';
+    const links = block.links || [];
+    
+    if (links.length === 0) return text;
+    
+    let result = [];
+    let lastIndex = 0;
+    
+    // Sort links by position (if you store position, otherwise simple replacement)
+    // For simplicity, we'll do simple string replacement
+    const processedText = text;
+    if (typeof text !== 'string') return text;
+    
+    // Simple approach: replace link texts with anchor tags
+    // For production, you'd want to store positions or use a proper rich text editor
+    return text;
+  };
+
   const BLOCK_COLORS = {
     paragraph: '#6366f1', heading: '#f59e0b', subheading: '#f97316',
     bullet_list: '#10b981', numbered_list: '#3b82f6', quote: '#8b5cf6',
@@ -65,6 +178,15 @@ const BlockEditor = ({ block, index, onChange, onRemove, onMoveUp, onMoveDown, i
 
   return (
     <div className="abf-block">
+      <LinkEditor
+        isOpen={showLinkEditor}
+        onClose={() => setShowLinkEditor(false)}
+        onSave={handleSaveLink}
+        initialText={editingLinkIndex !== null ? block.links?.[editingLinkIndex]?.text : ''}
+        initialUrl={editingLinkIndex !== null ? block.links?.[editingLinkIndex]?.url : ''}
+        initialNewTab={editingLinkIndex !== null ? block.links?.[editingLinkIndex]?.openInNewTab : true}
+      />
+      
       <div className="abf-block-handle" style={{ borderLeft: `3px solid ${color}` }}>
         <div className="abf-block-type-label" style={{ color }}>{block.type.replace('_', ' ')}</div>
         <div className="abf-block-controls">
@@ -75,21 +197,55 @@ const BlockEditor = ({ block, index, onChange, onRemove, onMoveUp, onMoveDown, i
       </div>
 
       <div className="abf-block-content">
-        {/* Text-based blocks */}
+        {/* Text-based blocks with link support */}
         {['paragraph', 'heading', 'subheading', 'quote', 'callout'].includes(block.type) && (
-          <textarea
-            rows={block.type === 'paragraph' ? 4 : 2}
-            placeholder={
-              block.type === 'heading'    ? 'Section heading…'        :
-              block.type === 'subheading' ? 'Sub-section heading…'    :
-              block.type === 'quote'      ? 'Blockquote text…'        :
-              block.type === 'callout'    ? 'Callout / tip text…'     :
-              'Paragraph text…'
-            }
-            value={block.text}
-            onChange={(e) => update({ text: e.target.value })}
-            className="abf-block-textarea"
-          />
+          <>
+            <textarea
+              rows={block.type === 'paragraph' ? 4 : 2}
+              placeholder={
+                block.type === 'heading'    ? 'Section heading…'        :
+                block.type === 'subheading' ? 'Sub-section heading…'    :
+                block.type === 'quote'      ? 'Blockquote text…'        :
+                block.type === 'callout'    ? 'Callout / tip text…'     :
+                'Paragraph text…'
+              }
+              value={block.text}
+              onChange={(e) => update({ text: e.target.value })}
+              className="abf-block-textarea"
+            />
+            
+            {/* Links section for text blocks */}
+            <div className="abf-links-section">
+              <div className="abf-links-header">
+                <span className="abf-links-label">Inline Links</span>
+                <button type="button" className="abf-add-link-btn" onClick={addLink}>
+                  <i className="fas fa-link"></i> Add Link
+                </button>
+              </div>
+              
+              {(block.links || []).length > 0 && (
+                <div className="abf-links-list">
+                  {(block.links || []).map((link, linkIndex) => (
+                    <div key={linkIndex} className="abf-link-item">
+                      <div className="abf-link-info">
+                        <span className="abf-link-text">{link.text}</span>
+                        <span className="abf-link-url">→ {link.url}</span>
+                        <span className="abf-link-target">{link.openInNewTab ? '🔗 New Tab' : '📄 Same Tab'}</span>
+                      </div>
+                      <div className="abf-link-actions">
+                        <button type="button" className="abf-link-edit" onClick={() => editLink(linkIndex)}>
+                          <i className="fas fa-edit"></i>
+                        </button>
+                        <button type="button" className="abf-link-delete" onClick={() => removeLink(linkIndex)}>
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
 
         {/* Divider */}
@@ -97,14 +253,18 @@ const BlockEditor = ({ block, index, onChange, onRemove, onMoveUp, onMoveDown, i
           <div className="abf-divider-preview"><hr /></div>
         )}
 
-        {/* Lists */}
+        {/* Lists - add link support for list items */}
         {['bullet_list', 'numbered_list'].includes(block.type) && (
           <div className="abf-list-editor">
             {(block.items || ['']).map((item, i) => (
               <div key={i} className="abf-list-item-row">
                 <span className="abf-list-marker">{block.type === 'numbered_list' ? `${i+1}.` : '•'}</span>
-                <input type="text" value={item} placeholder={`Item ${i+1}`}
-                  onChange={(e) => updateListItem(i, e.target.value)} />
+                <input 
+                  type="text" 
+                  value={item} 
+                  placeholder={`Item ${i+1}`}
+                  onChange={(e) => updateListItem(i, e.target.value)} 
+                />
                 {block.items.length > 1 && (
                   <button type="button" className="abf-list-del" onClick={() => removeListItem(i)}>✕</button>
                 )}

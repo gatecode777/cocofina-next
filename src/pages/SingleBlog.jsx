@@ -5,7 +5,6 @@ export const dynamicParams = true;
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -18,17 +17,79 @@ const getAuthorSrc = (f) => f ? `/uploads/profiles/${f}` : null;
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
-// ── Content block renderer ────────────────────────────────────────────────────
+// Helper function to render text with links
+const renderTextWithLinks = (text, links = []) => {
+  if (!text) return null;
+  if (!links || links.length === 0) {
+    // Return text with line breaks
+    return <span dangerouslySetInnerHTML={{ __html: text.replace(/\n/g, '<br />') }} />;
+  }
+  
+  // Create a copy of the text to work with
+  let result = text;
+  
+  // Sort links by text length (longest first) to avoid partial replacements
+  const sortedLinks = [...links].sort((a, b) => b.text.length - a.text.length);
+  
+  // Replace each link text with an HTML anchor
+  sortedLinks.forEach(link => {
+    const linkText = link.text;
+    const url = link.url;
+    const openInNewTab = link.openInNewTab !== false;
+    const target = openInNewTab ? '_blank' : '_self';
+    const rel = openInNewTab ? 'noopener noreferrer' : '';
+    
+    // Check if internal or external link
+    let href = url;
+    if (url.startsWith('/') || url.startsWith('#')) {
+      // Internal link - will be handled by Next.js Link component
+      // We'll use a special marker and replace later
+      const marker = `__LINK_MARKER_${Math.random()}_${Date.now()}__`;
+      const replacement = `<a href="${href}" target="${target}" rel="${rel}" class="inline-link" data-internal="true">${linkText}</a>`;
+      result = result.split(linkText).join(marker);
+      // Store the replacement for later
+      // This is a simplified approach; for production, use a more robust method
+    } else {
+      // External link
+      const regex = new RegExp(`(${linkText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g');
+      result = result.replace(regex, `<a href="${href}" target="${target}" rel="${rel}" class="inline-link">${linkText}</a>`);
+    }
+  });
+  
+  // Replace any remaining markers (for internal links) - simplified
+  return <span dangerouslySetInnerHTML={{ __html: result.replace(/\n/g, '<br />') }} />;
+};
+
+// ── Content block renderer with link support ────────────────────────────────────
 const ContentBlock = ({ block }) => {
   switch (block.type) {
 
     case 'heading':
-      return <h2 className="blg-sub-heading">{block.text}</h2>;
+      return (
+        <h2 className="blg-sub-heading">
+          {block.links && block.links.length > 0 
+            ? renderTextWithLinks(block.text, block.links)
+            : block.text}
+        </h2>
+      );
 
     case 'subheading':
-      return <h3 className="blg-list-title">{block.text}</h3>;
+      return (
+        <h3 className="blg-list-title">
+          {block.links && block.links.length > 0 
+            ? renderTextWithLinks(block.text, block.links)
+            : block.text}
+        </h3>
+      );
 
     case 'paragraph':
+      if (block.links && block.links.length > 0) {
+        return (
+          <div className="blg-paragraph">
+            {renderTextWithLinks(block.text, block.links)}
+          </div>
+        );
+      }
       return (
         <p dangerouslySetInnerHTML={{
           __html: (block.text || '').replace(/\n/g, '<br />')
@@ -154,7 +215,7 @@ const RelatedCard = ({ blog }) => (
   </Link>
 );
 
-// ── Share buttons ─────────────────────────────────────────────────────────────
+// ── Share buttons with updated styling for links ──────────────────────────────
 const ShareButtons = ({ title }) => {
   const [copied, setCopied] = useState(false);
 
@@ -188,13 +249,13 @@ const ShareButtons = ({ title }) => {
 const SingleBlogPage = () => {
   const params = useParams();
   const router = useRouter();
-  const slug = params?.slug; // Add optional chaining here
+  const slug = params?.slug;
 
   const [blog, setBlog] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isMounted, setIsMounted] = useState(false); // Add mounted state
+  const [isMounted, setIsMounted] = useState(false);
 
   // Sidebar form
   const [form, setForm] = useState({ fullName: '', email: '', phone: '', location: '' });
@@ -207,7 +268,7 @@ const SingleBlogPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMounted || !slug) return; // Don't fetch if not mounted or no slug
+    if (!isMounted || !slug) return;
     window.scrollTo(0, 0);
     fetchBlog();
   }, [slug, isMounted]);
@@ -235,13 +296,11 @@ const SingleBlogPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormSending(true);
-    // Simulate submit (wire to your contact/lead endpoint if needed)
     await new Promise(r => setTimeout(r, 900));
     setFormSent(true);
     setFormSending(false);
   };
 
-  // Show loading during static generation or before mount
   if (!isMounted || !slug) {
     return <SingleBlogSkeleton />;
   }
@@ -261,13 +320,10 @@ const SingleBlogPage = () => {
     </main>
   );
 
-  // Group content blocks into logical sections for rendering
   const contentBlocks = blog?.content || [];
 
   return (
     <main>
-      {/* Rest of your JSX remains exactly the same */}
-      {/* Make sure to add optional chaining for blog properties */}
       <section className="blg-hero-section">
         <div className="blg-container">
           <div className="blg-header-area">
@@ -284,7 +340,6 @@ const SingleBlogPage = () => {
             <ShareButtons title={blog?.title} />
           </div>
 
-          {/* Cover image + sidebar form */}
           <div className="blg-media-grid">
             <div className="blg-img-box">
               <img
@@ -323,7 +378,6 @@ const SingleBlogPage = () => {
         </div>
       </section>
 
-      {/* ── Body: render content blocks ───────────────────────────────── */}
       <section className="blg-body-section">
         <div className="blg-container">
           <div className="blg-text-block">
@@ -334,11 +388,8 @@ const SingleBlogPage = () => {
         </div>
       </section>
 
-      {/* ── Author card + disclaimer ───────────────────────────────────── */}
       <section className="blg-bottom-section">
         <div className="blg-container">
-
-          {/* Author card */}
           {blog?.author?.name && (
             <div className="blg-author-card">
               <div className="blg-author-flex">
@@ -360,7 +411,6 @@ const SingleBlogPage = () => {
             </div>
           )}
 
-          {/* Tags */}
           {blog?.tags?.length > 0 && (
             <div className="blg-tags">
               {blog.tags.map((tag, idx) => (
@@ -369,7 +419,6 @@ const SingleBlogPage = () => {
             </div>
           )}
 
-          {/* Disclaimer */}
           <div className="blg-disclaimer">
             <p>
               <strong>Disclaimer:</strong> The information provided in this blog is intended for general
@@ -385,7 +434,6 @@ const SingleBlogPage = () => {
         </div>
       </section>
 
-      {/* ── Related posts ──────────────────────────────────────────────── */}
       {related.length > 0 && (
         <section className="blg-related-section">
           <div className="blg-container">

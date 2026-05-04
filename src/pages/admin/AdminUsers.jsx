@@ -6,6 +6,14 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { userAPI } from '@/services/api';
 import '@/styles/admin/AdminUsers.css';
 
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
+
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,9 +27,14 @@ const AdminUsers = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [error, setError] = useState('');
+  const [perms, setPerms] = useState({});
 
   const router = useRouter();
   const searchTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    setPerms(getAdminPerms('users'));
+  }, []);
 
   // Debounced search - only fetch after user stops typing
   useEffect(() => {
@@ -208,10 +221,11 @@ const AdminUsers = () => {
             <h1>Users Management</h1>
             <p>Manage all registered users ({totalUsers} total)</p>
           </div>
-          <button className="btn-primary" onClick={() => alert('Add user feature coming soon')}>
-            <i className="fas fa-user-plus"></i>
-            Add New User
-          </button>
+          {perms.create && (
+            <button className="btn-primary" onClick={() => alert('Add user feature coming soon')}>
+              <i className="fas fa-user-plus"></i> Add New User
+            </button>
+          )}
         </div>
 
         {error && (
@@ -334,34 +348,38 @@ const AdminUsers = () => {
                   <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons-a">
-                      <button
-                        className="btn-action btn-view"
-                        title="View Details"
-                        onClick={() => openViewModal(user)}
-                      >
-                        <i className="fas fa-eye"></i>
-                      </button>
-                      <button
-                        className="btn-action btn-edit"
-                        title="Edit User"
-                        onClick={() => openEditModal(user)}
-                      >
-                        <i className="fas fa-edit"></i>
-                      </button>
-                      <button
-                        className={`btn-action btn-toggle ${user.isActive ? 'active' : 'inactive'}`}
-                        onClick={() => handleToggleStatus(user._id)}
-                        title={user.isActive ? 'Deactivate' : 'Activate'}
-                      >
-                        <i className={`fas fa-${user.isActive ? 'toggle-on' : 'toggle-off'}`}></i>
-                      </button>
-                      <button
-                        className="btn-action btn-delete"
-                        onClick={() => openDeleteModal(user)}
-                        title="Delete User"
-                      >
-                        <i className="fas fa-trash"></i>
-                      </button>
+                      {/* View — always show if they have view permission */}
+                      {perms.view && (
+                        <button className="btn-action btn-view" title="View Details"
+                          onClick={() => openViewModal(user)}>
+                          <i className="fas fa-eye"></i>
+                        </button>
+                      )}
+
+                      {/* Edit — only if edit permission */}
+                      {perms.edit && (
+                        <button className="btn-action btn-edit" title="Edit User"
+                          onClick={() => openEditModal(user)}>
+                          <i className="fas fa-edit"></i>
+                        </button>
+                      )}
+
+                      {/* Toggle status — only if edit permission */}
+                      {perms.edit && (
+                        <button className={`btn-action btn-toggle ${user.isActive ? 'active' : 'inactive'}`}
+                          onClick={() => handleToggleStatus(user._id)}
+                          title={user.isActive ? 'Deactivate' : 'Activate'}>
+                          <i className={`fas fa-toggle-${user.isActive ? 'on' : 'off'}`}></i>
+                        </button>
+                      )}
+
+                      {/* Delete — only if delete permission */}
+                      {perms.delete && (
+                        <button className="btn-action btn-delete" title="Delete User"
+                          onClick={() => openDeleteModal(user)}>
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

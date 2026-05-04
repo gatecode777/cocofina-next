@@ -1,10 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
 import '@/styles/admin/AdminCategories.css';
 import '@/styles/admin/AdminOrders.css';
+
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
 
 const emptyForm = {
   name: '',
@@ -26,6 +34,11 @@ const AdminBlogCategories = () => {
   const [formData, setFormData] = useState(emptyForm);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('blogcategories'));
+  }, []);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -239,9 +252,11 @@ const AdminBlogCategories = () => {
             <h1>Blog Categories Management</h1>
             <p>Manage blog categories ({totalCategories} total)</p>
           </div>
-          <button className="btn-primary" onClick={() => { closeModal(); setShowModal(true); }}>
-            <i className="fas fa-plus"></i> Add Category
-          </button>
+          {perms.create && (
+            <button className="btn-primary" onClick={() => { closeModal(); setShowModal(true); }}>
+              <i className="fas fa-plus"></i> Add Category
+            </button>
+          )}
         </div>
 
         {/* Filters */}
@@ -315,12 +330,16 @@ const AdminBlogCategories = () => {
                     </td>
                     <td>
                       <div className="action-buttons-a">
-                        <button className="btn-action-c btn-edit" onClick={() => handleEdit(cat)} title="Edit">
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button className="btn-action-c btn-delete" onClick={() => handleDelete(cat._id)} title="Delete">
-                          <i className="fas fa-trash"></i>
-                        </button>
+                        {perms.edit && (
+                          <button className="btn-action-c btn-edit" onClick={() => handleEdit(cat)} title="Edit">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                        )}
+                        {perms.delete && (
+                          <button className="btn-action-c btn-delete" onClick={() => handleDelete(cat._id)} title="Delete">
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

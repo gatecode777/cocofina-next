@@ -1,9 +1,8 @@
 // src/app/api/admin/login/route.js
-
-export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { generateToken } from '@/lib/auth';
 import Admin from '@/models/Admin';
 
@@ -35,7 +34,19 @@ export async function POST(request) {
     delete adminData.password;
     delete adminData.loginToken;
 
-    return NextResponse.json({ success: true, message: 'Login successful', token, admin: adminData });
+    // ← 'auth' not 'other', and 'fullName' not 'fullname'
+    await logActivity(request, admin, {
+      action:      'login',
+      module:      'auth',
+      description: `${admin.fullName} (${admin.role}) logged in`,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Login successful',
+      token,
+      admin: adminData,
+    });
   } catch (err) {
     console.error('Admin login error:', err);
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

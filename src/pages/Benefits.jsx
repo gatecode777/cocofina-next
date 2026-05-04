@@ -237,7 +237,7 @@ const RecipesSection = () => {
       <section className="cf-recipes-section">
         <div className="cf-container">
           <div className="cf-recipes-header">
-            <h2 className="cf-recipes-title">Featured Recipes</h2>
+            <h2 className="cf-recipes-title-b">Featured Recipes</h2>
             <div className="cf-recipes-underline"></div>
           </div>
           <div className="cf-slider-outer">
@@ -271,7 +271,7 @@ const RecipesSection = () => {
     <section className="cf-recipes-section">
       <div className="cf-container">
         <div className="cf-recipes-header">
-          <h2 className="cf-recipes-title">Featured Recipes</h2>
+          <h2 className="cf-recipes-title-b">Featured Recipes</h2>
           <div className="cf-recipes-underline"></div>
         </div>
 

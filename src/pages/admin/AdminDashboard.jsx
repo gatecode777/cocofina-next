@@ -6,6 +6,15 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { orderAPI, userAPI, adminProductAPI } from '@/services/api';
 import '@/styles/admin/AdminDashboard.css';
 
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    console.log('Admin data from localStorage:', data);
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -22,6 +31,13 @@ const AdminDashboard = () => {
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('products'));
+  }, []);
+
+  console.log('Current admin permissions for products:', perms);
 
   useEffect(() => {
     fetchDashboardData();
@@ -178,10 +194,12 @@ const AdminDashboard = () => {
         <div className="quick-actions">
           <h2>Quick Actions</h2>
           <div className="actions-grid">
-            <Link href="/admin/products/new" className="action-card">
-              <i className="fas fa-plus-circle"></i>
-              <span>Add New Product</span>
-            </Link>
+            {perms.create && (
+              <Link href="/admin/products/new" className="action-card">
+                <i className="fas fa-plus-circle"></i>
+                <span>Add New Product</span>
+              </Link>
+            )}
             <Link href="/admin/users" className="action-card">
               <i className="fas fa-user-plus"></i>
               <span>View All Users</span>

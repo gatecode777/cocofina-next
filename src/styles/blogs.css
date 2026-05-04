@@ -14,6 +14,7 @@ body {
     gap: 6px;
     flex-wrap: wrap;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .blog-cat-tab {

@@ -1,40 +1,96 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Great+Vibes&family=Inter:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@600&family=Afacad:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Great+Vibes&family=Inter:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@600&family=Afacad:wght@400;500&display=swap");
 
 :root {
-    --cf-brown: #8B573C;
-    --cf-light-bg: #F5EDE3;
+    --cf-brown: #8b573c;
+    --cf-light-bg: #f5ede3;
     --cf-text-gray: #956767;
-    --cf-heading-font: 'Playfair Display', serif;
+    --cf-heading-font: "Playfair Display", serif;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+button {
+  border: none;
+  background: transparent;
 }
 
 /* Hero Section */
 .cf-hero {
     width: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    padding: 20px 3%;
+    /* Bahar ka kuch nahi dikhega */
     box-sizing: border-box;
-    background-color: #fff;
 }
 
-.cf-hero-img {
+.cf-hero-banner {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.cf-slider {
+    width: 100%;
+    overflow: hidden;
+    /* Yeh "Window" hai, iske bahar ka hide ho jayegi */
+}
+
+.cf-slider-track {
+    display: flex;
+    width: 100%;
+    /* Track ki width default 100% rahegi */
+    margin: 0;
+    padding: 0;
+    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+}
+
+.cf-slide {
+    /* YE SABSE IMPORTANT LINE HAI */
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* .cf-hero-img {
     width: 100%;
     height: auto;
     display: block;
     object-fit: cover;
+    /* Banner ko stretch ya cut hone se bachayega 
+} */
 
-    border-radius: 8px;
+/* Dots: Inhe image ke upar dikhane ke liye */
+.cf-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
 }
 
-.cf-send-btn{
-    border: none;
-    background-color: transparent;
+.cf-dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.cf-dot.active {
+    background-color: #fff;
+    transform: scale(1.2);
 }
 
 /* Intro Section */
@@ -45,7 +101,7 @@
 }
 
 .cf-intro-title {
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
     font-size: 46px;
 
     color: #814a30;
@@ -53,15 +109,16 @@
     margin-bottom: 10px;
 }
 
-.cf-title-line {
-    width: 380px;
-    height: 2px;
+/* .cf-title-line {
+    width: 380px; */
+/* max-width: 300px; */
+/* height: 2px;
     background-color: var(--cf-brown);
     margin: 0 auto 25px;
-}
+} */
 
 .cf-intro-desc {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     font-size: 18px;
     max-width: 700px;
     margin: 0 auto 35px;
@@ -70,7 +127,7 @@
 }
 
 .cf-btn-primary {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -80,7 +137,9 @@
     text-decoration: none;
     border-radius: 6px;
     font-weight: 500;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
     box-shadow: 0 4px 15px rgba(139, 87, 60, 0.3);
 }
 
@@ -93,7 +152,7 @@
     width: 18px;
 }
 
-/* Features Grid */
+/* Features Section */
 .cf-features {
     padding-bottom: 80px;
     background-color: #fff;
@@ -109,8 +168,7 @@
 }
 
 .cf-feature-card {
-
-    background-color: #F4E8D8;
+    background-color: #f4e8d8;
     padding: 30px 25px;
     border-radius: 4px;
     text-align: left;
@@ -126,20 +184,19 @@
     width: auto;
 }
 
-
 .cf-card-title {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
 
-    color: #814A30;
+    color: #814a30;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 12px;
 }
 
 .cf-card-text {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
 
-    color: #814A30;
+    color: #814a30;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;
@@ -179,6 +236,98 @@
     }
 }
 
+/* --- 1. Entrance Animation (Fade & Slide Up) --- */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 1. Parent Grid par perspective dena zaroori hai 3D feel ke liye */
+.cf-features-grid {
+    perspective: 1500px;
+}
+
+/* 2. Initial State: Card shuruat mein hide rahega */
+.cf-feature-card {
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+/* 3. Reveal State: Jab JS se class add hogi tab animation chalega */
+.cf-feature-card.reveal {
+    animation: dropPerspective 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+/* 4. Delays: Ek-ek karke aane ke liye (Corrected Typos) */
+.cf-feature-card.reveal:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.cf-feature-card.reveal:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.cf-feature-card.reveal:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.cf-feature-card.reveal:nth-child(4) {
+    animation-delay: 0.7s;
+}
+
+/* 5. Keyframes (Agar aapne pehle copy nahi kiya tha toh yahan se lein) */
+@keyframes dropPerspective {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) rotateX(-20deg);
+        filter: blur(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+        filter: blur(0);
+    }
+}
+
+
+/* --- 2. Hover Effects (Simple & Sober) --- */
+
+.cf-feature-card:hover {
+    background-color: #efe0cc;
+    /* Halka sa dark shade */
+    transform: translateY(-8px);
+    /* Card thoda upar uthega */
+    box-shadow: 0 10px 25px rgba(129, 74, 48, 0.1);
+    /* Soft brown shadow */
+}
+
+/* Icon Animation on Hover */
+.cf-feature-card .cf-card-icon img {
+    transition: transform 0.4s ease;
+}
+
+.cf-feature-card:hover .cf-card-icon img {
+    transform: scale(1.1) rotate(5deg);
+    /* Icon halka sa bada aur tilt hoga */
+}
+
+/* Title color subtle change */
+.cf-feature-card:hover .cf-card-title {
+    color: #5d3421;
+}
+
+/* ============================================================
+   OUR PRODUCTS - COMPLETE CLEAN & RESPONSIVE CODE
+   ============================================================ */
 
 /* --- Products Section Styles --- */
 
@@ -186,11 +335,18 @@
     background-color: #F5EEE2;
     padding: 80px 0;
     font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+.cf-coming-soon-badge{
+    position: absolute;
+    font-size: 20px;
 }
 
 .cf-products-title-area {
     text-align: center;
     margin-bottom: 50px;
+    padding: 0 15px;
 }
 
 .cf-products-main-title {
@@ -199,13 +355,23 @@
     color: #8B4513;
     font-weight: 500;
     margin-bottom: 15px;
+    opacity: 0;
+}
+
+.cf-products-main-title.reveal {
+    animation: fadeInDown 1s ease-out forwards;
 }
 
 .cf-title-underline-center {
-    width: 150px;
+    width: 0;
     height: 1.5px;
     background-color: #000;
     margin: 0 auto;
+}
+
+.cf-title-underline-center.reveal {
+    animation: growUnderline 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    animation-delay: 0.4s;
 }
 
 /* Grid Layout */
@@ -216,6 +382,7 @@
     max-width: 1250px;
     margin: 0 auto;
     padding: 0 20px;
+    perspective: 2000px;
 }
 
 /* Card Styling */
@@ -224,13 +391,49 @@
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
+    /* opacity: 0;  */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
     display: flex;
     flex-direction: column;
 }
 
+.cf-product-card.reveal {
+  animation: dropPerspective 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+/* Staggered Delays */
+.cf-product-card.reveal:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.cf-product-card.reveal:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.cf-product-card.reveal:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+
 .cf-product-card:hover {
     transform: translateY(-5px);
+}
+
+@media (min-width: 1025px) {
+  .cf-product-card:hover {
+    transform: translateY(-15px) rotateY(5deg);
+    box-shadow: 0 30px 60px rgba(129, 74, 48, 0.2);
+    z-index: 10;
+  }
+
+  .cf-product-card:hover .cf-product-image {
+    transform: scale(1.18) translateY(-10px);
+    filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.3));
+  }
+
+  .cf-product-card:hover .cf-card-header-brown::after {
+    left: 150%;
+  }
 }
 
 /* Brown Image Area */
@@ -241,20 +444,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     overflow: hidden;
     margin-bottom: 20px;
+}
+
+.cf-card-header-brown::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -120%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: rotate(30deg);
+    transition: all 0.7s ease-in-out;
 }
 
 .cf-product-image {
     max-height: 85%;
     width: auto;
     object-fit: contain;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Card Content */
-.cf-card-body {
+/* .cf-card-body {
     padding: 10px 5px;
-}
+} */
 
 .cf-product-name {
     font-family: 'Poppins', sans-serif;
@@ -265,10 +482,8 @@
     line-height: 1.3;
 }
 
-
 .cf-product-desc {
     font-family: 'Poppins', sans-serif;
-    font-weight: 400;
     font-size: 14px;
     color: #814A30;
     line-height: 1.6;
@@ -284,7 +499,6 @@
 }
 
 .cf-price {
-    font-family: 'Poppins', sans-serif;
     font-size: 24px;
     font-weight: 700;
     color: #814A30;
@@ -297,9 +511,7 @@
     padding: 12px 28px;
     border-radius: 10px;
     font-weight: 500;
-    font-size: 16px;
-    box-shadow: 0 4px 10px rgba(161, 93, 64, 0.3);
-    transition: background 0.3s;
+    transition: 0.3s;
 }
 
 .cf-order-btn:hover {
@@ -311,6 +523,7 @@
 @media (max-width: 1024px) {
     .cf-products-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 
     .cf-products-main-title {
@@ -326,11 +539,12 @@
 
     .cf-products-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
+        max-width: 450px;
+        margin: 0 auto;
     }
 
     .cf-products-main-title {
-        font-size: 32px;
+        font-size: 30px;
     }
 
     .cf-card-header-brown {
@@ -350,8 +564,64 @@
         font-weight: 500;
         font-size: 12px;
         inline-size: auto;
-
     }
+
+    .cf-product-card:active {
+        transform: scale(0.98);
+    }
+}
+
+/* --- Extra Small Mobile (480px and below) --- */
+@media (max-width: 480px) {
+  .cf-product-name {
+    font-size: 18px;
+  }
+
+  .cf-price {
+    font-size: 20px;
+  }
+
+  .cf-order-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* KEYFRAMES */
+@keyframes dropPerspective {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) rotateX(-30deg) rotateY(15deg);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+    filter: blur(0);
+  }
+}
+
+@keyframes growUnderline {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 150px;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Our Story Section --- */
@@ -359,11 +629,11 @@
 .cf-story-section {
     padding: 60px 0;
     background-color: #fff;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
 }
 
 .cf-story-card {
-    background-color: #814A30;
+    background-color: #814a30;
     border-radius: 50px;
     display: flex;
     align-items: center;
@@ -388,13 +658,12 @@
 
     height: auto;
     border-radius: 20px;
-
 }
 
 /* Content Side */
 .cf-story-content-side {
     flex: 1;
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .cf-story-header {
@@ -402,7 +671,7 @@
 }
 
 .cf-story-title {
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
     font-size: 44px;
     font-weight: 500;
     margin-bottom: 10px;
@@ -411,11 +680,11 @@
 .cf-story-underline {
     width: 110px;
     height: 1.5px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 }
 
 .cf-story-text p {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 
     font-size: 16px;
     line-height: 1.7;
@@ -427,7 +696,6 @@
 .cf-story-text p:last-child {
     margin-bottom: 0;
 }
-
 
 /* For Tablet & Large Phones */
 @media (max-width: 992px) {
@@ -473,12 +741,11 @@
     }
 }
 
-/* --- About Our Product Section --- */
+/* --- About Our Product Secduction --- */
 
 .cf-about-product {
-    background-color: #F4E8D8;
+    background-color: #f4e8d8;
     padding: 20px 0;
-
 }
 
 /* Header & Text Styling */
@@ -490,11 +757,33 @@
 }
 
 .cf-about-title {
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
     font-size: 48px;
-    color: #814A30;
+    color: #814a30;
     font-weight: 500;
     margin-bottom: 12px;
+
+    text-align: center;
+    /* Center alignment */
+
+    /* Initial State (Before Scroll) */
+    opacity: 0;
+    filter: blur(15px);
+    /* Dhundla rahega */
+    letter-spacing: 10px;
+    /* Words phaile huye honge */
+    transform: scale(0.95);
+    transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Reveal State (On Scroll) */
+.cf-about-title.reveal {
+    opacity: 1;
+    filter: blur(0);
+    /* Focus mein aayega */
+    letter-spacing: normal;
+    /* Words apni jagah aayenge */
+    transform: scale(1);
 }
 
 .cf-about-underline {
@@ -502,12 +791,53 @@
     height: 2px;
     background-color: #333;
     margin: 0 auto 35px;
+
+    /* Initial State */
+    width: 0;
+    opacity: 0;
+}
+
+.cf-about-underline.reveal {
+    /* Animation directly yahan lagate hain */
+    animation: growAboutLine 1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    animation-delay: 0.6s;
+    /* Text ke Focus hone ke baad shuru hoga */
+}
+
+/* --- Keyframes for Underline --- */
+@keyframes growAboutLine {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+
+    100% {
+        width: 200px;
+        /* Jo aapki width thi */
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive adjustment */
+@media (max-width: 768px) {
+    .cf-about-title {
+        font-size: 32px;
+    }
+
+    @keyframes growAboutLine {
+        100% {
+            width: 150px;
+            opacity: 1;
+        }
+
+        /* Mobile par choti line */
+    }
 }
 
 .cf-about-desc-container p {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 17px;
-    color: #814A30;
+    color: #814a30;
     line-height: 1.6;
     margin-bottom: 25px;
     font-weight: 400;
@@ -533,7 +863,7 @@
     position: absolute;
     width: 95%;
     height: 75%;
-    background-color: #D7B49E;
+    background-color: #d7b49e;
     border-radius: 25px;
     z-index: 1;
 }
@@ -548,7 +878,6 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     display: block;
 }
-
 
 /* Tablet View */
 @media (max-width: 992px) {
@@ -586,7 +915,6 @@
         padding: 20px 0;
     }
 
-
     .cf-about-bg-box {
         height: 60%;
         border-radius: 15px;
@@ -601,28 +929,59 @@
 /* --- Featured Recipes Section --- */
 
 .cf-recipes-section {
-  padding: 40px 0;
-  background-color: #ffffff;
+    padding: 40px 0;
+    background-color: #ffffff;
 }
 
 .cf-recipes-header {
-  text-align: center;
-  margin-bottom: 60px;
+    text-align: center;
+    margin-bottom: 60px;
 }
 
 .cf-recipes-title {
-  font-family: "Playfair Display", serif;
-  font-size: 48px;
-  color: #814a30;
-  font-weight: 500;
-  margin-bottom: 12px;
+    font-family: "Playfair Display", serif;
+    font-size: 48px;
+    color: #814a30;
+    font-weight: 500;
+    margin-bottom: 12px;
+
+    text-align: center;
+    /* Center alignment */
+
+    /* Initial State (Invisible + Left Slide + Tilt) */
+    opacity: 0;
+    transform: translateX(-60px) skewX(20deg);
+    /* Left se aayega aur thoda tircha rahega */
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Reveal State (On Scroll) */
+.cf-recipes-title.reveal {
+    opacity: 1;
+    transform: translateX(0) skewX(0deg);
+    /* Straight aur center ho jayega */
 }
 
 .cf-recipes-underline {
-  width: 200px;
-  height: 1.5px;
-  background-color: #333;
-  margin: 0 auto;
+    width: 200px;
+    height: 1.5px;
+    background-color: #333;
+    margin: 0 auto;
+    transition: width 1s ease-out 0.5s;
+    /* Text aane ke 0.5s baad shuru hoga */
+}
+
+.cf-recipes-underline.reveal {
+    width: 180px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .cf-recipes-title {
+        font-size: 32px;
+        transform: translateX(-40px) skewX(15deg);
+        /* Mobile par thoda kam motion */
+    }
 }
 
 /* =====================
@@ -630,112 +989,114 @@
    ===================== */
 
 .cf-slider-outer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 10px;
-  position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 10px;
+    position: relative;
 }
 
 .cf-slider-viewport {
-  overflow: hidden;
-  width: 100%;
+    overflow: hidden;
+    width: 100%;
 }
 
 /* Grid Logic — now acts as the sliding track */
 .cf-recipes-grid {
-  display: flex;
-  gap: 23px;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-  padding: 10px 5px 20px 5px; /* breathing room so card shadows show */
+    display: flex;
+    /* background-color: white; */
+    gap: 25px;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    padding: 10px 5px 20px 5px;
+    /* breathing room so card shadows show */
 }
 
 /* Card Styling — fixed width so 4 show on desktop */
 .cf-recipe-card {
-  background-color: #c08267;
-  border-radius: 25px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); */
-  transition: transform 0.3s ease;
-  box-sizing: border-box;
+    background-color: #c08267;
+    border-radius: 25px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); */
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
 
-  /* Show 4 cards: (100% - 3 gaps) / 4 */
-  flex: 0 0 calc((100% - 75px) / 4);
-  min-width: 0;
+    /* Show 4 cards: (100% - 3 gaps) / 4 */
+    flex: 0 0 calc((100% - 75px) / 4);
+    min-width: 0;
 }
 
 .cf-recipe-card:hover {
-  transform: translateY(-8px);
+    transform: translateY(-8px);
 }
 
 /* Inner Image Container */
 .cf-recipe-img-wrapper {
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  border-radius: 18px;
-  margin-bottom: 20px;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: 18px;
+    margin-bottom: 20px;
 }
 
 .cf-recipe-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 /* Text Content inside Card */
 .cf-recipe-content {
-  flex-grow: 1;
-  padding: 0 5px;
+    flex-grow: 1;
+    padding: 0 5px;
 }
 
 .cf-recipe-card-title {
-  font-family: "Poppins", sans-serif;
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  line-height: 1.2;
+    font-family: "Poppins", sans-serif;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    line-height: 1.2;
 }
 
 .cf-recipe-card-desc {
-  font-family: "Poppins", sans-serif;
-  color: #fffada;
-  font-weight: 300;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 30px;
+    font-family: "Poppins", sans-serif;
+    color: #fffada;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 30px;
 }
 
 /* Button Styling */
 .cf-recipe-action {
-  text-align: center;
-  margin-top: auto;
-  padding-bottom: 10px;
+    text-align: center;
+    margin-top: auto;
+    padding-bottom: 10px;
 }
 
 .cf-recipe-btn {
-  font-family: "Poppins", sans-serif;
-  display: inline-block;
-  background-color: #a0583c;
-  color: #ffffff;
-  text-decoration: none;
-  padding: 12px 30px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 400;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: background 0.3s;
+    font-family: "Poppins", sans-serif;
+    display: inline-block;
+    background-color: #a0583c;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: background 0.3s;
 }
 
 .cf-recipe-btn:hover {
-  background-color: #723d29;
+    background-color: #723d29;
 }
 
 /* =====================
@@ -743,35 +1104,35 @@
    ===================== */
 
 .cf-slider-btn {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background-color: #c08267;
-  color: #fff;
-  font-size: 26px;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-  transition:
-    background 0.3s,
-    transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background-color: #c08267;
+    color: #fff;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition:
+        background 0.3s,
+        transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
 }
 
 .cf-slider-btn:hover {
-  background-color: #a0583c;
-  transform: scale(1.08);
+    background-color: #a0583c;
+    transform: scale(1.08);
 }
 
 .cf-slider-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-  transform: none;
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
 }
 
 /* =====================
@@ -779,28 +1140,28 @@
    ===================== */
 
 .cf-slider-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 28px;
 }
 
 .cf-slider-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background-color: #d4a58a;
-  border: none;
-  cursor: pointer;
-  transition:
-    background 0.3s,
-    transform 0.2s;
-  padding: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #d4a58a;
+    border: none;
+    cursor: pointer;
+    transition:
+        background 0.3s,
+        transform 0.2s;
+    padding: 0;
 }
 
 .cf-slider-dot.active {
-  background-color: #814a30;
-  transform: scale(1.3);
+    background-color: #814a30;
+    transform: scale(1.3);
 }
 
 /* =====================
@@ -809,48 +1170,48 @@
 
 /* Tablet — show 2 cards */
 @media (max-width: 1024px) {
-  .cf-recipe-card {
-    flex: 0 0 calc((100% - 25px) / 2);
-  }
+    .cf-recipe-card {
+        flex: 0 0 calc((100% - 25px) / 2);
+    }
 
-  .cf-recipes-title {
-    font-size: 38px;
-  }
+    .cf-recipes-title {
+        font-size: 38px;
+    }
 
-  .cf-slider-outer {
-    padding: 0 5px;
-  }
+    .cf-slider-outer {
+        padding: 0 5px;
+    }
 }
 
 /* Mobile — show 1 card */
 @media (max-width: 650px) {
-  .cf-recipes-section {
-    padding: 60px 0;
-  }
+    .cf-recipes-section {
+        padding: 60px 0;
+    }
 
-  .cf-recipe-card {
-    flex: 0 0 calc(100% - 0px);
-    padding: 15px;
-  }
+    .cf-recipe-card {
+        flex: 0 0 calc(100% - 0px);
+        padding: 15px;
+    }
 
-  .cf-recipes-title {
-    font-size: 32px;
-  }
+    .cf-recipes-title {
+        font-size: 32px;
+    }
 
-  .cf-recipe-img-wrapper {
-    height: 220px;
-  }
+    .cf-recipe-img-wrapper {
+        height: 220px;
+    }
 
-  .cf-slider-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-  }
+    .cf-slider-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+    }
 
-  .cf-slider-outer {
-    gap: 6px;
-    padding: 0 5px;
-  }
+    .cf-slider-outer {
+        gap: 6px;
+        padding: 0 5px;
+    }
 }
 
 /* --- Stay Connected Section --- */
@@ -860,7 +1221,7 @@
 }
 
 .cf-connect-wrapper {
-    background-color: #F4E8D8;
+    background-color: #f4e8d8;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -879,27 +1240,28 @@
 }
 
 .cf-sub-title {
-    color: #814A30;
+    color: #814a30;
     font-size: 20px;
     letter-spacing: 2px;
     font-weight: 500;
     display: block;
-    font-family: 'Afacad', sans-serif;
+    margin-bottom: 5px;
+    font-family: "Afacad", sans-serif;
     text-transform: uppercase;
 }
 
 .cf-main-title {
-    color: #814A30;
+    color: #814a30;
     font-size: 52px;
     line-height: 1.1;
     font-weight: 600;
     margin-bottom: 20px;
-    font-family: 'Manrope', sans-serif;
+    font-family: "Manrope", sans-serif;
 }
 
 /* Newsletter Input Box */
 .cf-input-box {
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 50px;
     padding: 8px 10px 8px 25px;
     display: flex;
@@ -914,17 +1276,17 @@
     outline: none;
     flex: 1;
     font-size: 16px;
-    color: #8B5D43;
+    color: #8b5d43;
     background: transparent;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
 }
 
 .cf-email-input::placeholder {
-    color: #A18D82;
+    color: #a18d82;
 }
 
 .cf-submit-btn {
-    background-color: #8B5D43;
+    background-color: #8b5d43;
     color: #fff;
     border: none;
     width: 50px;
@@ -938,7 +1300,7 @@
 }
 
 .cf-submit-btn:hover {
-    background-color: #723D29;
+    background-color: #723d29;
     transform: scale(1.05);
 }
 
@@ -950,7 +1312,6 @@
     align-items: center;
     position: relative;
     padding: 40px 0;
-
 }
 
 /* Decorative Circles - Adjusted for Professional Look */
@@ -958,7 +1319,7 @@
     position: absolute;
     width: 45px;
     height: 45px;
-    background: #F4E8D8;
+    background: #f4e8d8;
     border-radius: 50%;
     top: 13%;
     left: 15%;
@@ -969,7 +1330,7 @@
     position: absolute;
     width: 55px;
     height: 55px;
-    background: #F4E8D8;
+    background: #f4e8d8;
     border-radius: 50%;
     bottom: 30%;
     right: 15%;
@@ -978,7 +1339,7 @@
 
 /* Chat Card */
 .cf-chat-card {
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 24px;
     width: 100%;
     max-width: 380px;
@@ -986,6 +1347,7 @@
     padding: 15px 15px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
     position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1004,12 +1366,12 @@
     font-size: 14px;
     line-height: 1.5;
     max-width: 85%;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     align-items: center;
 }
 
 .cf-bubble-small {
-    background-color: #814A30;
+    background-color: #814a30;
     border-radius: 4px 18px 18px 18px;
     align-self: flex-start;
     margin-left: 17%;
@@ -1017,7 +1379,7 @@
 }
 
 .cf-bubble-large {
-    background-color: #814A30;
+    background-color: #814a30;
     border-radius: 20px 20px 4px 20px;
     width: 55%;
     align-self: flex-end;
@@ -1027,10 +1389,9 @@
 
 /* Input Footer */
 .cf-chat-footer {
-    border: 1.2px solid #BC9A8B;
+    border: 1.2px solid #bc9a8b;
     border-radius: 50px;
     padding: 10px 18px;
-
 }
 
 .cf-chat-input-wrapper {
@@ -1040,7 +1401,7 @@
 }
 
 .cf-cursor {
-    color: #A67C6A;
+    color: #a67c6a;
     font-size: 18px;
 }
 
@@ -1048,10 +1409,10 @@
     border: none;
     outline: none;
     font-size: 15px;
-    color: #814A30;
+    color: #814a30;
     flex: 1;
     background: transparent;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
 }
 
 .cf-send-icon {
@@ -1061,7 +1422,6 @@
     cursor: pointer;
     opacity: 0.7;
 }
-
 
 /* For Laptops/Large Tablets */
 @media (max-width: 1024px) {
@@ -1156,7 +1516,8 @@
 /* Section Styles */
 .ctm-testimonial-wrapper {
     padding: 40px 10px;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+
+    font-family: "Inter", "Segoe UI", sans-serif;
     overflow: hidden;
 }
 
@@ -1166,7 +1527,7 @@
 }
 
 .ctm-main-heading {
-    font-family: 'Manrope', sans-serif;
+    font-family: "Manrope", sans-serif;
     text-align: center;
     font-size: 45px;
     font-weight: 700;
@@ -1194,7 +1555,7 @@
 }
 
 .ctm-text {
-    font-family: 'Afacad', sans-serif;
+    font-family: "Afacad", sans-serif;
     color: #818181;
     font-size: 16px;
     line-height: 1.6;
@@ -1221,15 +1582,15 @@
     font-size: 17px;
     font-weight: 500;
     color: #000;
-    /* margin: 0; */
-    font-family: 'Afacad', sans-serif;
+    margin: 0;
+    font-family: "Afacad", sans-serif;
 }
 
 .ctm-user-loc {
     font-size: 14px;
     color: #999;
     margin: 2px 0 0 0;
-    font-family: 'Afacad', sans-serif;
+    font-family: "Afacad", sans-serif;
 }
 
 /* Navigation & Pagination */
@@ -1248,8 +1609,6 @@
     display: flex;
     align-items: center;
     transition: 0.3s;
-    background: transparent;
-    border: none;
 }
 
 .ctm-arrow-prev:hover,

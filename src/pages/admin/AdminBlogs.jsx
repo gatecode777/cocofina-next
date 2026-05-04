@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
 import '@/styles/admin/AdminBlogs.css';
 import '@/styles/admin/AdminOrders.css';
+
+const getAdminPerms = (module) => {
+  try {
+    const data = JSON.parse(localStorage.getItem('adminData') || '{}');
+    if (data.role === 'super_admin') return { view: true, create: true, edit: true, delete: true };
+    return data.permissions?.[module] || { view: false, create: false, edit: false, delete: false };
+  } catch { return {}; }
+};
 
 // ── Helper functions ──────────────────────────────────────────────────────────
 const tok = () => localStorage.getItem('adminToken');
@@ -47,6 +55,11 @@ const AdminBlogs = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const debRef = useRef(null);
+  const [perms, setPerms] = useState({});
+
+  useEffect(() => {
+    setPerms(getAdminPerms('blogs'));
+  }, []);
 
   useEffect(() => { fetchStats(); }, []);
   useEffect(() => {
@@ -106,9 +119,11 @@ const AdminBlogs = () => {
             <h1>Blog Management</h1>
             <p>Create, edit and manage your blog posts</p>
           </div>
-          <button className="btn-primary" onClick={() => router.push('/admin/blogs/new')}>
-            <i className="fas fa-plus"></i> New Blog Post
-          </button>
+          {perms.create && (
+            <button className="btn-primary" onClick={() => router.push('/admin/blogs/new')}>
+              <i className="fas fa-plus"></i> New Blog Post
+            </button>
+          )}
         </div>
 
         {/* Stats */}
@@ -199,6 +214,7 @@ const AdminBlogs = () => {
                           <span>{b.author?.name || '—'}</span>
                         </div>
                       </td>
+                      {perms.edit ? (
                       <td>
                         <select
                           className="ab-status-select"
@@ -211,6 +227,13 @@ const AdminBlogs = () => {
                           <option value="archived">Archived</option>
                         </select>
                       </td>
+                      ) : (
+                      <td>
+                        <span style={{ color: sc.color, background: sc.bg, padding: '4px 8px', borderRadius: 4 }}>
+                          {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+                        </span>
+                      </td>
+                      )}
                       <td style={{ textAlign: 'center' }}>
                         <button className={`ab-star-btn ${b.isFeatured ? 'starred' : ''}`}
                           onClick={() => handleToggleFeatured(b._id)} title={b.isFeatured ? 'Unfeature' : 'Feature'}>
@@ -220,18 +243,24 @@ const AdminBlogs = () => {
                       <td><small style={{ color: '#888' }}>{fmtDate(b.publishedAt || b.createdAt)}</small></td>
                       <td>
                         <div className="action-buttons-a">
-                          <button className="btn-action btn-view"
-                            onClick={() => window.open(`/blog/${b.slug}`, '_blank')} title="Preview">
-                            <i className="fas fa-eye"></i>
-                          </button>
-                          <button className="btn-action btn-edit"
-                            onClick={() => router.push(`/admin/blogs/edit/${b._id}`)} title="Edit">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn-action btn-delete"
-                            onClick={() => setDeleteTarget(b)} title="Delete">
-                            <i className="fas fa-trash"></i>
-                          </button>
+                          {perms.view && (
+                            <button className="btn-action btn-view"
+                              onClick={() => window.open(`/blog/${b.slug}`, '_blank')} title="Preview">
+                              <i className="fas fa-eye"></i>
+                            </button>
+                          )}
+                          {perms.edit && (
+                            <button className="btn-action btn-edit"
+                              onClick={() => router.push(`/admin/blogs/edit/${b._id}`)} title="Edit">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          )}
+                          {perms.delete && (
+                            <button className="btn-action btn-delete"
+                              onClick={() => setDeleteTarget(b)} title="Delete">
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

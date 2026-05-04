@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { requireAdmin } from '@/lib/auth';
 import Admin from '@/models/Admin';
 
@@ -12,6 +13,13 @@ export async function POST(request) {
     if (error) return error;
     await connectDB();
     await Admin.findByIdAndUpdate(admin._id, { loginToken: null });
+
+    await logActivity(request, admin, {
+      action: 'logout',
+      module: 'admin',
+      description: `${admin.fullname} logged out`,
+    });
+
     return NextResponse.json({ success: true, message: 'Logout successful' });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

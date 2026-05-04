@@ -237,6 +237,10 @@
   font-size: 26px;
   font-weight: 500;
   color: #000000;
+  margin-bottom: 10px;
+}
+.blg-paragraph{
+  margin-bottom: 10px;
 }
 
 .blg-text-block p {
@@ -472,4 +476,35 @@
   .blg-author-card {
     border-radius: 15px;
   }
+}
+
+/* Inline link styles */
+.inline-link {
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.inline-link:hover {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+/* For internal links */
+a.inline-link[data-internal="true"] {
+  color: #8b5cf6;
+}
+
+a.inline-link[data-internal="true"]:hover {
+  color: #7c3aed;
+}
+
+/* External link indicator */
+a.inline-link[target="_blank"]::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 2px;
+  font-size: 10px;
+  vertical-align: super;
 }

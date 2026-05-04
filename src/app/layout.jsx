@@ -4,23 +4,23 @@ import '@/styles/style.css';
 
 export const metadata = {
   title: {
-    default: 'Your Website Title',
-    template: '%s | Your Website Name'
+    default: 'Cocofina sugar',
+    template: '%s | Cocofina sugar'
   },
   description: 'Your default website description here. This should be a compelling description of your site.',
   keywords: ['keyword1', 'keyword2', 'keyword3'],
   authors: [{ name: 'Your Name/Company' }],
   openGraph: {
-    title: 'Your Website Title',
+    title: 'Cocofina sugar',
     description: 'Your default website description here.',
     url: 'https://yourdomain.com',
-    siteName: 'Your Website Name',
+    siteName: 'Cocofina sugar',
     images: [
       {
         url: 'https://yourdomain.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Your Website OG Image',
+        alt: 'Cocofina sugar OG Image',
       },
     ],
     locale: 'en_US',
@@ -28,7 +28,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Your Website Title',
+    title: 'Cocofina sugar',
     description: 'Your default website description here.',
     images: ['https://yourdomain.com/twitter-image.jpg'],
   },

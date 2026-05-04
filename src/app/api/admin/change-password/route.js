@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { connectDB } from '@/lib/db';
+import { logActivity } from '@/lib/logActivity';
 import { requireAdmin } from '@/lib/auth';
 import Admin from '@/models/Admin';
 
@@ -27,6 +28,13 @@ export async function PUT(request) {
 
     admin.password = await bcrypt.hash(newPassword, 10);
     await admin.save();
+
+    await logActivity(request, authAdmin, {
+      action: 'other',
+      module: 'admin',
+      description: `Changed password`,
+    });
+
     return NextResponse.json({ success: true, message: 'Password changed successfully' });
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

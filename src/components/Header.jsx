@@ -3,34 +3,36 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, ShoppingBasket, UserRound, Menu, X, LogOut, User, Package } from 'lucide-react';
+import { Search, ShoppingCart, UserRound, Menu, X, LogOut, User, Package } from 'lucide-react';
 import { userAuth } from '@/services/api';
 import { useCart } from '@/context/CartContext';
 import '@/styles/header.css';
 
 const Header = () => {
-  const router   = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
-  const dropdownRef    = useRef(null);
-  const searchRef      = useRef(null);     // wraps the whole search UI
-  const searchInputRef = useRef(null);     // the <input> itself
-  const debounceRef    = useRef(null);
+  const dropdownRef = useRef(null);
+  const desktopSearchRef = useRef(null);     // for desktop search UI
+  const mobileSearchInputRef = useRef(null); // for mobile search input
+  const desktopSearchInputRef = useRef(null); // for desktop search input
+  const debounceRef = useRef(null);
   const { count: cartCount } = useCart();
 
-  const [isMobileMenuOpen,   setIsMobileMenuOpen]   = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const [user,               setUser]               = useState(null);
+  const [user, setUser] = useState(null);
 
   // ── Search state ────────────────────────────────────────────────────────────
-  const [searchOpen,    setSearchOpen]    = useState(false);
-  const [searchTerm,    setSearchTerm]    = useState('');
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   // ── Auth state ──────────────────────────────────────────────────────────────
   const loadUser = () => {
     try {
-      const token    = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
       if (token && userData) setUser(JSON.parse(userData));
       else setUser(null);
@@ -57,11 +59,11 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // ── Close search on outside click ──────────────────────────────────────────
+  // ── Close desktop search on outside click ──────────────────────────────────
   useEffect(() => {
     const handler = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setSearchOpen(false);
+      if (desktopSearchRef.current && !desktopSearchRef.current.contains(e.target)) {
+        setIsDesktopSearchOpen(false);
         setSearchTerm('');
         setSearchResults([]);
       }
@@ -72,7 +74,8 @@ const Header = () => {
 
   // ── Close search on route change ───────────────────────────────────────────
   useEffect(() => {
-    setSearchOpen(false);
+    setIsDesktopSearchOpen(false);
+    setIsMobileSearchOpen(false);
     setSearchTerm('');
     setSearchResults([]);
   }, [pathname]);
@@ -100,10 +103,30 @@ const Header = () => {
     debounceRef.current = setTimeout(() => fetchResults(val), 350);
   };
 
-  // ── Open search bar ─────────────────────────────────────────────────────────
-  const openSearch = () => {
-    setSearchOpen(true);
-    setTimeout(() => searchInputRef.current?.focus(), 50);
+  // ── Open desktop search ─────────────────────────────────────────────────────
+  const openDesktopSearch = () => {
+    setIsDesktopSearchOpen(true);
+    setTimeout(() => desktopSearchInputRef.current?.focus(), 50);
+  };
+
+  // ── Close desktop search ────────────────────────────────────────────────────
+  const closeDesktopSearch = () => {
+    setIsDesktopSearchOpen(false);
+    setSearchTerm('');
+    setSearchResults([]);
+  };
+
+  // ── Open mobile search modal ────────────────────────────────────────────────
+  const openMobileSearch = () => {
+    setIsMobileSearchOpen(true);
+    setTimeout(() => mobileSearchInputRef.current?.focus(), 100);
+  };
+
+  // ── Close mobile search modal ───────────────────────────────────────────────
+  const closeMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    setSearchTerm('');
+    setSearchResults([]);
   };
 
   // ── Go to full results page ─────────────────────────────────────────────────
@@ -111,17 +134,15 @@ const Header = () => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     router.push(`/our-products?search=${encodeURIComponent(searchTerm.trim())}`);
-    setSearchOpen(false);
-    setSearchTerm('');
-    setSearchResults([]);
+    closeDesktopSearch();
+    closeMobileSearch();
   };
 
   // ── Click a result ──────────────────────────────────────────────────────────
   const handleResultClick = (product) => {
     router.push(`/products/${product.slug || product._id}`);
-    setSearchOpen(false);
-    setSearchTerm('');
-    setSearchResults([]);
+    closeDesktopSearch();
+    closeMobileSearch();
   };
 
   // ── Handlers ────────────────────────────────────────────────────────────────
@@ -182,121 +203,226 @@ const Header = () => {
         {/* Logo */}
         <div className="cf-logo">
           <Link href="/" onClick={closeMobileMenu}>
-            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '75px', width: 'auto' }} />
+            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '65px', width: 'auto' }} />
           </Link>
+          <div className='brandName'>
+            <span className='brandName1'>Cocofina Sugar</span>
+          </div>
         </div>
 
         {/* Desktop Nav */}
         <nav className="cf-nav">
           <ul className="cf-menu">
-            <li><Link href="/"            className={isActive('/')             ? 'active' : ''}>Home</Link></li>
+            <li><Link href="/" className={isActive('/') ? 'active' : ''}>Home</Link></li>
             <li><Link href="/our-products" className={isActive('/our-products') ? 'active' : ''}>Our Product</Link></li>
-            <li><Link href="/benefits"    className={isActive('/benefits')     ? 'active' : ''}>Benefits</Link></li>
-            <li><Link href="/about-us"    className={isActive('/about-us')     ? 'active' : ''}>About Us</Link></li>
-            <li><Link href="/contact-us"  className={isActive('/contact-us')   ? 'active' : ''}>Contact Us</Link></li>
+            <li><Link href="/benefits" className={isActive('/benefits') ? 'active' : ''}>Benefits</Link></li>
+            <li><Link href="/about-us" className={isActive('/about-us') ? 'active' : ''}>About Us</Link></li>
+            <li><Link href="/contact-us" className={isActive('/contact-us') ? 'active' : ''}>Contact Us</Link></li>
           </ul>
         </nav>
 
         {/* Action icons */}
         <div className="cf-actions">
 
-          {/* ── Search ────────────────────────────────────────────────────── */}
-          <div className={`header-search-wrap ${searchOpen ? 'search-open' : ''}`} ref={searchRef}>
+          {/* ── Desktop Search ────────────────────────────────────────────── */}
+          <div className="desktop-search-wrapper" ref={desktopSearchRef}>
+            <button
+              className="icon-btn desktop-search-btn"
+              aria-label="Search"
+              onClick={openDesktopSearch}
+            >
+              <Search size={20} />
+            </button>
 
-            {/* Icon button (collapsed state) */}
-            {!searchOpen && (
-              <button className="icon-btn" aria-label="Search" onClick={openSearch}>
-                <Search size={20} />
-              </button>
-            )}
-
-            {/* Expanded search bar */}
-            {searchOpen && (
-              <form className="header-search-form" onSubmit={handleSearchSubmit}>
-                <Search size={16} className="header-search-icon-inner" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  className="header-search-input"
-                  placeholder="Search products…"
-                  value={searchTerm}
-                  onChange={handleSearchInput}
-                  autoComplete="off"
-                />
-                {searchTerm && (
-                  <button
-                    type="button"
-                    className="header-search-clear"
-                    onClick={() => { setSearchTerm(''); setSearchResults([]); searchInputRef.current?.focus(); }}
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-                <button type="button" className="header-search-close" onClick={() => { setSearchOpen(false); setSearchTerm(''); setSearchResults([]); }}>
-                  <X size={18} />
-                </button>
-              </form>
-            )}
-
-            {/* Results dropdown */}
-            {searchOpen && (searchTerm.length >= 2) && (
-              <div className="header-search-dropdown">
-                {searchLoading ? (
-                  <div className="hsd-loading">
-                    <i className="fas fa-spinner fa-spin"></i> Searching…
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <div className="hsd-empty">
-                    No products found for "<strong>{searchTerm}</strong>"
-                  </div>
-                ) : (
-                  <>
-                    {searchResults.map((product) => {
-                      const lowestPrice = product.variants?.length
-                        ? Math.min(...product.variants.map(v => v.price))
-                        : null;
-                      return (
-                        <button
-                          key={product._id}
-                          className="hsd-item"
-                          onClick={() => handleResultClick(product)}
-                        >
-                          <img
-                            src={getProductImage(product)}
-                            alt={product.name}
-                            className="hsd-item-img"
-                            onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
-                          />
-                          <div className="hsd-item-info">
-                            <span className="hsd-item-name">{product.name}</span>
-                            {product.category?.name && (
-                              <span className="hsd-item-cat">{product.category.name}</span>
-                            )}
-                          </div>
-                          {lowestPrice !== null && (
-                            <span className="hsd-item-price">₹{lowestPrice}</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                    {/* View all results */}
+            {/* Desktop Expanded Search Bar */}
+            {isDesktopSearchOpen && (
+              <div className="desktop-search-container">
+                <form className="header-search-form" onSubmit={handleSearchSubmit}>
+                  <Search size={16} className="header-search-icon-inner" />
+                  <input
+                    ref={desktopSearchInputRef}
+                    type="text"
+                    className="header-search-input"
+                    placeholder="Search products…"
+                    value={searchTerm}
+                    onChange={handleSearchInput}
+                    autoComplete="off"
+                  />
+                  {searchTerm && (
                     <button
-                      className="hsd-view-all"
-                      onClick={handleSearchSubmit}
+                      type="button"
+                      className="header-search-clear"
+                      onClick={() => { setSearchTerm(''); setSearchResults([]); desktopSearchInputRef.current?.focus(); }}
                     >
-                      <Search size={14} />
-                      View all results for "<strong>{searchTerm}</strong>"
+                      <X size={14} />
                     </button>
-                  </>
+                  )}
+                  <button type="button" className="header-search-close" onClick={closeDesktopSearch}>
+                    <X size={18} />
+                  </button>
+                </form>
+
+                {/* Desktop Results dropdown */}
+                {searchTerm.length >= 2 && (
+                  <div className="header-search-dropdown">
+                    {searchLoading ? (
+                      <div className="hsd-loading">
+                        <i className="fas fa-spinner fa-spin"></i> Searching…
+                      </div>
+                    ) : searchResults.length === 0 ? (
+                      <div className="hsd-empty">
+                        No products found for "<strong>{searchTerm}</strong>"
+                      </div>
+                    ) : (
+                      <>
+                        {searchResults.map((product) => {
+                          const lowestPrice = product.variants?.length
+                            ? Math.min(...product.variants.map(v => v.price))
+                            : null;
+                          return (
+                            <button
+                              key={product._id}
+                              className="hsd-item"
+                              onClick={() => handleResultClick(product)}
+                            >
+                              <img
+                                src={getProductImage(product)}
+                                alt={product.name}
+                                className="hsd-item-img"
+                                onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
+                              />
+                              <div className="hsd-item-info">
+                                <span className="hsd-item-name">{product.name}</span>
+                                {product.category?.name && (
+                                  <span className="hsd-item-cat">{product.category.name}</span>
+                                )}
+                              </div>
+                              {lowestPrice !== null && (
+                                <span className="hsd-item-price">₹{lowestPrice}</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                        <button className="hsd-view-all" onClick={handleSearchSubmit}>
+                          <Search size={14} />
+                          View all results for "<strong>{searchTerm}</strong>"
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
             )}
           </div>
 
+          {/* ── Mobile Search Trigger Button ──────────────────────────────── */}
+          <button
+            className="icon-btn mobile-search-trigger"
+            aria-label="Search"
+            onClick={openMobileSearch}
+          >
+            <Search size={20} />
+          </button>
+
+          {/* ── Mobile Search Modal ───────────────────────────────────────── */}
+          {isMobileSearchOpen && (
+            <div className="mobile-search-modal-overlay" onClick={closeMobileSearch}>
+              <div className="mobile-search-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="mobile-search-modal-header">
+                  <h3>Search Products</h3>
+                  <button className="mobile-search-close" onClick={closeMobileSearch}>
+                    <X size={22} />
+                  </button>
+                </div>
+
+                <form className="mobile-search-modal-form" onSubmit={handleSearchSubmit}>
+                  <Search size={18} className="mobile-search-icon" />
+                  <input
+                    ref={mobileSearchInputRef}
+                    type="text"
+                    className="mobile-search-modal-input"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={handleSearchInput}
+                    autoComplete="off"
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      className="mobile-search-clear"
+                      onClick={() => { setSearchTerm(''); setSearchResults([]); mobileSearchInputRef.current?.focus(); }}
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </form>
+
+                {/* Mobile Search Results */}
+                {searchTerm.length >= 2 && (
+                  <div className="mobile-search-results">
+                    {searchLoading ? (
+                      <div className="msr-loading">
+                        <i className="fas fa-spinner fa-spin"></i> Searching...
+                      </div>
+                    ) : searchResults.length === 0 ? (
+                      <div className="msr-empty">
+                        No products found for "<strong>{searchTerm}</strong>"
+                      </div>
+                    ) : (
+                      <>
+                        {searchResults.map((product) => {
+                          const lowestPrice = product.variants?.length
+                            ? Math.min(...product.variants.map(v => v.price))
+                            : null;
+                          return (
+                            <button
+                              key={product._id}
+                              className="msr-item"
+                              onClick={() => {
+                                handleResultClick(product);
+                                closeMobileSearch();
+                              }}
+                            >
+                              <img
+                                src={getProductImage(product)}
+                                alt={product.name}
+                                className="msr-item-img"
+                                onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
+                              />
+                              <div className="msr-item-info">
+                                <span className="msr-item-name">{product.name}</span>
+                                {product.category?.name && (
+                                  <span className="msr-item-cat">{product.category.name}</span>
+                                )}
+                              </div>
+                              {lowestPrice !== null && (
+                                <span className="msr-item-price">₹{lowestPrice}</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                        <button
+                          className="msr-view-all"
+                          onClick={() => {
+                            handleSearchSubmit();
+                            closeMobileSearch();
+                          }}
+                        >
+                          <Search size={14} />
+                          View all results for "<strong>{searchTerm}</strong>"
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Cart icon */}
           {isLoggedIn && (
             <button className="icon-btn cart-icon-btn" aria-label="Cart" onClick={() => router.push('/cart')}>
-              <ShoppingBasket size={20} />
+              <ShoppingCart size={20} />
               {cartCount > 0 && (
                 <span className="cart-count-badge">{cartCount > 99 ? '99+' : cartCount}</span>
               )}
@@ -341,16 +467,16 @@ const Header = () => {
               </div>
             )}
           </div>
-        </div>
 
-        {/* Mobile hamburger */}
-        <button className="mobile-toggle" aria-label="Toggle Menu" onClick={() => setIsMobileMenuOpen((p) => !p)}>
-          {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          {/* Mobile hamburger */}
+          <button className="mobile-toggle" aria-label="Toggle Menu" onClick={() => setIsMobileMenuOpen((p) => !p)}>
+            {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
 
         {/* Mobile menu */}
         <div className={`cf-mobile-menu-box ${isMobileMenuOpen ? 'active' : ''}`}>
-          {/* Mobile search */}
+          {/* Mobile search - simple form without modal */}
           <form className="mobile-search-form" onSubmit={handleSearchSubmit}>
             <Search size={16} />
             <input
@@ -365,18 +491,18 @@ const Header = () => {
             )}
           </form>
 
-          <Link href="/"            className={isActive('/')             ? 'active' : ''} onClick={closeMobileMenu}>Home</Link>
+          <Link href="/" className={isActive('/') ? 'active' : ''} onClick={closeMobileMenu}>Home</Link>
           <Link href="/our-products" className={isActive('/our-products') ? 'active' : ''} onClick={closeMobileMenu}>Our Product</Link>
-          <Link href="/benefits"    className={isActive('/benefits')     ? 'active' : ''} onClick={closeMobileMenu}>Benefits</Link>
-          <Link href="/about-us"    className={isActive('/about-us')     ? 'active' : ''} onClick={closeMobileMenu}>About Us</Link>
-          <Link href="/contact-us"  className={isActive('/contact-us')   ? 'active' : ''} onClick={closeMobileMenu}>Contact Us</Link>
+          <Link href="/benefits" className={isActive('/benefits') ? 'active' : ''} onClick={closeMobileMenu}>Benefits</Link>
+          <Link href="/about-us" className={isActive('/about-us') ? 'active' : ''} onClick={closeMobileMenu}>About Us</Link>
+          <Link href="/contact-us" className={isActive('/contact-us') ? 'active' : ''} onClick={closeMobileMenu}>Contact Us</Link>
           <div className="mobile-menu-divider"></div>
           {isLoggedIn ? (
             <>
-              <Link href="/my-profile"   className="mobile-menu-user-link" onClick={closeMobileMenu}><User size={14} /> My Profile</Link>
+              <Link href="/my-profile" className="mobile-menu-user-link" onClick={closeMobileMenu}><User size={14} /> My Profile</Link>
               <Link href="/my-orders" className="mobile-menu-user-link" onClick={closeMobileMenu}><Package size={14} /> My Orders</Link>
-              <Link href="/cart"      className="mobile-menu-user-link" onClick={closeMobileMenu}>
-                <ShoppingBasket size={14} /> Cart
+              <Link href="/cart" className="mobile-menu-user-link" onClick={closeMobileMenu}>
+                <ShoppingCart size={14} /> Cart
                 {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
               </Link>
               <button className="mobile-menu-logout" onClick={() => { closeMobileMenu(); handleLogout(); }}>

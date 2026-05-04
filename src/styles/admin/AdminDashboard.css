@@ -290,3 +290,443 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ── Append to src/styles/admin/AdminDashboard.css ──────────────────────────── */
+
+/* ── User Detail Modal ─────────────────────────────────────────────────────── */
+.udm-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  overflow-y: auto;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  overflow: hidden;
+  animation: udm-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+@keyframes udm-pop {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Banner / hero top */
+.udm-banner {
+  background: linear-gradient(135deg, #3b2a1a 0%, #5a3e28 60%, #7a5438 100%);
+  padding: 32px 24px 24px;
+  text-align: center;
+  position: relative;
+}
+.udm-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(255,255,255,0.15);
+  border: none; border-radius: 50%;
+  width: 30px; height: 30px;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+.udm-close:hover { background: rgba(255,255,255,0.3); }
+
+/* Avatar */
+.udm-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.udm-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 3px solid rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.udm-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.udm-avatar span {
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-family: sans-serif;
+}
+
+/* Online dot */
+.udm-status-dot {
+  position: absolute;
+  bottom: 3px; right: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid #3b2a1a;
+}
+.dot-active   { background: #10b981; }
+.dot-inactive { background: #ef4444; }
+
+.udm-name {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.udm-email {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+/* Badges row */
+.udm-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.udm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-active    { background: #d1fae5; color: #065f46; }
+.badge-inactive  { background: #fee2e2; color: #991b1b; }
+.badge-verified  { background: #dbeafe; color: #1e40af; }
+.badge-unverified{ background: #fef3c7; color: #92400e; }
+
+/* Detail rows */
+.udm-body {
+  padding: 8px 0;
+}
+.udm-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f5f0eb;
+  transition: background 0.12s;
+}
+.udm-row:hover { background: #faf7f4; }
+.udm-row-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: #faf7f4;
+  border: 1px solid #e8e0d8;
+  display: flex; align-items: center; justify-content: center;
+  color: #5a3e28;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.udm-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.udm-row-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.udm-row-value {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+/* Footer */
+.udm-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  border-top: 1px solid #f0ebe5;
+  background: #faf7f4;
+}
+
+.modal-overlay {
+  position: fixed;        /* ← must be fixed, not absolute or static */
+  inset: 0;               /* top:0 right:0 bottom:0 left:0 */
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;    /* vertical center */
+  justify-content: center; /* horizontal center */
+  z-index: 9999;           /* above everything */
+  padding: 20px;
+}
+
+
+/* ── Append to src/styles/admin/AdminDashboard.css ──────────────────────────── */
+
+/* ── Order Detail Modal ────────────────────────────────────────────────────── */
+.odm-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  animation: udm-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Banner */
+.odm-banner {
+  background: linear-gradient(135deg, #3b2a1a 0%, #5a3e28 60%, #7a5438 100%);
+  padding: 28px 20px 20px;
+  text-align: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.odm-icon-wrap {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 3px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 26px;
+  color: #fff;
+}
+.odm-order-num {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  font-family: monospace;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+}
+.odm-date {
+  color: rgba(255,255,255,0.65);
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+.odm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Quick stats strip */
+.odm-quick-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 16px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 10px 0;
+}
+.odm-qs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 2px;
+}
+.odm-qs-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+.odm-qs-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.odm-qs-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.2);
+}
+
+/* Scrollable body */
+.odm-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+/* Section */
+.odm-section {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f5f0eb;
+}
+.odm-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.odm-section-title i { color: #5a3e28; }
+
+/* Address card */
+.odm-address-card {
+  background: #faf7f4;
+  border: 1px solid #e8e0d8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.odm-address-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.odm-address-name strong { font-size: 14px; color: #1a1a1a; }
+.odm-label-tag {
+  background: #e8e0d8;
+  color: #5a3e28;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+.odm-address-phone {
+  font-size: 13px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.odm-address-line { font-size: 13px; color: #6b7280; }
+
+/* Items */
+.odm-items { display: flex; flex-direction: column; gap: 8px; }
+.odm-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #faf7f4;
+  border-radius: 8px;
+  border: 1px solid #f0ebe5;
+}
+.odm-item-img {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: #e8e0d8;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+.odm-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.odm-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.odm-item-name  { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.odm-item-variant { font-size: 11px; color: #9ca3af; }
+.odm-item-price { font-size: 14px; font-weight: 700; color: #3b2a1a; }
+
+/* Coupon */
+.odm-coupon-card {
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border: 1px solid #c4b5fd;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.odm-coupon-left { display: flex; flex-direction: column; gap: 2px; }
+.odm-coupon-code {
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 800;
+  color: #4c1d95;
+  letter-spacing: 1px;
+}
+.odm-coupon-type { font-size: 12px; color: #7c3aed; }
+.odm-coupon-saving {
+  font-size: 20px;
+  font-weight: 800;
+  color: '#7c3aed';
+  color: #7c3aed;
+}
+
+/* Pricing */
+.odm-pricing { display: flex; flex-direction: column; gap: 0; }
+.odm-price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  font-size: 13px;
+  color: #555;
+  border-bottom: 1px dashed #f0ebe5;
+}
+.odm-price-row:last-of-type { border-bottom: none; }
+.odm-discount-row { color: #10b981 !important; font-weight: 600; }
+.odm-discount-row i { margin-right: 4px; }
+.odm-price-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 4px;
+  margin-top: 4px;
+  border-top: 2px solid #e8e0d8;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+/* Timeline */
+.odm-timeline { display: flex; flex-direction: column; gap: 0; }
+.odm-tl-item {
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+.odm-tl-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b2a1a, #5a3e28);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.odm-tl-line {
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  width: 2px;
+  height: calc(100% - 4px);
+  background: #e8e0d8;
+}
+.odm-tl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 0 16px;
+}
+.odm-tl-label { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.odm-tl-time  { font-size: 11px; color: #9ca3af; }

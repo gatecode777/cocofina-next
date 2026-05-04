@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,15 +19,65 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // Indian phone number validation function
+  const validateIndianPhoneNumber = (phone) => {
+    // Remove any non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Check if empty
+    if (!cleaned) {
+      return { isValid: false, message: 'Phone number is required' };
+    }
+    
+    // Check length (Indian numbers are 10 digits)
+    if (cleaned.length !== 10) {
+      return { isValid: false, message: 'Please enter a valid 10-digit phone number' };
+    }
+    
+    // Check if starts with valid Indian mobile prefixes
+    // Valid prefixes: 6,7,8,9 (mobile numbers in India start with these)
+    const firstDigit = cleaned[0];
+    if (!['6', '7', '8', '9'].includes(firstDigit)) {
+      return { isValid: false, message: 'Phone number must start with 6, 7, 8, or 9' };
+    }
+    
+    // Check if all digits are numbers (already done by regex)
+    if (!/^\d{10}$/.test(cleaned)) {
+      return { isValid: false, message: 'Please enter a valid 10-digit phone number' };
+    }
+    
+    // Optional: Check for repetitive patterns (1111111111, 1234567890, etc.)
+    const repetitivePatterns = [
+      /^(\d)\1{9}$/, // Same digit repeated 10 times
+      /^1234567890$/, // Sequential increasing
+      /^9876543210$/, // Sequential decreasing
+      /^0123456789$/, // Sequential with zero
+    ];
+    
+    for (const pattern of repetitivePatterns) {
+      if (pattern.test(cleaned)) {
+        return { isValid: false, message: 'Please enter a valid phone number' };
+      }
+    }
+    
+    return { isValid: true, message: '' };
+  };
+
   const validate = () => {
     const e = {};
     if (!formData.firstName.trim()) e.firstName = 'First name is required';
     if (!formData.lastName.trim()) e.lastName = 'Last name is required';
+    
+    // Enhanced phone number validation
     if (!formData.contactNumber.trim()) {
       e.contactNumber = 'Contact number is required';
-    } else if (!/^\d{10}$/.test(formData.contactNumber.replace(/\D/g, ''))) {
-      e.contactNumber = 'Please enter a valid 10-digit phone number';
+    } else {
+      const phoneValidation = validateIndianPhoneNumber(formData.contactNumber);
+      if (!phoneValidation.isValid) {
+        e.contactNumber = phoneValidation.message;
+      }
     }
+    
     if (!formData.email.trim()) {
       e.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -48,9 +97,26 @@ const Signup = () => {
     return Object.keys(e).length === 0;
   };
 
+  // Format phone number as user types (optional)
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digits
+    const cleaned = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    return cleaned.slice(0, 10);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Special handling for phone number to format it
+    if (name === 'contactNumber') {
+      const formattedValue = formatPhoneNumber(value);
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+    
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
     if (errors.submit) setErrors((prev) => ({ ...prev, submit: '' }));
   };
@@ -65,7 +131,7 @@ const Signup = () => {
         lastName: formData.lastName.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        phone: formData.contactNumber.replace(/\D/g, ''),
+        phone: formData.contactNumber.replace(/\D/g, ''), // Send only digits
       });
 
       if (res.data.success) {
@@ -117,8 +183,8 @@ const Signup = () => {
                 <input type="text" name="firstName" placeholder="First Name"
                   className={`input-field-s ${errors.firstName ? 'error' : ''}`}
                   value={formData.firstName} onChange={handleChange} disabled={isLoading} />
-                {errors.firstName && <span className="field-error">{errors.firstName}</span>}
               </div>
+                {errors.firstName && <span className="field-error">{errors.firstName}</span>}
 
               {/* Last Name */}
               <div className="input-icon-container">
@@ -126,8 +192,8 @@ const Signup = () => {
                 <input type="text" name="lastName" placeholder="Last Name"
                   className={`input-field-s ${errors.lastName ? 'error' : ''}`}
                   value={formData.lastName} onChange={handleChange} disabled={isLoading} />
-                {errors.lastName && <span className="field-error">{errors.lastName}</span>}
               </div>
+                {errors.lastName && <span className="field-error">{errors.lastName}</span>}
 
               {/* Phone */}
               <div className="input-icon-container">
@@ -136,8 +202,8 @@ const Signup = () => {
                   className={`input-field-s ${errors.contactNumber ? 'error' : ''}`}
                   value={formData.contactNumber} onChange={handleChange}
                   disabled={isLoading} maxLength={10} />
-                {errors.contactNumber && <span className="field-error">{errors.contactNumber}</span>}
               </div>
+                {errors.contactNumber && <span className="field-error">{errors.contactNumber}</span>}
 
               {/* Email */}
               <div className="input-icon-container">
@@ -158,8 +224,8 @@ const Signup = () => {
                 <button type="button" className="eye-toggle" onClick={() => setShowPassword(p => !p)} disabled={isLoading}>
                   <i className={showPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
                 </button>
-                {errors.password && <span className="field-error">{errors.password}</span>}
               </div>
+                {errors.password && <span className="field-error">{errors.password}</span>}
 
               {/* Confirm Password */}
               <div className="input-icon-container">
@@ -171,8 +237,8 @@ const Signup = () => {
                 <button type="button" className="eye-toggle" onClick={() => setShowConfirmPassword(p => !p)} disabled={isLoading}>
                   <i className={showConfirmPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
                 </button>
-                {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
               </div>
+                {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
 
               <p className="terms-text">
                 By signing below, you agree to the{' '}

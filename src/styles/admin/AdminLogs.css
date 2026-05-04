@@ -1,0 +1,316 @@
+/* src/styles/admin/AdminLogs.css */
+
+.admin-logs-page {
+    padding-bottom: 40px;
+}
+
+/* Stats strip */
+.log-stats-strip {
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8edf3;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.log-stat-item {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 14px 16px;
+    border-right: 1px solid #f0f0f0;
+}
+
+.log-stat-item:last-child {
+    border-right: none;
+}
+
+.log-stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1;
+}
+
+.log-stat-label {
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.log-stat-label i {
+    margin-right: 3px;
+}
+
+/* Filters bar */
+.log-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.log-filters .search-bar {
+    flex: 1;
+    min-width: 220px;
+}
+
+.log-date-input {
+    padding: 9px 12px;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #374151;
+    outline: none;
+    background: #fff;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.log-date-input:focus {
+    border-color: #3b2a1a;
+}
+
+.log-reset-btn {
+    white-space: nowrap;
+}
+
+/* Table wrapper */
+.log-table-wrap {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8edf3;
+    overflow: hidden;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: inherit;
+}
+
+.log-table thead th {
+    padding: 11px 14px;
+    text-align: left;
+    background: #f8f9fb;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    border-bottom: 1px solid #e8edf3;
+}
+
+/* Log rows */
+.log-row {
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid #f5f0eb;
+}
+
+.log-row:hover {
+    background: #faf7f4;
+}
+
+.log-row-expanded {
+    background: #faf7f4 !important;
+}
+
+.log-row-failed {
+    border-left: 3px solid #ef4444;
+}
+
+.log-row td {
+    padding: 10px 14px;
+    vertical-align: middle;
+}
+
+/* Time cell */
+.log-td-time {
+    min-width: 140px;
+    white-space: nowrap;
+}
+
+.log-time-main {
+    font-size: 12px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Admin cell */
+.log-td-admin {
+    min-width: 160px;
+}
+
+.log-admin-cell {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.log-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b2a1a, #5a3e28);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.log-admin-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.log-admin-role {
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: capitalize;
+}
+
+/* Module / Action badges */
+.log-module-badge,
+.log-action-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.log-module-badge i,
+.log-action-badge i {
+    font-size: 10px;
+}
+
+/* Description cell */
+.log-td-desc {
+    max-width: 320px;
+}
+
+.log-desc {
+    font-size: 13px;
+    color: #374151;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.log-desc-fail {
+    color: #ef4444;
+}
+
+.log-target {
+    font-size: 11px;
+    color: #9ca3af;
+    display: block;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Expand arrow */
+.log-td-arrow {
+    width: 32px;
+    text-align: center;
+}
+
+.log-expand-icon {
+    font-size: 11px;
+    color: #9ca3af;
+    transition: transform 0.2s;
+}
+
+.log-row-expanded .log-expand-icon {
+    color: #3b2a1a;
+}
+
+/* Expanded detail row */
+.log-detail-row td {
+    background: #f8f6f3;
+    border-bottom: 1px solid #e8e0d8;
+    padding: 12px 20px;
+}
+
+.log-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+}
+
+.log-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: 1px solid #ece8e4;
+}
+
+.log-detail-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9ca3af;
+}
+
+.log-detail-label i {
+    margin-right: 4px;
+    color: #5a3e28;
+}
+
+.log-detail-value {
+    font-size: 12px;
+    color: #374151;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .log-filters {
+        flex-direction: column;
+    }
+
+    .log-table {
+        font-size: 12px;
+    }
+
+    .log-td-time,
+    .log-td-admin {
+        display: none;
+    }
+
+    .log-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .log-stats-strip {
+        flex-wrap: wrap;
+    }
+
+    .log-stat-item {
+        min-width: 45%;
+    }
+}

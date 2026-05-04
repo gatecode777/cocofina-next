@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { saveFile } from '@/lib/apiHelpers';
+import { logActivity } from '@/lib/logActivity';
 import Product from '@/models/Product';
 
 const generateSlug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -28,11 +29,11 @@ export async function GET(request) {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
-    const page     = parseInt(searchParams.get('page')   || '1');
-    const limit    = parseInt(searchParams.get('limit')  || '20');
-    const search   = searchParams.get('search')  || '';
-    const category = searchParams.get('category')|| '';
-    const status   = searchParams.get('status')  || 'all';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search') || '';
+    const category = searchParams.get('category') || '';
+    const status = searchParams.get('status') || 'all';
 
     const filter = {};
     if (search.trim()) filter.$or = [
@@ -40,13 +41,19 @@ export async function GET(request) {
       { 'description.short': { $regex: search.trim(), $options: 'i' } },
     ];
     if (category && category !== 'all') filter.category = category;
-    if (status   && status   !== 'all') filter.status   = status;
+    if (status && status !== 'all') filter.status = status;
 
-    const skip  = (page - 1) * limit;
+    const skip = (page - 1) * limit;
     const total = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .populate('category', 'name slug')
       .sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+
+    await logActivity(request, admin, {
+      action: 'view',
+      module: 'products',
+      description: `Viewed product list (page ${page})`,
+    });
 
     return NextResponse.json({ success: true, products, totalProducts: total, totalPages: Math.ceil(total / limit), currentPage: page });
   } catch (err) {
@@ -78,12 +85,21 @@ export async function POST(request) {
     const imageFiles = formData.getAll('images').filter(f => f instanceof File);
     if (imageFiles.length) {
       const filenames = await Promise.all(imageFiles.map(f => saveFile(f, 'products')));
-      productData.images    = filenames;
+      productData.images = filenames;
       productData.thumbnail = filenames[0];
     }
 
     const product = await Product.create(productData);
     const populated = await Product.findById(product._id).populate('category', 'name slug');
+
+    await logActivity(request, admin, {
+      action: 'create',
+      module: 'products',
+      description: `Created product "${product.name}"`,
+      targetId: product._id,
+      targetName: product.name,
+    });
+    
     return NextResponse.json({ success: true, product: populated }, { status: 201 });
   } catch (err) {
     console.error('admin createProduct error:', err);

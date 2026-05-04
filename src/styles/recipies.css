@@ -21,7 +21,6 @@
     width: 100%;
     display: block;
     line-height: 0;
-    margin-top: 20px;
 }
 
 .recipes .banner img {
@@ -50,7 +49,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    max-width: 1500px;
+    max-width: 1100px;
     margin: 0 auto 20px;
 }
 
@@ -60,13 +59,14 @@
 
 .recipes .card {
     /* border-radius: 20px; */
-    padding: 28px 24px 26px;
+    padding: 20px 20px 26px;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     overflow: hidden;
-    min-height: 50px;
+    min-height: 40px;
+    
 }
 
 .recipes .card.light {
@@ -228,9 +228,9 @@
     ======================== */
 
 .recipes .note {
-    max-width: 1500px;
+    max-width: 1100px;
     margin: 4px auto 0;
-    font-size: clamp(17px, 1.9vw, 17px);
+    font-size: clamp(14px, 1.3vw, 15px);
     color: #c07030;
     line-height: 1.75;
 }
@@ -239,7 +239,177 @@
     font-weight: 700;
     text-decoration: underline;
 }
+/* =========================================
+   1. 3D ENTRANCE (Flip & Pop Effect)
+   ========================================= */
 
+/* Parent container ko 3D perspective dena zaroori hai */
+.recipes .cards-grid {
+    perspective: 2000px; /* 3D depth create karne ke liye */
+}
+
+@keyframes flip3D {
+    0% {
+        opacity: 0;
+        transform: rotateX(-30deg) rotateY(15deg) translateY(100px) scale(0.8);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.recipes .card {
+    opacity: 0;
+    /* Cubic-bezier se animation "Smooth" aur "Bouncy" lagta hai */
+    animation: flip3D 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+/* Dheere-dheere ek ke baad ek card aane ke liye (Increased delays) */
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(1) { animation-delay: 0.2s; }
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(2) { animation-delay: 0.5s; }
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(3) { animation-delay: 0.8s; }
+
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(1) { animation-delay: 1.1s; }
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(2) { animation-delay: 1.4s; }
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(3) { animation-delay: 1.7s; }
+
+
+/* =========================================
+   2. PREMIUM 3D HOVER EFFECT
+   ========================================= */
+
+.recipes .card {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.6s ease, 
+                background-color 0.4s ease;
+}
+
+.recipes .card:hover {
+    /* Card ko thoda 3D tilt aur lift dena */
+    transform: translateY(-20px) rotateX(5deg) scale(1.03);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+}
+
+/* Mithai ki image ko "Float" karwana */
+.recipes .card-img {
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+.recipes .card:hover .card-img {
+    /* Image card se bahar aati hui dikhegi */
+    transform: translateZ(50px) scale(1.15) translateY(-10px);
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
+}
+
+/* Background Deco (Circle) Animation */
+.recipes .card-deco-wrap {
+    transition: all 0.8s ease;
+}
+
+.recipes .card:hover .card-deco-wrap {
+    transform: translateY(-50%) translateX(-10px) rotate(-15deg) scale(1.1);
+}
+
+/* Bonus: Subtle Floating Loop for Images (Taaki section alive lage) */
+@keyframes softFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.recipes .card-img {
+    animation: softFloat 4s ease-in-out infinite;
+    animation-delay: inherit; /* Alag-alag time par float honge */
+}
+
+/* =========================================
+   1. 3D ENTRANCE (9 Cards Sequence)
+   ========================================= */
+
+.recipes .cards-grid {
+    perspective: 2000px; 
+}
+
+@keyframes flip3D {
+    0% {
+        opacity: 0;
+        transform: rotateX(-30deg) rotateY(15deg) translateY(100px) scale(0.8);
+        filter: blur(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.recipes .card {
+    opacity: 0;
+    animation: flip3D 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    transform-style: preserve-3d;
+}
+
+/* --- ROW 1 (Cards 1, 2, 3) --- */
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(1) { animation-delay: 0.1s; }
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(2) { animation-delay: 0.3s; }
+.recipes .cards-grid:nth-of-type(1) .card:nth-child(3) { animation-delay: 0.5s; }
+
+/* --- ROW 2 (Cards 4, 5, 6) --- */
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(1) { animation-delay: 0.7s; }
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(2) { animation-delay: 0.9s; }
+.recipes .cards-grid:nth-of-type(2) .card:nth-child(3) { animation-delay: 1.1s; }
+
+/* --- ROW 3 (Cards 7, 8, 9) --- */
+.recipes .cards-grid:nth-of-type(3) .card:nth-child(1) { animation-delay: 1.3s; }
+.recipes .cards-grid:nth-of-type(3) .card:nth-child(2) { animation-delay: 1.5s; }
+.recipes .cards-grid:nth-of-type(3) .card:nth-child(3) { animation-delay: 1.7s; }
+
+
+/* =========================================
+   2. PREMIUM 3D HOVER (Stay the same)
+   ========================================= */
+
+.recipes .card {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.6s ease;
+}
+
+.recipes .card:hover {
+    transform: translateY(-20px) rotateX(5deg) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+/* Mithai Pop-out effect */
+.recipes .card-img {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.recipes .card:hover .card-img {
+    transform: translateZ(50px) scale(1.2) translateY(-10px);
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
+}
+
+/* Deco icon movement */
+.recipes .card:hover .card-deco-wrap {
+    transform: translateY(-50%) translateX(-15px) rotate(-10deg);
+}
+
+/* Smooth Floating Animation for Images */
+@keyframes softFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.recipes .card-img {
+    animation: softFloat 4s ease-in-out infinite;
+}
 /* ========================
        RESPONSIVE
     ======================== */
