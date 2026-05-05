@@ -168,8 +168,8 @@ const heroSliderStyles = `
 }
 
 @media (max-width: 480px) {
-  .cf-slider {
-    height: 145px;
+  .cf-hero-banner .cf-slider {
+    height: 170px;
   }
 
   .cf-hero-img {
@@ -190,6 +190,12 @@ const heroSliderStyles = `
   
   .cf-dot.active {
     width: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .cf-slider {
+    height: 145px;
   }
 }
 

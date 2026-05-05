@@ -12,7 +12,7 @@ const BenefitsHeroSection = () => (
     <div className="b-container">
       <div className="b-banner-wrapper">
         <img
-          src="/benefits.jpg.jpeg"
+          src="/benefits.jpg.jpg"
           alt="Cocofina Coconut Sugar"
           className="b-banner-img"
           loading="lazy"
