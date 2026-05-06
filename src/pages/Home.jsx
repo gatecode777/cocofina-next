@@ -47,7 +47,7 @@ const heroSliderStyles = `
   position: relative;
   width: 100%;
   height: 650px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .cf-slide {
@@ -169,7 +169,7 @@ const heroSliderStyles = `
 
 @media (max-width: 480px) {
   .cf-hero-banner .cf-slider {
-    height: 170px;
+    height: 192px !important;
   }
 
   .cf-hero-img {
@@ -193,9 +193,37 @@ const heroSliderStyles = `
   }
 }
 
-@media (max-width: 380px) {
-  .cf-slider {
-    height: 145px;
+
+@media (max-width: 376px) {
+  .cf-hero-banner .cf-slider {
+    height: 170px !important ;
+  }
+
+  .cf-hero-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .cf-dots {
+    bottom: 6px;
+    gap: 5px;
+  }
+  
+  .cf-dot {
+    width: 5px;
+    height: 5px;
+  }
+  
+  .cf-dot.active {
+    width: 10px;
+  }
+}
+
+
+@media (max-width: 320px) {
+  .cf-hero-banner .cf-slider {
+    height: 142px !important;
   }
 }
 
