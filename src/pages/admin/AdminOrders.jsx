@@ -202,15 +202,15 @@ const AdminOrders = () => {
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
-            <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="filter-select">
-              <option value="all">All Status</option>
-              <option value="placed">Placed</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+          <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="filter-select">
+            <option value="all">All Status</option>
+            <option value="placed">Placed</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
         </div>
 
         {/* Table */}
@@ -296,7 +296,7 @@ const AdminOrders = () => {
                     <td>
                       <div className="action-buttons-a">
                         {perms.view && (
-                          <button className="btn-action btn-view" onClick={() => openDetailsModal(order)} title="View Details">
+                          <button className="btn-action btn-view" onClick={() => router.push(`/admin/orders/${order._id}`)} title="View Details">
                             <i className="fas fa-eye"></i>
                           </button>
                         )}

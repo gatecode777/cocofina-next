@@ -1,0 +1,753 @@
+/* src/styles/admin/AdminOrderDetail.css */
+
+.aod-page {
+    padding-bottom: 40px;
+}
+
+/* ── Topbar ──────────────────────────────────────────────────────────────── */
+.aod-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.aod-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.aod-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.aod-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a3e28;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.aod-back-btn:hover {
+    background: #faf7f4;
+}
+
+.aod-order-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+    font-family: monospace;
+}
+
+.aod-order-date {
+    font-size: 12px;
+    color: #9ca3af;
+    display: block;
+}
+
+/* ── Grid layout ─────────────────────────────────────────────────────────── */
+.aod-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .aod-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Card base ───────────────────────────────────────────────────────────── */
+.aod-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8edf3;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.aod-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 16px;
+}
+
+.aod-card-title i {
+    color: #5a3e28;
+}
+
+/* ── Shiprocket card ─────────────────────────────────────────────────────── */
+.aod-sr-card {
+    border-top: 3px solid #f97316;
+}
+
+.aod-sr-missing {
+    border-top-color: #ef4444;
+}
+
+.aod-sr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.aod-sr-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.aod-sr-title h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.aod-sr-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.sr-dot-green {
+    background: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.sr-dot-yellow {
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.sr-dot-red {
+    background: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.aod-sr-empty {
+    text-align: center;
+    padding: 24px;
+    color: #9ca3af;
+}
+
+.aod-sr-empty i {
+    font-size: 32px;
+    color: #fbbf24;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.aod-sr-empty p {
+    margin: 4px 0;
+    font-size: 13px;
+}
+
+.aod-sr-error {
+    color: #ef4444 !important;
+    font-size: 12px !important;
+}
+
+/* SR IDs grid */
+.aod-sr-ids {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.aod-sr-id-item {
+    background: #faf7f4;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #f0ebe5;
+}
+
+.aod-sr-id-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9ca3af;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.aod-sr-id-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-family: monospace;
+}
+
+.aod-sr-current-status {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #065f46;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* SR action buttons */
+.aod-sr-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.aod-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.aod-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.aod-btn-primary {
+    background: #3b2a1a;
+    color: #fff;
+}
+
+.aod-btn-primary:hover:not(:disabled) {
+    background: #5a3e28;
+}
+
+.aod-btn-outline {
+    background: #fff;
+    color: #374151;
+    border: 1.5px solid #e0d8cf;
+}
+
+.aod-btn-outline:hover:not(:disabled) {
+    background: #faf7f4;
+    border-color: #5a3e28;
+}
+
+.aod-btn-danger {
+    background: #fff;
+    color: #ef4444;
+    border: 1.5px solid #fecaca;
+}
+
+.aod-btn-danger:hover:not(:disabled) {
+    background: #fef2f2;
+}
+
+.aod-btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+.aod-btn-ghost {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.aod-btn-ghost:hover {
+    color: #374151;
+}
+
+/* Couriers panel */
+.aod-couriers-panel {
+    background: #faf7f4;
+    border-radius: 10px;
+    border: 1px solid #e8e0d8;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.aod-couriers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.aod-couriers-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.aod-couriers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.aod-courier-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.aod-courier-card:hover {
+    border-color: #5a3e28;
+    background: #fdfaf7;
+}
+
+.aod-courier-selected {
+    border-color: #5a3e28 !important;
+    background: #faf7f4 !important;
+}
+
+.aod-courier-radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.aod-courier-radio.filled {
+    border-color: #5a3e28;
+    background: #5a3e28;
+    box-shadow: inset 0 0 0 3px #fff;
+}
+
+.aod-courier-info {
+    flex: 1;
+}
+
+.aod-courier-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.aod-courier-meta {
+    font-size: 11px;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aod-courier-cod {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.aod-courier-rate {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+/* Tracking */
+.aod-tracking-section {
+    border-top: 1px solid #f0ebe5;
+    padding-top: 16px;
+    margin-top: 4px;
+}
+
+.aod-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.aod-section-title i {
+    color: #5a3e28;
+}
+
+.aod-timeline {
+    position: relative;
+}
+
+.aod-tl-item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+}
+
+.aod-tl-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e0d8cf;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e0d8cf;
+    flex-shrink: 0;
+    margin-top: 4px;
+    z-index: 1;
+}
+
+.aod-tl-latest .aod-tl-dot {
+    background: #f97316;
+    box-shadow: 0 0 0 2px #fed7aa;
+}
+
+.aod-tl-line {
+    position: absolute;
+    left: 4px;
+    top: 14px;
+    width: 2px;
+    height: calc(100% + 4px);
+    background: #f0ebe5;
+}
+
+.aod-tl-content {
+    flex: 1;
+    padding-bottom: 16px;
+}
+
+.aod-tl-desc {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+    margin: 0 0 2px;
+}
+
+.aod-tl-time {
+    font-size: 11px;
+    color: #9ca3af;
+    display: block;
+}
+
+.aod-tl-loc {
+    font-size: 11px;
+    color: #6b7280;
+    display: block;
+    margin-top: 2px;
+}
+
+.aod-tl-loc i {
+    margin-right: 3px;
+    color: #f97316;
+}
+
+/* ── Order items ─────────────────────────────────────────────────────────── */
+.aod-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.aod-item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #faf7f4;
+    border-radius: 8px;
+    border: 1px solid #f0ebe5;
+}
+
+.aod-item-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: #e8e0d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: #9ca3af;
+}
+
+.aod-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.aod-item-info {
+    flex: 1;
+}
+
+.aod-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.aod-item-variant {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.aod-item-qty {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.aod-item-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Pricing */
+.aod-pricing {
+    border-top: 1px solid #f0ebe5;
+    padding-top: 12px;
+}
+
+.aod-price-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #555;
+    padding: 5px 0;
+}
+
+.aod-discount {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.aod-price-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    border-top: 2px solid #e8e0d8;
+    margin-top: 6px;
+    padding-top: 10px;
+}
+
+/* ── Sidebar cards ───────────────────────────────────────────────────────── */
+.aod-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.aod-field label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.aod-field select {
+    padding: 8px 10px;
+    border: 1.5px solid #e0d8cf;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1a1a1a;
+    outline: none;
+    font-family: inherit;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.aod-field select:focus {
+    border-color: #5a3e28;
+}
+
+.aod-cod-tip {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #166534;
+    margin-top: 10px;
+}
+
+.aod-customer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.aod-customer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b2a1a, #5a3e28);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.aod-customer-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.aod-customer-email {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.aod-customer-phone {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.aod-address {
+    font-size: 13px;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.aod-address-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.aod-addr-tag {
+    background: #f0e8de;
+    color: #5a3e28;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 8px;
+}
+
+.aod-payment-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aod-pay-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #555;
+}
+
+.aod-cancelled-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 700;
+    width: 100%;
+}
+
+.aod-cancelled-banner i {
+    font-size: 16px;
+}
+
+.aod-coupon-code {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: #4c1d95;
+    background: #f5f3ff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+}
+
+.aod-coupon-saving {
+    font-size: 18px;
+    font-weight: 800;
+    color: #7c3aed;
+}
+
+.aod-coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.aod-cancelled-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 700;
+    width: 100%;
+}
+
+.aod-cancelled-banner i {
+    font-size: 16px;
+}

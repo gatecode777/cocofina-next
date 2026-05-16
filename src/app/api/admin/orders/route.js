@@ -1,17 +1,20 @@
 // src/app/api/admin/orders/route.js
+export const dynamic = 'force-dynamic';
 
-export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
-import { logActivity } from '@/lib/logActivity';
 import Order from '@/models/Order';
-import '@/models/User';
 
+// GET /api/admin/orders
 export async function GET(request) {
   try {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
+
+    if (admin.role !== 'super_admin' && !admin.permissions?.orders?.view)
+      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
+
     await connectDB();
 
     const { searchParams } = new URL(request.url);
@@ -22,26 +25,33 @@ export async function GET(request) {
 
     const filter = {};
     if (status && status !== 'all') filter.status = status;
-    if (search) filter.$or = [
-      { orderNumber: { $regex: search, $options: 'i' } },
-      { 'shippingAddress.fullName': { $regex: search, $options: 'i' } },
-      { 'shippingAddress.phone':    { $regex: search, $options: 'i' } },
-    ];
+    if (search?.trim()) {
+      filter.$or = [
+        { orderNumber:                 { $regex: search.trim(), $options: 'i' } },
+        { 'shippingAddress.fullName':  { $regex: search.trim(), $options: 'i' } },
+        { 'shippingAddress.phone':     { $regex: search.trim(), $options: 'i' } },
+      ];
+    }
 
     const skip  = (page - 1) * limit;
     const total = await Order.countDocuments(filter);
     const orders = await Order.find(filter)
       .populate('user', 'firstName lastName email')
-      .sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
-    await logActivity(request, admin, {
-      action: 'view',
-      module: 'orders',
-      description: `Viewed orders (page ${page})`,
+    return NextResponse.json({
+      success: true,
+      orders,
+      total,
+      totalOrders: total,
+      totalPages:  Math.ceil(total / limit),
+      currentPage: page,
     });
-
-    return NextResponse.json({ success: true, orders, totalOrders: total, totalPages: Math.ceil(total / limit), currentPage: page });
   } catch (err) {
-    return NextResponse.json({ success: false, message: 'Failed to fetch orders' }, { status: 500 });
+    console.error('GET /api/admin/orders error:', err);
+    return NextResponse.json({ success: false, message: err.message || 'Server error' }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@ import { requireAdmin } from '@/lib/auth';
 import { saveFile } from '@/lib/apiHelpers';
 import { logActivity } from '@/lib/logActivity';
 import Product from '@/models/Product';
+import Category from '@/models/Category';
 
 const generateSlug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 

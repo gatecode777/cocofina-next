@@ -1,3 +1,4 @@
+// src/models/Product.js
 import mongoose from "mongoose";
 
 const variantSchema = new mongoose.Schema({
@@ -42,120 +43,76 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Images - store filenames only
-    images: [
-      {
-        type: String,
-      },
-    ],
+    images:    [{ type: String }],
+    thumbnail: { type: String },
 
-    thumbnail: {
-      type: String,
-    },
-
-    // Product Descriptions
     description: {
-      short: {
-        type: String,
-        maxlength: 200,
-      },
-      long: {
-        type: String,
-      },
+      short: { type: String, maxlength: 200 },
+      long:  { type: String },
     },
 
-    // Weight/size variants
     variants: [variantSchema],
 
-    // Product usage
-    usage: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+    usage:    [{ type: String, trim: true }],
+    highlights: [{ type: String, trim: true }],
 
-    // Highlights
-    highlights: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+    shelfLife:            { type: String, trim: true },
+    storageInstructions:  { type: String, trim: true },
+    delivery:             { type: String, trim: true },
 
-    shelfLife: {
-      type: String,
-      trim: true,
-    },
-
-    storageInstructions: {
-      type: String,
-      trim: true,
-    },
-
-    delivery: {
-      type: String,
-      trim: true,
+    // ── Shipping dimensions (required for Shiprocket) ─────────────────────────
+    // These are the PACKAGE dimensions of the product, not the product itself.
+    // Shiprocket uses these to calculate volumetric weight and assign couriers.
+    shipping: {
+      length: { type: Number, default: 10, min: 0 },  // cm
+      breadth:{ type: Number, default: 10, min: 0 },  // cm
+      height: { type: Number, default: 10, min: 0 },  // cm
+      weight: { type: Number, default: 0.5, min: 0 }, // kg (dead weight)
     },
 
     stockStatus: {
-      type: String,
-      enum: ["In Stock", "Out of Stock", "Limited Stock"],
+      type:    String,
+      enum:    ["In Stock", "Out of Stock", "Limited Stock"],
       default: "In Stock",
     },
 
-    // SEO
     seo: {
-      metaTitle: String,
+      metaTitle:       String,
       metaDescription: String,
-      keywords: [String],
+      keywords:        [String],
     },
 
     status: {
-      type: String,
-      enum: ["active", "inactive", "draft"],
+      type:    String,
+      enum:    ["active", "inactive", "draft"],
       default: "active",
     },
 
     isComingSoon: {
-      type: Boolean,
+      type:    Boolean,
       default: false,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Indexes
-productSchema.index({
-  name: "text",
-  "description.short": "text",
-  "description.long": "text",
-});
-
+productSchema.index({ name: "text", "description.short": "text", "description.long": "text" });
 productSchema.index({ category: 1, status: 1 });
 productSchema.index({ slug: 1 });
 productSchema.index({ status: 1, stockStatus: 1 });
 
-// Pre-save middleware
 productSchema.pre("save", function (next) {
-  // Generate slug when name changes
   if (this.isModified("name")) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
   }
-
-  // Auto-set thumbnail
-  if (this.images && this.images.length > 0 && !this.thumbnail) {
+  if (this.images?.length > 0 && !this.thumbnail) {
     this.thumbnail = this.images[0];
   }
-
+  next();
 });
 
-const Product =
-  mongoose.models.Product || mongoose.model("Product", productSchema);
-
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 export default Product;

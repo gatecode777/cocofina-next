@@ -28,7 +28,7 @@ export async function GET(request, { params }) {
     const { admin, error } = await requireAdmin(request);
     if (error) return error;
 
-    if (admin.role !== 'super_admin' && !admin.permissions?.products?.edit)
+    if (admin.role !== 'super_admin' && !admin.permissions?.products?.view)
       return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
 
     await connectDB();
@@ -53,7 +53,6 @@ export async function GET(request, { params }) {
 
 // PUT /api/admin/products/:id  (multipart/form-data)
 export async function PUT(request, { params }) {
-  // Declare outside try so catch block can reference them
   let admin           = null;
   let existingProduct = null;
 
@@ -61,10 +60,11 @@ export async function PUT(request, { params }) {
     const authResult = await requireAdmin(request);
     if (authResult.error) return authResult.error;
 
+    // ← assign FIRST, then check
+    admin = authResult.admin;
+
     if (admin.role !== 'super_admin' && !admin.permissions?.products?.edit)
       return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
-
-    admin = authResult.admin;
 
     await connectDB();
 
@@ -81,12 +81,10 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ success: false, message: 'Invalid product data' }, { status: 400 });
     }
 
-    // Slug update only when name changes
     if (productData.name && productData.name !== existingProduct.name) {
       productData.slug = await ensureUniqueSlug(generateSlug(productData.name), params.id);
     }
 
-    // Image handling
     const keepExisting  = formData.get('keepExistingImages') === 'true';
     const newImageFiles = formData.getAll('images').filter(f => f instanceof File);
     const newFilenames  = await Promise.all(newImageFiles.map(f => saveFile(f, 'products')));
@@ -109,7 +107,6 @@ export async function PUT(request, { params }) {
       { new: true, runValidators: true }
     ).populate('category', 'name slug');
 
-    // ← 'edit' is the correct enum value (not 'update')
     await logActivity(request, admin, {
       action:      'edit',
       module:      'products',
@@ -123,7 +120,6 @@ export async function PUT(request, { params }) {
   } catch (err) {
     console.error('admin updateProduct error:', err);
 
-    // Guard: only log if admin + product are available
     if (admin && existingProduct) {
       await logActivity(request, admin, {
         action:       'edit',
@@ -145,9 +141,14 @@ export async function PUT(request, { params }) {
 
 // DELETE /api/admin/products/:id
 export async function DELETE(request, { params }) {
+  let admin = null;
+
   try {
-    const { admin, error } = await requireAdmin(request);
-    if (error) return error;
+    const authResult = await requireAdmin(request);
+    if (authResult.error) return authResult.error;
+
+    // ← assign FIRST, then check
+    admin = authResult.admin;
 
     if (admin.role !== 'super_admin' && !admin.permissions?.products?.delete)
       return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
@@ -158,7 +159,7 @@ export async function DELETE(request, { params }) {
     if (!product)
       return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
 
-    const name = product.name; // snapshot before deletion
+    const name = product.name;
     for (const fn of (product.images || [])) await deleteFile(fn, 'products');
     await Product.findByIdAndDelete(params.id);
 
@@ -172,10 +173,7 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (err) {
-
-    if (admin.role !== 'super_admin' && !admin.permissions?.products?.delete)
-      return NextResponse.json({ success: false, message: 'Permission denied' }, { status: 403 });
-
+    console.error('admin deleteProduct error:', err);
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }
 }
