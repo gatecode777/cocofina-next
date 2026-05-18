@@ -262,9 +262,9 @@ const HeroSection = () => {
   const [touchEnd, setTouchEnd] = useState(0);
 
   const slides = [
-    { id: 0, src: "/banner.png", alt: "Banner 1" },
-    { id: 1, src: "/banner.png", alt: "Banner 2" },
-    { id: 2, src: "/banner.png", alt: "Banner 3" }
+    // { id: 0, src: "/banner.png", alt: "Banner 1" },
+    { id: 0, src: "/Main Poster 02 (3).webp", alt: "Banner 1" },
+    { id: 1, src: "/Main Poster 03 (1).webp", alt: "Banner 2" }
   ];
   const intervalRef = useRef(null);
   const totalSlides = slides.length;
@@ -581,7 +581,7 @@ const StorySection = () => (
     <div className="cf-container">
       <div className="cf-story-card">
         <div className="cf-story-image-side">
-          <img src="/our_story.png" alt="Our Story Book" className="cf-story-main-img" />
+          <img src="/our page.webp" alt="Our Story Book" className="cf-story-main-img" />
         </div>
         <div className="cf-story-content-side">
           <div className="cf-story-header">
@@ -636,7 +636,7 @@ const AboutProductSection = () => (
       </div>
       <div className="cf-about-visual">
         <div className="cf-about-bg-box"></div>
-        <img src="/ingredient banner.png" alt="Cocofina Coconut Sugar Ingredients" className="cf-about-main-img" />
+        <img src="/ingredient.webp" alt="Cocofina Coconut Sugar Ingredients" className="cf-about-main-img" />
       </div>
     </div>
   </section>
@@ -650,12 +650,12 @@ const RecipesSection = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const recipes = [
-    { image: '/dailybevrage.jpg', title: 'Daily Beverages', desc: 'Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour.', link: '/recipes/daily-beverages' },
-    { image: '/baking.png', title: 'Baking & Desserts', desc: 'Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite.', link: '/recipes/baking-desserts' },
-    { image: '/indiansweet.png', title: 'Indian Sweets', desc: 'Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms.', link: '/recipes/indian-sweets' },
-    { image: '/breakfast.png', title: 'Breakfast Recipes', desc: 'Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness.', link: '/recipes/breakfast-recipes' },
-    { image: '/sauces.jpg', title: 'Sauces & Homemade Syrups', desc: 'Create homemade sauces and syrups with Cocofina Coconut Sugar for deeper flavour, smooth texture, and naturally rich sweetness.', link: '/recipes/sauces-syrups' },
-    { image: '/everyday.jpg', title: 'Everyday Cooking', desc: 'From daily beverages to desserts and cooking, Cocofina Coconut Sugar is a versatile sweetener that fits effortlessly into every recipe.', link: '/recipes/everyday-cooking' },
+    { image: '/dailybevrage.webp', title: 'Daily Beverages', desc: 'Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour.', link: '/recipes/daily-beverages' },
+    { image: '/baking.webp', title: 'Baking & Desserts', desc: 'Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite.', link: '/recipes/baking-desserts' },
+    { image: '/indiansweet.webp', title: 'Indian Sweets', desc: 'Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms.', link: '/recipes/indian-sweets' },
+    { image: '/breakfast.webp', title: 'Breakfast Recipes', desc: 'Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness.', link: '/recipes/breakfast-recipes' },
+    { image: '/sauces.webp', title: 'Sauces & Homemade Syrups', desc: 'Create homemade sauces and syrups with Cocofina Coconut Sugar for deeper flavour, smooth texture, and naturally rich sweetness.', link: '/recipes/sauces-homemade-syrups' },
+    { image: '/everyday.webp', title: 'Everyday Cooking', desc: 'From daily beverages to desserts and cooking, Cocofina Coconut Sugar is a versatile sweetener that fits effortlessly into every recipe.', link: '/recipes/everyday-cooking' },
   ];
 
   // Update slidesToShow based on screen size

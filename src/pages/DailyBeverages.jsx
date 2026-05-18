@@ -14,7 +14,7 @@ const DailyBeverages = () => {
 
       {/* BANNER */}
       <div className="recipes banner">
-        <img src="/dailybeverages.png" alt="Pure Sweetness In Every Sip" />
+        <img src="/dailybeverages.webp" alt="Pure Sweetness In Every Sip" />
       </div>
 
       <div className="recipes content">

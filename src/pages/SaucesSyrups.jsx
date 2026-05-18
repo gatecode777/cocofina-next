@@ -14,7 +14,7 @@ const SaucesSyrups = () => {
 
       {/* BANNER */}
       <div className="recipes banner">
-        <img src="/s&h.png" alt="Pure Sweetness In Every Sip" />
+        <img src="/s&h.webp" alt="Pure Sweetness In Every Sip" />
       </div>
 
       <div className="recipes content">

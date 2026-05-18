@@ -12,7 +12,7 @@ const BenefitsHeroSection = () => (
     <div className="b-container">
       <div className="b-banner-wrapper">
         <img
-          src="/benefits.jpg.jpg"
+          src="/benefits.webp"
           alt="Cocofina Coconut Sugar"
           className="b-banner-img"
           loading="lazy"
@@ -49,42 +49,42 @@ const benefitsData = [
   {
     title: "Rich in Natural Minerals",
     description: "Unlike refined sugar, coconut sugar retains small amounts of minerals such as iron, zinc, calcium, and potassium that naturally occur in coconut blossom sap.",
-    imageSrc: "/Benefits1.png",
+    imageSrc: "/Benefits1.webp",
     cardType: "brown",
     imageAlt: "Rich in Natural Minerals"
   },
   {
     title: "Low Glycemic Index",
     description: "Coconut sugar has a lower glycemic index compared to regular refined sugar. This means it releases energy more gradually, helping avoid sudden spikes in blood sugar levels.",
-    imageSrc: "/Benefits2.png",
+    imageSrc: "/Benefits2.webp",
     cardType: "cream",
     imageAlt: "Low Glycemic Index"
   },
   {
     title: "Natural Source",
     description: "Cocofina Sugar is derived from the sap of coconut blossoms, making it a natural sweetener that comes directly from nature without heavy processing.",
-    imageSrc: "/Benefits3.png",
+    imageSrc: "/Benefits3.webp",
     cardType: "brown",
     imageAlt: "Natural Source"
   },
   {
     title: "No Chemicals or Additives",
     description: "Our coconut sugar is free from artificial preservatives, chemicals, and synthetic additives, ensuring a clean and pure sweetness in every spoon.",
-    imageSrc: "/Benefits4.png",
+    imageSrc: "/Benefits4.webp",
     cardType: "cream",
     imageAlt: "No Chemicals"
   },
   {
     title: "Better Flavor",
     description: "Coconut sugar has a naturally rich caramel-like taste that enhances beverages, desserts, and recipes without overpowering other ingredients.",
-    imageSrc: "/Benefits5.png",
+    imageSrc: "/Benefits5.webp",
     cardType: "brown",
     imageAlt: "Better Flavor"
   },
   {
     title: "Sustainable Production",
     description: "Harvesting coconut blossom sap does not require cutting down trees, making coconut sugar production a more environmentally friendly and sustainable process.",
-    imageSrc: "/Benefits6.png",
+    imageSrc: "/Benefits6.webp",
     cardType: "cream",
     imageAlt: "Sustainable Production"
   }
@@ -111,22 +111,22 @@ const BenefitsGridSection = () => (
 // Featured Recipes Data
 const recipesData = [
   {
-    image: "/dailybevrage.jpg",
+    image: "/dailybevrage.webp",
     title: "Daily Beverages",
     description: "Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour."
   },
   {
-    image: "/baking.png",
+    image: "/baking.webp",
     title: "Baking & Desserts",
     description: "Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite."
   },
   {
-    image: "/indiansweet.png",
+    image: "/indiansweet.webp",
     title: "Indian Sweets",
     description: "Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms."
   },
   {
-    image: "/breakfast.png",
+    image: "/breakfast.webp",
     title: "Breakfast Recipes",
     description: "Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness."
   }
@@ -160,12 +160,12 @@ const RecipesSection = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const recipes = [
-    { image: '/dailybevrage.jpg', title: 'Daily Beverages', desc: 'Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour.', link: '/recipes/daily-beverages' },
-    { image: '/baking.png', title: 'Baking & Desserts', desc: 'Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite.', link: '/recipes/baking-desserts' },
-    { image: '/indiansweet.png', title: 'Indian Sweets', desc: 'Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms.', link: '/recipes/indian-sweets' },
-    { image: '/breakfast.png', title: 'Breakfast Recipes', desc: 'Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness.', link: '/recipes/breakfast-recipes' },
-    { image: '/sauces.jpg', title: 'Sauces & Homemade Syrups', desc: 'Create homemade sauces and syrups with Cocofina Coconut Sugar for deeper flavour, smooth texture, and naturally rich sweetness.', link: '/recipes/sauces-syrups' },
-    { image: '/everyday.jpg', title: 'Everyday Cooking', desc: 'From daily beverages to desserts and cooking, Cocofina Coconut Sugar is a versatile sweetener that fits effortlessly into every recipe.', link: '/recipes/everyday-cooking' },
+    { image: '/dailybevrage.webp', title: 'Daily Beverages', desc: 'Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour.', link: '/recipes/daily-beverages' },
+    { image: '/baking.webp', title: 'Baking & Desserts', desc: 'Bake your favourite cakes, cookies, and desserts with Cocofina Coconut Sugar for a rich caramel note and a naturally better sweetness in every bite.', link: '/recipes/baking-desserts' },
+    { image: '/indiansweet.webp', title: 'Indian Sweets', desc: 'Prepare traditional Indian sweets using Cocofina Coconut Sugar to enjoy authentic taste with a clean, unrefined sweetness made from coconut blossoms.', link: '/recipes/indian-sweets' },
+    { image: '/breakfast.webp', title: 'Breakfast Recipes', desc: 'Start your mornings on a healthier note by adding Cocofina Coconut Sugar to oatmeal, smoothies, and breakfast bowls for gentle, balanced sweetness.', link: '/recipes/breakfast-recipes' },
+    { image: '/sauces.webp', title: 'Sauces & Homemade Syrups', desc: 'Create homemade sauces and syrups with Cocofina Coconut Sugar for deeper flavour, smooth texture, and naturally rich sweetness.', link: '/recipes/sauces-homemade-syrups' },
+    { image: '/everyday.webp', title: 'Everyday Cooking', desc: 'From daily beverages to desserts and cooking, Cocofina Coconut Sugar is a versatile sweetener that fits effortlessly into every recipe.', link: '/recipes/everyday-cooking' },
   ];
 
   // Update slidesToShow based on screen size

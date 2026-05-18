@@ -118,8 +118,10 @@
 
 /* Our Mission Section Styles */
 .oms-wrapper {
-    background-color: #814A30;
-    padding: 100px 0;
+    /* background-color: #814A30; */
+    background: url('/Our Mission.webp');
+    padding: 169px 0;
+    background-size: cover;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -342,8 +344,10 @@
 
 /* Our Promise Section Styles */
 .ops-wrapper {
-    background-color: #814A30;
-    padding: 100px 0;
+    /* background-color: #814A30; */
+    background: url('/Our Promise.webp');
+    background-size: cover;
+    padding: 185px 0;
     display: flex;
     align-items: center;
     overflow: hidden;

@@ -1,12 +1,11 @@
 .how-process-section {
-    padding: 40px 0;
+    padding: 20px 0;
     font-family: "Poppins", sans-serif;
 }
 
 .how-process-section .container {
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
 }
 
 .process-banner {
@@ -18,7 +17,7 @@
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 

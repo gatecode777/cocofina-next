@@ -38,11 +38,11 @@ const MissionSection = () => (
       <div className="oms-row">
         <div className="oms-image-col">
           <div className="oms-img-box">
-            <img
-              src="/Ourmisssion.jpg"
+            {/* <img
+              src="/Our Mission.webp"
               alt="Our Mission Cocofina"
               loading="lazy"
-            />
+            /> */}
           </div>
         </div>
 
@@ -144,11 +144,11 @@ const PromiseSection = () => (
 
         <div className="ops-image-col">
           <div className="ops-img-box">
-            <img
-              src="/Ourpromise.jpg"
+            {/* <img
+              src="/Our Promise.webp"
               alt="Our Promise Cocofina"
               loading="lazy"
-            />
+            /> */}
           </div>
         </div>
       </div>

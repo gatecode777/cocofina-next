@@ -11,7 +11,7 @@ const ContactHeroSection = () => (
   <div
     className="cu-hero-banner"
     style={{
-      backgroundImage: 'url("/contact us.jpg.jpeg")'
+      backgroundImage: 'url("/contactus.webp")'
     }}
   >
     <div className="cu-hero-content"></div>
@@ -304,7 +304,7 @@ const ContactSupportSection = () => (
     <div className="cs-container">
       <div className="cs-image-box">
         <img
-          src="/femalecontactus.png"
+          src="/femalecontactus.webp"
           alt="Support Illustration"
           className="cs-main-img"
           loading="lazy"
@@ -370,7 +370,7 @@ const FAQSection = () => (
       <div className="cs-faq-avatar">
         <div className="cs-avatar-circle">
           <img
-            src="/male-contactus.png"
+            src="/male_contactus.webp"
             alt="FAQ Character"
             loading="lazy"
           />

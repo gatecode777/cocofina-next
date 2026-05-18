@@ -15,7 +15,7 @@ const TermsAndConditions = () => {
       <section className="privacy-section">
         <div className="privacy-banner">
           <img
-            src="/TC.jpg"
+            src="/TC.webp"
             alt="Terms and Conditions Banner"
             className="banner-img"
           />

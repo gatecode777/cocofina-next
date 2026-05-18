@@ -15,7 +15,7 @@ const EverydayCooking = () => {
       {/* BANNER */}
       <div className="recipes banner">
         <img
-          src="/evryday.png"
+          src="/evryday.webp"
           alt="Pure Sweetness In Every Sip"
         />
       </div>

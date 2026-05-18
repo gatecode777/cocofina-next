@@ -15,7 +15,7 @@ const RefundPolicy = () => {
       <section className="privacy-section">
         <div className="privacy-banner">
           <img
-            src="/Refund.jpg"
+            src="/Refund.webp"
             alt="Refund Policy Banner"
             className="banner-img"
           />

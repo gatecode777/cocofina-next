@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
       <section className="privacy-section">
         <div className="privacy-banner">
           <img
-            src="/Privacy.jpg"
+            src="/Privacy.webp"
             alt="Privacy Policy Banner"
             className="banner-img"
           />

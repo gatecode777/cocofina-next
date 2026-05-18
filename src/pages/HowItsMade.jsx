@@ -16,7 +16,7 @@ const HowItsMade = () => {
         <div className="container">
           <div className="process-banner">
             <img
-              src="/How.png"
+              src="/How.webp"
               alt="Coconut Sugar Process"
               className="responsive-banner"
             />
@@ -50,7 +50,7 @@ const HowItsMade = () => {
               </p>
             </div>
             <div className="step-image">
-              <img src="/How1.jpg" alt="Harvesting" />
+              <img src="/How1.webp" alt="Harvesting" />
             </div>
           </div>
 
@@ -66,7 +66,7 @@ const HowItsMade = () => {
               </p>
             </div>
             <div className="step-image">
-              <img src="/How2.jpg" alt="Natural Heating" />
+              <img src="/How2.webp" alt="Natural Heating" />
             </div>
           </div>
 
@@ -81,7 +81,7 @@ const HowItsMade = () => {
               </p>
             </div>
             <div className="step-image">
-              <img src="/How3.jpg" alt="Crystallization" />
+              <img src="/How3.webp" alt="Crystallization" />
             </div>
           </div>
 
@@ -96,7 +96,7 @@ const HowItsMade = () => {
               </p>
             </div>
             <div className="step-image">
-              <img src="/How4.jpg" alt="Cooling and Drying" />
+              <img src="/How4.webp" alt="Cooling and Drying" />
             </div>
           </div>
 
@@ -112,7 +112,7 @@ const HowItsMade = () => {
               </p>
             </div>
             <div className="step-image">
-              <img src="/How5.jpg" alt="Packaging" />
+              <img src="/How5.webp" alt="Packaging" />
             </div>
           </div>
 

@@ -15,7 +15,7 @@ const ShippingPolicy = () => {
       <section className="privacy-section">
         <div className="privacy-banner">
           <img
-            src="/Shiping.jpg"
+            src="/Shiping.webp"
             alt="Shipping Policy Banner"
             className="banner-img"
           />
