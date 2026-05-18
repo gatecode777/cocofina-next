@@ -581,7 +581,7 @@ const StorySection = () => (
     <div className="cf-container">
       <div className="cf-story-card">
         <div className="cf-story-image-side">
-          <img src="/our page.webp" alt="Our Story Book" className="cf-story-main-img" />
+          {/* <img src="/our page.webp" alt="Our Story Book" className="cf-story-main-img" /> */}
         </div>
         <div className="cf-story-content-side">
           <div className="cf-story-header">

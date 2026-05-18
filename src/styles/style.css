@@ -633,11 +633,13 @@ button {
 }
 
 .cf-story-card {
-    background-color: #814a30;
+    background: url('/our page.webp');
+    background-size: cover;
+    /* background-color: #814a30; */
     border-radius: 50px;
     display: flex;
     align-items: center;
-    padding: 50px;
+    padding: 112px 50px;
 
     gap: 50px;
     overflow: hidden;

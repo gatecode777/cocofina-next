@@ -14,8 +14,8 @@
 /* Banner Styling */
 .abs-hero-banner {
     width: 100%;
-    height: 500px;
-    background-image: url('/assets/Aboutus.jpeg');
+    height: 550px;
+    background-image: url('/assets/Aboutus.webp');
     background-size: cover;
     background-position: center;
     border-radius: 8px;
@@ -105,6 +105,8 @@
 @media (max-width: 480px) {
     .abs-hero-banner {
         height: 250px;
+        background-size: contain;
+        background-repeat: no-repeat;
     }
 
     .abs-hero-text {
