@@ -33,13 +33,14 @@ const BenefitsHeroSection = () => (
 
 // Benefits Grid Item Component
 const BenefitsGridItem = ({ title, description, imageSrc, cardType, imageAlt }) => (
-  <div className={`ben-item ${cardType === 'brown' ? 'card-brown' : 'card-cream'}`}>
+  <div
+    className={`ben-item ${cardType === 'brown' ? 'card-brown' : 'card-cream'}`}
+    style={{ backgroundImage: `url(${imageSrc})` }}
+    aria-label={imageAlt || title}
+  >
     <div className="ben-item-text">
       <h3>{title}</h3>
       <p>{description}</p>
-    </div>
-    <div className="ben-item-img">
-      <img src={imageSrc} alt={imageAlt || title} loading="lazy" />
     </div>
   </div>
 );
@@ -111,7 +112,7 @@ const BenefitsGridSection = () => (
 // Featured Recipes Data
 const recipesData = [
   {
-    image: "/dailybevrage.webp",
+    // image: "/dailybevrage.webp",
     title: "Daily Beverages",
     description: "Add a natural touch to your everyday tea and coffee with Cocofina Coconut Sugar. Its mild caramel sweetness blends perfectly without overpowering the flavour."
   },
