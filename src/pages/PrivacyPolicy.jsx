@@ -139,10 +139,10 @@ const PrivacyPolicy = () => {
             </p>
 
             <p className="contact-detail">
-              <strong>Email:</strong> customer@cocofina.co.in
+              <strong>Email:</strong> info@cocofinasugar.com
             </p>
             <p className="contact-detail">
-              <strong>Contact Number:</strong> +91 XXXXXXXXX89
+              <strong>Contact Number:</strong> +91 8233227986
             </p>
           </div>
 
