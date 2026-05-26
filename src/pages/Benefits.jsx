@@ -64,7 +64,7 @@ const benefitsData = [
   {
     title: "Natural Source",
     description: "Cocofina Sugar is derived from the sap of coconut blossoms, making it a natural sweetener that comes directly from nature without heavy processing.",
-    imageSrc: "/Benefits3.webp",
+    imageSrc: "/Benefits7.webp",
     cardType: "brown",
     imageAlt: "Natural Source"
   },
