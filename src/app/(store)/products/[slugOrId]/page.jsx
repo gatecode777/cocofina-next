@@ -199,6 +199,7 @@ const ProductDetail = () => {
   const images = product.images?.length ? product.images : (product.thumbnail ? [product.thumbnail] : []);
   const hasImages = images.length > 0;
   const isOutOfStock = product.stockStatus === 'Out of Stock';
+  const isLimitedStock = product.stockStatus === 'Limited Stock';
   const isComingSoon = product.isComingSoon;
 
   return (
@@ -211,7 +212,7 @@ const ProductDetail = () => {
           <span>&gt;</span>
           <span className="current-prod"> {product.name} </span>
         </nav>
-
+ 
         <div className="product-main-layout">
           <div className="product-gallery">
             {hasImages && (
@@ -233,9 +234,17 @@ const ProductDetail = () => {
               />
             </div>
           </div>
-
+ 
           <div className="product-info">
-            <h1 className="product-title">{product.name}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '15px' }}>
+              <h1 className="product-title" style={{ margin: 0 }}>{product.name}</h1>
+              {isOutOfStock && (
+                <span className="detail-out-of-stock-badge">🚫 Out of Stock</span>
+              )}
+              {isLimitedStock && (
+                <span className="detail-limited-stock-badge">⚠️ Limited Stock</span>
+              )}
+            </div>
 
             {selectedVariant && (
               <div className="product-price">

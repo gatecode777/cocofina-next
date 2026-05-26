@@ -51,6 +51,8 @@ const ProductCard = ({ product }) => {
   const router = useRouter();
   const lowestVar = getLowestVariant(product);
   const isComingSoon = product.isComingSoon;
+  const isOutOfStock = product.stockStatus === 'Out of Stock';
+  const isLimitedStock = product.stockStatus === 'Limited Stock';
   const [selectedVariant, setSelectedVariant] = useState(lowestVar);
 
   return (
@@ -60,10 +62,16 @@ const ProductCard = ({ product }) => {
           src={getImageSrc(product)}
           alt={product.name}
           onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
-          style={isComingSoon ? { opacity: 0.78, filter: 'grayscale(15%)' } : {}}
+          style={isComingSoon || isOutOfStock ? { opacity: 0.7, filter: 'grayscale(25%)' } : {}}
         />
         {isComingSoon && (
-          <span className="cf-coming-soon-badge">⏳ Coming Soon</span>
+          <span className="prod-coming-soon-badge">⏳ Coming Soon</span>
+        )}
+        {isOutOfStock && !isComingSoon && (
+          <span className="prod-out-of-stock-badge">🚫 Out of Stock</span>
+        )}
+        {isLimitedStock && !isComingSoon && (
+          <span className="prod-limited-stock-badge">⚠️ Limited Stock</span>
         )}
       </div>
       <div className="prod-info">
@@ -101,11 +109,15 @@ const ProductCard = ({ product }) => {
           </div>
           <button
             className="prod-order-btn"
-            onClick={() => !isComingSoon && router.push(`/products/${product.slug || product._id}`)}
-            disabled={isComingSoon}
-            style={{ border: 'none', ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af' } : {}) }}
+            onClick={() => !isComingSoon && !isOutOfStock && router.push(`/products/${product.slug || product._id}`)}
+            disabled={isComingSoon || isOutOfStock}
+            style={{ 
+              border: 'none', 
+              ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af', boxShadow: 'none' } : {}),
+              ...(isOutOfStock ? { opacity: 0.65, cursor: 'not-allowed', background: '#dc2626', color: '#fff', boxShadow: 'none' } : {})
+            }}
           >
-            {isComingSoon ? 'Coming Soon' : 'Order Now'}
+            {isComingSoon ? 'Coming Soon' : isOutOfStock ? 'Out of Stock' : 'Order Now'}
           </button>
         </div>
       </div>

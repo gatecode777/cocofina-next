@@ -264,7 +264,10 @@ const HeroSection = () => {
   const slides = [
     // { id: 0, src: "/banner.png", alt: "Banner 1" },
     { id: 0, src: "/Main Poster 02 (3).webp", alt: "Banner 1" },
-    { id: 1, src: "/Main Poster 03 (1).webp", alt: "Banner 2" }
+    { id: 1, src: "/Main Poster 03 (1).webp", alt: "Banner 2" },
+    { id: 2, src: "/Main Poster 05.webp", alt: "Banner 3" },
+    { id: 3, src: "/Main Poster 06.webp", alt: "Banner 4" },
+    { id: 4, src: "/Main Poster 07.webp", alt: "Banner 5" }
   ];
   const intervalRef = useRef(null);
   const totalSlides = slides.length;
@@ -438,6 +441,8 @@ const ProductCard = ({ product }) => {
   const imageSrc = getImageSrc(product);
   const lowestVar = getLowestVariant(product);
   const isComingSoon = product.isComingSoon;
+  const isOutOfStock = product.stockStatus === 'Out of Stock';
+  const isLimitedStock = product.stockStatus === 'Limited Stock';
 
   const variantWeights = product.variants?.map((v) => v.weight) || [];
   const [selectedVariant, setSelectedVariant] = useState(lowestVar);
@@ -450,10 +455,16 @@ const ProductCard = ({ product }) => {
           alt={product.name}
           className="cf-product-image"
           onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
-          style={isComingSoon ? { opacity: 0.78, filter: 'grayscale(15%)' } : {}}
+          style={isComingSoon || isOutOfStock ? { opacity: 0.7, filter: 'grayscale(25%)' } : {}}
         />
         {isComingSoon && (
           <span className="cf-coming-soon-badge">⏳ Coming Soon</span>
+        )}
+        {isOutOfStock && !isComingSoon && (
+          <span className="cf-out-of-stock-badge">🚫 Out of Stock</span>
+        )}
+        {isLimitedStock && !isComingSoon && (
+          <span className="cf-limited-stock-badge">⚠️ Limited Stock</span>
         )}
       </div>
 
@@ -490,11 +501,15 @@ const ProductCard = ({ product }) => {
           </div>
           <button
             className="cf-order-btn"
-            onClick={() => !isComingSoon && router.push(`/products/${product.slug || product._id}`)}
-            disabled={isComingSoon}
-            style={{ border: 'none', ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af' } : {}) }}
+            onClick={() => !isComingSoon && !isOutOfStock && router.push(`/products/${product.slug || product._id}`)}
+            disabled={isComingSoon || isOutOfStock}
+            style={{
+              border: 'none',
+              ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af', boxShadow: 'none' } : {}),
+              ...(isOutOfStock ? { opacity: 0.65, cursor: 'not-allowed', background: '#dc2626', color: '#fff', boxShadow: 'none' } : {})
+            }}
           >
-            {isComingSoon ? 'Coming Soon' : 'Order Now'}
+            {isComingSoon ? 'Coming Soon' : isOutOfStock ? 'Out of Stock' : 'Order Now'}
           </button>
         </div>
       </div>

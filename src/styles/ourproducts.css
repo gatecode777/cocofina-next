@@ -355,3 +355,39 @@
 .prod-active-filters{
     margin-bottom: 20px;
 }
+
+/* Badge Styles */
+.prod-coming-soon-badge,
+.prod-out-of-stock-badge,
+.prod-limited-stock-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 5;
+    font-family: 'Poppins', sans-serif;
+}
+
+.prod-coming-soon-badge {
+    background: rgba(249, 115, 22, 0.9);
+    color: #fff;
+}
+
+.prod-out-of-stock-badge {
+    background: rgba(220, 38, 38, 0.9);
+    color: #fff;
+}
+
+.prod-limited-stock-badge {
+    background: rgba(234, 179, 8, 0.95);
+    color: #000;
+}
