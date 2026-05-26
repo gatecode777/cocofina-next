@@ -41,7 +41,7 @@ const BenefitsGridItem = ({ title, description, imageSrc, cardType, imageAlt }) 
     <div className="ben-item-text">
       <h3>{title}</h3>
       <p>{description}</p>
-    </div>
+    </div> 
   </div>
 );
 
