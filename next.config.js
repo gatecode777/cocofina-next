@@ -5,7 +5,13 @@ const nextConfig = {
 
   // Serve uploaded files from /public/uploads
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
+        pathname: '/**',
+      },
+    ],
     unoptimized: false,
   },
 

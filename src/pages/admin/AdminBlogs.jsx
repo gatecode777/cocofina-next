@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminBlogs.css';
 import '@/styles/admin/AdminOrders.css';
 
@@ -188,7 +189,7 @@ const AdminBlogs = () => {
                       <td>
                         <div className="ab-cover-thumb">
                           {b.coverImage
-                            ? <img src={`/uploads/blogs/${b.coverImage}`} alt={b.title} onError={(e) => { e.target.style.display = 'none'; }} />
+                            ? <img src={getUploadUrl(b.coverImage, 'blogs')} alt={b.title} onError={(e) => { e.target.style.display = 'none'; }} />
                             : <i className="fas fa-image" style={{ color: '#ccc', fontSize: 20 }}></i>
                           }
                         </div>
@@ -207,7 +208,7 @@ const AdminBlogs = () => {
                       <td>
                         <div className="ab-author-cell">
                           {b.author?.image
-                            ? <img src={`/uploads/profiles/${b.author.image}`} alt={b.author.name}
+                            ? <img src={getUploadUrl(b.author.image, 'profiles')} alt={b.author.name}
                               className="ab-author-avatar" onError={(e) => { e.target.style.display = 'none'; }} />
                             : <div className="ab-author-initials">{b.author?.name?.[0] || '?'}</div>
                           }

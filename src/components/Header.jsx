@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingCart, UserRound, Menu, X, LogOut, User, Package } from 'lucide-react';
 import { userAuth } from '@/services/api';
 import { useCart } from '@/context/CartContext';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/header.css';
 
 const Header = () => {
@@ -172,7 +173,8 @@ const Header = () => {
     if (user?.profile) {
       return (
         <img
-          src={`/uploads/profiles/${user.profile}`}
+          key={user.profile}
+          src={getUploadUrl(user.profile, 'profiles')}
           alt={user.firstName}
           className="header-avatar-img"
           onError={(e) => { e.target.style.display = 'none'; }}
@@ -193,7 +195,7 @@ const Header = () => {
 
   const getProductImage = (product) => {
     const img = product.images?.[0] || product.thumbnail;
-    return img ? `/uploads/products/${img}` : '/cocofinaproduct.png';
+    return img ? getUploadUrl(img, 'products') : '/cocofinaproduct.png';
   };
 
   return (

@@ -7,11 +7,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cartAPI, couponAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/cart.css';
 
 const getImageSrc = (item) => {
   const img = item.product?.images?.[0] || item.product?.thumbnail;
-  return img ? `/uploads/products/${img}` : '/cocofinaproduct.png';
+  return img ? getUploadUrl(img, 'products') : '/cocofinaproduct.png';
 };
 
 // ── Skeleton ───────────────────────────────────────────────────────────────────

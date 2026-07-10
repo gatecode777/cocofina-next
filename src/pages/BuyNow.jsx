@@ -4,11 +4,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { cartAPI, addressAPI, orderAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/buynow.css';
 
 const getImageSrc = (item) => {
   const img = item.image || item.product?.images?.[0] || item.product?.thumbnail;
-  if (img) return `/uploads/products/${img}`;
+  if (img) return getUploadUrl(img, 'products');
   return '/cocofinaproduct.png';
 };
 
@@ -354,7 +355,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
           {cartItems.map((item, i) => (
             <div className="summary-item" key={i}>
               <img
-                src={item.image ? `/uploads/products/${item.image}` : '/cocofinaproduct.png'}
+                src={item.image ? getUploadUrl(item.image, 'products') : '/cocofinaproduct.png'}
                 alt={item.name}
                 onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
               />

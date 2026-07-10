@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/orderdetails.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -288,7 +289,7 @@ const OrderDetail = () => {
                     <div className="od-item" key={i}>
                       <div className="od-item-img">
                         <img
-                          src={item.image ? `/uploads/products/${item.image}` : '/cocofinaproduct.png'}
+                          src={item.image ? getUploadUrl(item.image, 'products') : '/cocofinaproduct.png'}
                           alt={item.name}
                           onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
                         />

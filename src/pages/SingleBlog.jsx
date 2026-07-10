@@ -9,10 +9,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { blogAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/singleblog.css';
 
-const getCoverSrc = (f) => f ? `/uploads/blogs/${f}` : '/Blog1.jpg';
-const getAuthorSrc = (f) => f ? `/uploads/profiles/${f}` : null;
+const getCoverSrc = (f) => f ? getUploadUrl(f, 'blogs') : '/Blog1.jpg';
+const getAuthorSrc = (f) => f ? getUploadUrl(f, 'profiles') : null;
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -133,7 +134,7 @@ const ContentBlock = ({ block }) => {
       return block.imageFile ? (
         <figure className="blg-figure">
           <img
-            src={`/uploads/blogs/${block.imageFile}`}
+            src={getUploadUrl(block.imageFile, 'blogs')}
             alt={block.imageAlt || ''}
             className="blg-block-img"
             loading="lazy"

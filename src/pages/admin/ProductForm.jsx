@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { adminProductAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/ProductForm.css';
 import '@/styles/admin/AdminOrders.css';
 
@@ -587,7 +588,7 @@ const ProductForm = () => {
                     <div className="image-preview-grid">
                       {existingImages.map((filename, index) => (
                         <div key={`existing-${index}`} className="preview-item">
-                          <img src={`/uploads/products/${filename}`} alt={`Product ${index + 1}`} />
+                          <img src={getUploadUrl(filename, 'products')} alt={`Product ${index + 1}`} />
                           <button type="button" className="remove-image-btn" onClick={() => removeExistingImage(filename)}>
                             <i className="fas fa-times"></i>
                           </button>

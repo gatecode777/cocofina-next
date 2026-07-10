@@ -5,10 +5,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { blogAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/blogs.css';
 
 const getCoverSrc = (filename) =>
-  filename ? `/uploads/blogs/${filename}` : '/Blog1.jpg';
+  filename ? getUploadUrl(filename, 'blogs') : '/Blog1.jpg';
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '';

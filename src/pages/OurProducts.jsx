@@ -4,14 +4,15 @@ export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { productAPI, categoryAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/ourproducts.css';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const getImageSrc = (product) => {
   if (product.images?.length)
-    return `/uploads/products/${product.images[0]}`;
+    return getUploadUrl(product.images[0], 'products');
   if (product.thumbnail)
-    return `/uploads/products/${product.thumbnail}`;
+    return getUploadUrl(product.thumbnail, 'products');
   return '/cocofinaproduct.png';
 };
 

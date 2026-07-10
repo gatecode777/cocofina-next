@@ -8,14 +8,15 @@ import Swiper from 'swiper';
 import 'swiper/css';
 import { Compass, ArrowRight } from 'lucide-react';
 import { productAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/style.css';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const getImageSrc = (product) => {
   if (product.images?.length)
-    return `/uploads/products/${product.images[0]}`;
+    return getUploadUrl(product.images[0], 'products');
   if (product.thumbnail)
-    return `/uploads/products/${product.thumbnail}`;
+    return getUploadUrl(product.thumbnail, 'products');
   return null;
 };
 

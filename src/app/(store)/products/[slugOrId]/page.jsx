@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { productAPI, cartAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/productdetail.css';
 
-const getImageUrl = (filename) => `/uploads/products/${filename}`;
+const getImageUrl = (filename) => getUploadUrl(filename, 'products');
 
 const ProductSkeleton = () => (
   <div className="product-page-container">

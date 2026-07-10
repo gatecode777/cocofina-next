@@ -22,7 +22,7 @@ export async function GET() {
       body: JSON.stringify({ email, password }),
     });
     srResult = await res.json();
-  } catch (err) {
+  } catch (err: any) {
     srResult = { fetchError: err.message };
   }
 
