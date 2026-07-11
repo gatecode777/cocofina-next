@@ -6,11 +6,12 @@ import axios from 'axios';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const getImageSrc = (product) => {
-  if (product.images?.length)
-    return `/uploads/products/${product.images[0]}`;
-  if (product.thumbnail)
-    return `/uploads/products/${product.thumbnail}`;
-  return '/cocofinaproduct.png';
+  const firstImage = product.images?.[0] || product.thumbnail;
+  if (!firstImage) return '/cocofinaproduct.png';
+  if (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/')) {
+    return firstImage;
+  }
+  return `/uploads/products/${firstImage}`;
 };
 
 const getLowestVariant = (product) => {

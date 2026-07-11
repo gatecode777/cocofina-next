@@ -32,8 +32,9 @@ export async function generateMetadata({ params }) {
   const description = product.description?.short
     ? `${product.description.short} Shop ${product.name} online at Cocofina – free delivery on ₹499+.`
     : `Buy ${product.name} – premium organic coconut sugar at Cocofina. Natural, unrefined, low GI sweetener. Free delivery on ₹499+.`;
-  const imageUrl = product.images?.[0]
-    ? `https://www.cocofinasugar.com/uploads/products/${product.images[0]}`
+  const firstImage = product.images?.[0];
+  const imageUrl = firstImage
+    ? (firstImage.startsWith('http') ? firstImage : `https://www.cocofinasugar.com/uploads/products/${firstImage}`)
     : 'https://www.cocofinasugar.com/og-image.jpg';
   const url = `https://www.cocofinasugar.com/products/${product.slug || params.slugOrId}`;
   const lowestPrice = product.variants?.reduce((min, v) => Math.min(min, v.price), Infinity);

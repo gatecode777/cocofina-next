@@ -13,6 +13,7 @@ import RecipesSection from '@/components/benefits/RecipesSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import NewsletterForm from '@/components/about/NewsletterForm';
 import ChatSection from '@/components/about/ChatSection';
+import HomeRevealObserver from '@/components/home/HomeRevealObserver';
 
 import '@/styles/style.css';
 
@@ -103,14 +104,18 @@ const StorySection = () => (
   <section className="cf-story-section">
     <div className="cf-container">
       <div className="cf-story-card">
-        <div className="cf-story-image-side"></div>
+        <div className="cf-story-image-side">
+          <img src="/our page.webp" alt="Our Story Book" className="cf-story-main-img" />
+        </div>
         <div className="cf-story-content-side">
-          <h2 className="cf-story-title-b">Our Story</h2>
-          <div className="cf-story-underline"></div>
-          <div className="cf-story-desc">
+          <div className="cf-story-header">
+            <h2 className="cf-story-title">Our Story</h2>
+            <div className="cf-story-underline"></div>
+          </div>
+          <div className="cf-story-text">
             <p>
-              Cocofina began with a simple idea: sweetening our foods shouldn't
-              mean sacrificing our health. We looked at refined sugars and
+              Cocofina was born from a simple belief — sweetness should come from
+              nature, not chemicals. In a world full of over-processed sugars, we
               wanted to return to something pure and honest.
             </p>
             <p>
@@ -183,6 +188,7 @@ export default async function Page() {
 
   return (
     <main className="cf-main">
+      <HomeRevealObserver />
       <HeroSection />
       <IntroSection />
       <FeaturesSection />

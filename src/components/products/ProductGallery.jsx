@@ -2,7 +2,13 @@
 
 import React, { useState } from 'react';
 
-const getImageUrl = (filename) => `/uploads/products/${filename}`;
+const getImageUrl = (filename) => {
+  if (!filename) return '/cocofinaproduct.png';
+  if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('/')) {
+    return filename;
+  }
+  return `/uploads/products/${filename}`;
+};
 
 const ProductGallery = ({ product = {}, images = [], initialImage = '' }) => {
   const [mainImage, setMainImage] = useState(initialImage);
