@@ -10,5 +10,5 @@ export const getUploadUrl = (filename, folder = 'products') => {
   ) {
     return filename;
   }
-  return `https://ik.imagekit.io/zjd5xircoy/cocofina/${folder}/${filename}`;
+  return `/uploads/${folder}/${filename}`;
 };
