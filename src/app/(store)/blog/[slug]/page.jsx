@@ -222,14 +222,7 @@ async function getBlogData(slug) {
   };
 }
 
-export async function generateMetadata({ params }) {
-  const data = await getBlogData(params.slug);
-  if (!data || !data.blog) return { title: 'Blog Post Not Found | Cocofina' };
-  return {
-    title: `${data.blog.title} | Cocofina Blog`,
-    description: data.blog.excerpt || `Read article ${data.blog.title} on Cocofina Blog.`,
-  };
-}
+
 
 export default async function Page({ params }) {
   const data = await getBlogData(params.slug);
