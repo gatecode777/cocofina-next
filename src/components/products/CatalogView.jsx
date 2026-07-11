@@ -3,15 +3,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { getUploadUrl } from '@/lib/imageHelper';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const getImageSrc = (product) => {
   const firstImage = product.images?.[0] || product.thumbnail;
-  if (!firstImage) return '/cocofinaproduct.png';
-  if (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/')) {
-    return firstImage;
-  }
-  return `/uploads/products/${firstImage}`;
+  return getUploadUrl(firstImage, 'products') || '/cocofinaproduct.png';
 };
 
 const getLowestVariant = (product) => {

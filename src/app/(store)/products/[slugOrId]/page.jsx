@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
     : `Buy ${product.name} – premium organic coconut sugar at Cocofina. Natural, unrefined, low GI sweetener. Free delivery on ₹499+.`;
   const firstImage = product.images?.[0];
   const imageUrl = firstImage
-    ? (firstImage.startsWith('http') ? firstImage : `https://www.cocofinasugar.com/uploads/products/${firstImage}`)
+    ? (firstImage.startsWith('http') ? firstImage : `https://ik.imagekit.io/zjd5xircoy/cocofina/products/${firstImage}`)
     : 'https://www.cocofinasugar.com/og-image.jpg';
   const url = `https://www.cocofinasugar.com/products/${product.slug || params.slugOrId}`;
   const lowestPrice = product.variants?.reduce((min, v) => Math.min(min, v.price), Infinity);

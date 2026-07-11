@@ -2,14 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getUploadUrl } from '@/lib/imageHelper';
 
 const getImageSrc = (product) => {
   const firstImage = product.images?.[0] || product.thumbnail;
-  if (!firstImage) return '/cocofinaproduct.png';
-  if (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/')) {
-    return firstImage;
-  }
-  return `/uploads/products/${firstImage}`;
+  return getUploadUrl(firstImage, 'products') || '/cocofinaproduct.png';
 };
 
 const getLowestVariant = (product) => {

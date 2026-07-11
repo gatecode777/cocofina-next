@@ -1,14 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { getUploadUrl } from '@/lib/imageHelper';
 
-const getImageUrl = (filename) => {
-  if (!filename) return '/cocofinaproduct.png';
-  if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('/')) {
-    return filename;
-  }
-  return `/uploads/products/${filename}`;
-};
+const getImageUrl = (filename) => getUploadUrl(filename, 'products') || '/cocofinaproduct.png';
 
 const ProductGallery = ({ product = {}, images = [], initialImage = '' }) => {
   const [mainImage, setMainImage] = useState(initialImage);
