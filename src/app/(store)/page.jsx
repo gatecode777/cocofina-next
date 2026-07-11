@@ -45,15 +45,50 @@ export const metadata = {
   },
 };
 
+const imageMapping = {
+  'Cocofina Coconut Sugar (100g)': {
+    thumbnail: 'product-1773661168696-2666733.jpg',
+    images: ['product-1773661168696-2666733.jpg', 'product-1773661168703-649612969.jpg', 'product-1773661168712-671321756.jpg']
+  },
+  'Cocofina Coconut Sugar (250g)': {
+    thumbnail: 'product-1773661001175-788018848.jpg',
+    images: ['product-1773661001175-788018848.jpg', 'product-1773661001185-385520394.jpg', 'product-1773661001192-458559.jpg']
+  },
+  'Cocofina Coconut Sugar (400g)': {
+    thumbnail: 'product-1773643841842-327208087.jpg',
+    images: ['product-1773643841842-327208087.jpg', 'product-1773643841880-146241348.jpg', 'product-1773643841893-126187246.jpg']
+  },
+  'Cocofina Coconut Sugar (700g)': {
+    thumbnail: 'products-1777368876158-55975.jpg',
+    images: ['products-1777368876158-55975.jpg', 'products-1777368876162-246845.jpg', 'products-1778733038983-249168.jpg']
+  },
+  'Cocofina Coconut Sugar (1000g)': {
+    thumbnail: 'product-1773643841822-182463378.jpg',
+    images: ['product-1773643841822-182463378.jpg', 'product-1773643841880-146241348.jpg', 'product-1773643841893-126187246.jpg']
+  }
+};
+
 async function getHomeProducts() {
   await connectDB();
+
+  // Auto-migrate if database contains broken .png thumbnails that do not exist locally
+  const brokenProduct = await Product.findOne({ thumbnail: /^products-177968/ });
+  if (brokenProduct) {
+    console.log("Auto-migrating broken product image paths in database...");
+    for (const [name, mapping] of Object.entries(imageMapping)) {
+      await Product.updateOne(
+        { name },
+        { $set: { thumbnail: mapping.thumbnail, images: mapping.images } }
+      );
+    }
+  }
+
   const products = await Product.find({ status: 'active' })
     .populate('category', 'name slug')
     .sort({ createdAt: -1 })
     .limit(6)
     .lean();
   
-  // Serialize Mongo records (specifically _id) for Next.js RSC boundary compatibility
   return JSON.parse(JSON.stringify(products));
 }
 
