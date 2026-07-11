@@ -1,4 +1,4 @@
-// src/app/layout.jsx (Server Component - NO 'use client')
+// src/app/layout.jsx (Server Component - NO 'use client' - Vercel trigger)
 import ClientLayout from './ClientLayout';
 import '@/styles/style.css';
 
