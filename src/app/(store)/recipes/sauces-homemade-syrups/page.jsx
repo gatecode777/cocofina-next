@@ -1,3 +1,3 @@
 'use client';
-import SaucesSyrups from '../../../../pages/SaucesSyrups';
+import SaucesSyrups from '../../../../legacy-pages/SaucesSyrups';
 export default function Page() { return <SaucesSyrups />; }

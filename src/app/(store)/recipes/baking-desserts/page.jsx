@@ -1,3 +1,3 @@
 'use client';
-import BakingDesserts from '../../../../pages/BakingDesserts';
+import BakingDesserts from '../../../../legacy-pages/BakingDesserts';
 export default function Page() { return <BakingDesserts />; }

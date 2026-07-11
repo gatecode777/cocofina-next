@@ -8,8 +8,20 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const generateToken = (id) =>
   jwt.sign({ id }, JWT_SECRET, { expiresIn: '7d' });
 
-// ── Verify token from Authorization header ────────────────────────────────────
-export const verifyToken = (request) => {
+// ── Verify token from HTTP-only cookie or Authorization header ────────────────
+export const verifyToken = (request, type = 'user') => {
+  // 1. Check secure cookie first
+  const cookieName = type === 'admin' ? 'adminToken' : 'token';
+  const cookieToken = request.cookies?.get?.(cookieName)?.value;
+  if (cookieToken) {
+    try {
+      return jwt.verify(cookieToken, JWT_SECRET);
+    } catch {
+      // Fall through to authorization header
+    }
+  }
+
+  // 2. Fall back to Authorization header
   const authHeader = request.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
   const token = authHeader.split(' ')[1];
@@ -26,7 +38,7 @@ export const requireUser = async (request) => {
   const { connectDB } = await import('./db');
   const User = (await import('../models/User')).default;
 
-  const decoded = verifyToken(request);
+  const decoded = verifyToken(request, 'user');
   if (!decoded) {
     return {
       user: null,
@@ -51,7 +63,7 @@ export const requireAdmin = async (request) => {
   const { connectDB } = await import('./db');
   const Admin = (await import('../models/Admin')).default;
 
-  const decoded = verifyToken(request);
+  const decoded = verifyToken(request, 'admin');
   if (!decoded) {
     return {
       admin: null,

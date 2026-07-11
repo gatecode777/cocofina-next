@@ -1,6 +1,6 @@
 'use client';
 import { Suspense } from 'react';
-import OrderDetail from '../../../../pages/OrderDetails';
+import OrderDetail from '../../../../legacy-pages/OrderDetails';
 export default function Page() { 
   return (
     <Suspense fallback={<div>Loading...</div>}>

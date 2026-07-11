@@ -1,3 +1,3 @@
 'use client';
-import AdminCoupons from '../../../pages/admin/AdminCoupons';
+import AdminCoupons from '../../../legacy-pages/admin/AdminCoupons';
 export default function Page() { return <AdminCoupons />; }

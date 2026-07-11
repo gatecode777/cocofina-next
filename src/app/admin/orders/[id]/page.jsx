@@ -1,4 +1,4 @@
 // src/app/admin/orders/[id]/page.jsx
 'use client';
-import AdminOrderDetail from '../../../../pages/admin/AdminOrderDetail';
+import AdminOrderDetail from '../../../../legacy-pages/admin/AdminOrderDetail';
 export default function Page() { return <AdminOrderDetail />; }

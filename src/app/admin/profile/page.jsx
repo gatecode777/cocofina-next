@@ -1,3 +1,3 @@
 'use client';
-import AdminProfile from '../../../pages/admin/AdminProfile';
+import AdminProfile from '../../../legacy-pages/admin/AdminProfile';
 export default function Page() { return <AdminProfile />; }

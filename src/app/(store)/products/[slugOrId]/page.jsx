@@ -1,33 +1,71 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { productAPI, cartAPI } from '@/services/api';
-import { triggerCartUpdate } from '@/context/CartContext';
+import React from 'react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { connectDB } from '@/lib/db';
+import Product from '@/models/Product';
+import ProductGallery from '@/components/products/ProductGallery';
+import AddToCartControls from '@/components/products/AddToCartControls';
 import '@/styles/productdetail.css';
 
-const getImageUrl = (filename) => `/uploads/products/${filename}`;
+export const dynamic = "force-dynamic";
 
-const ProductSkeleton = () => (
-  <div className="product-page-container">
-    <div className="product-main-layout">
-      <div className="product-gallery">
-        <div className="thumbnails">
-          {[1, 2, 3, 4].map((i) => <div key={i} className="sp-skel sp-skel-thumb" />)}
-        </div>
-        <div className="main-image sp-skel sp-skel-main" />
-      </div>
-      <div className="product-info">
-        <div className="sp-skel sp-skel-title" />
-        <div className="sp-skel sp-skel-price" />
-        <div className="sp-skel sp-skel-variants" />
-        <div className="sp-skel sp-skel-desc" />
-        <div className="sp-skel sp-skel-desc" style={{ width: '75%' }} />
-        <div className="sp-skel sp-skel-buttons" />
-      </div>
-    </div>
-  </div>
-);
+async function getProduct(slugOrId) {
+  await connectDB();
+  let product = null;
+  if (slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
+    product = await Product.findById(slugOrId).lean();
+  }
+  if (!product) {
+    product = await Product.findOne({ slug: slugOrId }).lean();
+  }
+  return product ? JSON.parse(JSON.stringify(product)) : null;
+}
+
+export async function generateMetadata({ params }) {
+  const product = await getProduct(params.slugOrId);
+  if (!product) return {
+    title: 'Product Not Found | Cocofina',
+    robots: { index: false, follow: false },
+  };
+
+  const title = `Buy ${product.name} – Organic Coconut Sugar | Cocofina`;
+  const description = product.description?.short
+    ? `${product.description.short} Shop ${product.name} online at Cocofina – free delivery on ₹499+.`
+    : `Buy ${product.name} – premium organic coconut sugar at Cocofina. Natural, unrefined, low GI sweetener. Free delivery on ₹499+.`;
+  const imageUrl = product.images?.[0]
+    ? `https://www.cocofinasugar.com/uploads/products/${product.images[0]}`
+    : 'https://www.cocofinasugar.com/og-image.jpg';
+  const url = `https://www.cocofinasugar.com/products/${product.slug || params.slugOrId}`;
+  const lowestPrice = product.variants?.reduce((min, v) => Math.min(min, v.price), Infinity);
+
+  return {
+    title,
+    description,
+    keywords: [
+      product.name,
+      'organic coconut sugar',
+      'buy coconut sugar online India',
+      'natural sweetener',
+      'low GI sugar',
+      'Cocofina products',
+      ...(product.seo?.keywords || []),
+    ],
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: product.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
 
 const ReviewsSection = () => (
   <section className="reviews-section">
@@ -64,7 +102,7 @@ const ReviewsSection = () => (
         {[
           { avatar: 'https://i.pravatar.cc/100?u=priya', name: 'Priya Mehra', stars: 4, date: '24 January, 2026', text: 'Great quality product! I use Cocofina Coconut Sugar for baking cookies and cakes. The flavor is natural and much better than refined sugar.', images: [] },
           { avatar: 'https://i.pravatar.cc/100?u=anoop', name: 'Anoop Sharma', stars: 5, date: '24 January, 2026', text: "I switched from regular sugar to Cocofina Coconut Sugar and I absolutely love the taste. It has a light caramel flavor that works perfectly in my tea and coffee.", images: [] },
-          { avatar: 'https://i.pravatar.cc/100?u=soniya', name: 'Soniya Mathur', stars: 4, date: '24 January, 2023', text: 'I was looking for a healthier alternative to white sugar and Cocofina Coconut Sugar is perfect. It tastes amazing and feels more natural.', images: ['/Review1.jpg', '/Review1.jpg'] },
+          { avatar: 'https://i.pravatar.cc/100?u soniya', name: 'Soniya Mathur', stars: 4, date: '24 January, 2023', text: 'I was looking for a healthier alternative to white sugar and Cocofina Coconut Sugar is perfect. It tastes amazing and feels more natural.', images: ['/Review1.jpg', '/Review1.jpg'] },
         ].map((review, i) => (
           <div className="review-item" key={i}>
             <div className="review-header">
@@ -101,139 +139,30 @@ const ReviewsSection = () => (
   </section>
 );
 
-const ProductDetail = () => {
-  const params = useParams();
-  const router = useRouter();
-  const slugOrId = params.slugOrId;
-
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [mainImage, setMainImage] = useState('');
-  const [activeThumb, setActiveThumb] = useState('');
-  const [selectedVariant, setSelectedVariant] = useState(null);
-  const [cartLoading, setCartLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const toastTimerRef = React.useRef(null);
-
-  useEffect(() => {
-    if (!slugOrId) return;
-    window.scrollTo(0, 0);
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        
-        // Try to fetch product - use the correct API endpoint
-        const res = await productAPI.getById(slugOrId);
-        
-        if (res.data.success) {
-          const p = res.data.product;
-          setProduct(p);
-          document.title = `${p.name} - Cocofina`;
-          const firstImg = p.images?.[0] || p.thumbnail || '';
-          setMainImage(firstImg);
-          setActiveThumb(firstImg);
-          if (p.variants?.length) {
-            const lowest = p.variants.reduce((min, v) => (v.price < min.price ? v : min), p.variants[0]);
-            setSelectedVariant(lowest);
-          }
-        } else {
-          setError('Product not found.');
-        }
-      } catch (err) {
-        console.error('Fetch error:', err);
-        setError('Product not found or unavailable.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [slugOrId]);
-
-  const handleAddToCart = async () => {
-    if (!selectedVariant) return;
-    const token = localStorage.getItem('token');
-    if (!token) {
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
-      router.push('/login');
-      return;
-    }
-    try {
-      setCartLoading(true);
-      const res = await cartAPI.addToCart(product._id, 1, selectedVariant.weight);
-      if (res.data.success) {
-        triggerCartUpdate();
-        if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-        setShowToast(true);
-        toastTimerRef.current = setTimeout(() => setShowToast(false), 2800);
-      }
-    } catch (err) {
-      console.error('Add to cart error:', err);
-    } finally {
-      setCartLoading(false);
-    }
-  };
-
-  const handleBuyNow = async () => {
-    await handleAddToCart();
-    router.push('/cart');
-  };
-
-  if (loading) return <main><ProductSkeleton /></main>;
-
-  if (error || !product) {
-    return (
-      <main>
-        <div className="product-page-container" style={{ textAlign: 'center', padding: '80px 20px' }}>
-          <h2 style={{ color: '#888' }}>{error || 'Product not found'}</h2>
-          <button onClick={() => router.push('/our-products')}
-            style={{ marginTop: '20px', padding: '10px 24px', background: '#5a3e28', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-            Back to Products
-          </button>
-        </div>
-      </main>
-    );
+export default async function Page({ params }) {
+  const product = await getProduct(params.slugOrId);
+  if (!product) {
+    return notFound();
   }
 
   const images = product.images?.length ? product.images : (product.thumbnail ? [product.thumbnail] : []);
-  const hasImages = images.length > 0;
+  const initialImage = images[0] || '';
   const isOutOfStock = product.stockStatus === 'Out of Stock';
   const isLimitedStock = product.stockStatus === 'Limited Stock';
-  const isComingSoon = product.isComingSoon;
 
   return (
     <main>
       <div className="product-page-container">
         <nav className="prod-breadcrumb">
-          <span className="prod-breadcrumb-link" onClick={() => router.push('/')}>HOME </span>
+          <Link href="/" className="prod-breadcrumb-link">HOME</Link>
           <span>&gt;</span>
-          <span className="prod-breadcrumb-link" onClick={() => router.push('/our-products')}> OUR PRODUCT </span>
+          <Link href="/our-products" className="prod-breadcrumb-link">OUR PRODUCT</Link>
           <span>&gt;</span>
-          <span className="current-prod"> {product.name} </span>
+          <span className="current-prod">{product.name}</span>
         </nav>
  
         <div className="product-main-layout">
-          <div className="product-gallery">
-            {hasImages && (
-              <div className="thumbnails">
-                {images.map((filename, index) => (
-                  <img key={index} src={getImageUrl(filename)}
-                    alt={`${product.name} ${index + 1}`}
-                    className={activeThumb === filename ? 'active' : ''}
-                    onClick={() => { setMainImage(filename); setActiveThumb(filename); }}
-                    onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
-                  />
-                ))}
-              </div>
-            )}
-            <div className="main-image">
-              <img src={hasImages ? getImageUrl(mainImage) : '/cocofinaproduct.png'}
-                alt={product.name}
-                onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
-              />
-            </div>
-          </div>
+          <ProductGallery product={product} images={images} initialImage={initialImage} />
  
           <div className="product-info">
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '15px' }}>
@@ -246,39 +175,7 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {selectedVariant && (
-              <div className="product-price">
-                <span className="current-price">₹{selectedVariant.price}</span>
-                {selectedVariant.oldPrice && selectedVariant.oldPrice > selectedVariant.price && (
-                  <span className="old-price">₹{selectedVariant.oldPrice}</span>
-                )}
-              </div>
-            )}
-
-            {product.variants?.length > 0 && (
-              <div className="weight-selector">
-                {product.variants.map((v) => (
-                  <button key={v.weight}
-                    className={`weight-btn ${selectedVariant?.weight === v.weight ? 'active' : ''}`}
-                    onClick={() => setSelectedVariant(v)}
-                    disabled={isOutOfStock}
-                  >{v.weight}</button>
-                ))}
-              </div>
-            )}
-
-            {product.description?.short && (
-              <p className="product-description">{product.description.short}</p>
-            )}
-
-            <div className="action-buttons">
-              <button className="btn-buy-now" onClick={handleBuyNow} disabled={isOutOfStock || cartLoading}>
-                {isOutOfStock ? 'Out of Stock' : 'Buy Now'}
-              </button>
-              <button className="btn-add-cart" onClick={handleAddToCart} disabled={isOutOfStock || cartLoading}>
-                {cartLoading ? 'Adding...' : 'Add to Cart'}
-              </button>
-            </div>
+            <AddToCartControls product={product} isOutOfStock={isOutOfStock} />
 
             <div className="features-bar">
               {product.delivery && (
@@ -346,17 +243,6 @@ const ProductDetail = () => {
       </section>
 
       <ReviewsSection />
-
-      <div className={`cart-toast ${showToast ? 'show' : ''}`}>
-        <span className="cart-toast-icon">
-          <svg viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </span>
-        {product?.name} added to cart!
-      </div>
     </main>
   );
-};
-
-export default ProductDetail;
+}

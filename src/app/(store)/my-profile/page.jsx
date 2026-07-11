@@ -1,3 +1,3 @@
 'use client';
-import AccountPage from '../../../pages/MyProfile';
+import AccountPage from '../../../legacy-pages/MyProfile';
 export default function Page() { return <AccountPage />; }

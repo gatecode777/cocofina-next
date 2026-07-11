@@ -1,3 +1,3 @@
 'use client';
-import ResetPasswordPage from '../../../pages/ResetPassword';
+import ResetPasswordPage from '../../../legacy-pages/ResetPassword';
 export default function Page() { return <ResetPasswordPage />; }

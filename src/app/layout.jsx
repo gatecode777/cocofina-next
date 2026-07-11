@@ -4,33 +4,50 @@ import '@/styles/style.css';
 
 export const metadata = {
   title: {
-    default: 'Cocofina sugar',
-    template: '%s | Cocofina sugar'
+    default: 'Cocofina – Premium Organic Coconut Sugar | Natural Sweetener from India',
+    template: '%s | Cocofina'
   },
-  description: 'Your default website description here. This should be a compelling description of your site.',
-  keywords: ['keyword1', 'keyword2', 'keyword3'],
-  authors: [{ name: 'Your Name/Company' }],
+  description: 'Shop Cocofina premium organic coconut sugar — a 100% natural, unrefined sweetener with a low glycemic index. Perfect for baking, cooking, and healthy living. Free delivery on orders above ₹499.',
+  keywords: [
+    'organic coconut sugar',
+    'coconut sugar India',
+    'natural sweetener',
+    'low glycemic index sugar',
+    'coconut sugar buy online',
+    'healthy sugar alternative',
+    'unrefined coconut sugar',
+    'coconut blossom sugar',
+    'sugar substitute',
+    'Cocofina',
+    'vegan sweetener India',
+    'coconut sugar for baking',
+    'diabetic friendly sugar',
+  ],
+  authors: [{ name: 'Cocofina', url: 'https://www.cocofinasugar.com' }],
+  metadataBase: new URL('https://www.cocofinasugar.com'),
   openGraph: {
-    title: 'Cocofina sugar',
-    description: 'Your default website description here.',
-    url: 'https://yourdomain.com',
-    siteName: 'Cocofina sugar',
+    title: 'Cocofina – Premium Organic Coconut Sugar | Natural Sweetener',
+    description: 'Discover Cocofina organic coconut sugar — naturally sweet, low GI, and perfect for a healthy lifestyle. Shop now and enjoy free delivery across India.',
+    url: 'https://www.cocofinasugar.com',
+    siteName: 'Cocofina',
     images: [
       {
-        url: 'https://yourdomain.com/og-image.jpg',
+        url: 'https://www.cocofinasugar.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Cocofina sugar OG Image',
+        alt: 'Cocofina Premium Organic Coconut Sugar',
       },
     ],
-    locale: 'en_US',
+    locale: 'en_IN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cocofina sugar',
-    description: 'Your default website description here.',
-    images: ['https://yourdomain.com/twitter-image.jpg'],
+    title: 'Cocofina – Premium Organic Coconut Sugar',
+    description: 'Natural, unrefined coconut sugar with a low glycemic index. Shop Cocofina for a healthier, sweeter life.',
+    site: '@cocofina',
+    creator: '@cocofina',
+    images: ['https://www.cocofinasugar.com/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -44,7 +61,10 @@ export const metadata = {
     },
   },
   alternates: {
-    canonical: 'https://yourdomain.com',
+    canonical: 'https://www.cocofinasugar.com',
+  },
+  verification: {
+    google: 'your-google-site-verification-token',
   },
 };
 
@@ -71,6 +91,30 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        {/* JSON-LD Structured Data – Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Cocofina",
+              "url": "https://www.cocofinasugar.com",
+              "logo": "https://www.cocofinasugar.com/logo.png",
+              "description": "Cocofina is a premium organic coconut sugar brand from India offering 100% natural, unrefined, low glycemic index sweeteners.",
+              "sameAs": [
+                "https://www.instagram.com/cocofina",
+                "https://www.facebook.com/cocofina"
+              ],
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "email": "support@cocofina.in",
+                "availableLanguage": ["English", "Hindi"]
+              }
+            })
+          }}
+        />
       </head>
       <body>
         <ClientLayout>

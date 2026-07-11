@@ -1,6 +1,6 @@
 'use client';
 import { Suspense } from 'react';
-import Signup from '../../../pages/Signup';
+import Signup from '../../../legacy-pages/Signup';
 
 export default function Page() { 
   return (

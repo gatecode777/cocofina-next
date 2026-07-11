@@ -41,12 +41,22 @@ export async function POST(request) {
       description: `${admin.fullName} (${admin.role}) logged in`,
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Login successful',
       token,
       admin: adminData,
     });
+
+    response.cookies.set('adminToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    });
+
+    return response;
   } catch (err) {
     console.error('Admin login error:', err);
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

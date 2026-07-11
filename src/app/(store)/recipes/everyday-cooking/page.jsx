@@ -1,3 +1,3 @@
 'use client';
-import EverydayCooking from '../../../../pages/EverydayCooking';
+import EverydayCooking from '../../../../legacy-pages/EverydayCooking';
 export default function Page() { return <EverydayCooking />; }

@@ -20,7 +20,9 @@ export async function POST(request) {
       description: `${admin.fullname} logged out`,
     });
 
-    return NextResponse.json({ success: true, message: 'Logout successful' });
+    const response = NextResponse.json({ success: true, message: 'Logout successful' });
+    response.cookies.set('adminToken', '', { path: '/', maxAge: 0 });
+    return response;
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }

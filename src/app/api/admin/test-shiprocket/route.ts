@@ -23,7 +23,7 @@ export async function GET() {
     });
     srResult = await res.json();
   } catch (err) {
-    srResult = { fetchError: err.message };
+    srResult = { fetchError: err instanceof Error ? err.message : String(err) };
   }
 
   return NextResponse.json({

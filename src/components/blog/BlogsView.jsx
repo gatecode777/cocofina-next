@@ -1,11 +1,9 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { blogAPI } from '@/services/api';
-import '@/styles/blogs.css';
+import axios from 'axios';
 
 const getCoverSrc = (filename) =>
   filename ? `/uploads/blogs/${filename}` : '/Blog1.jpg';
@@ -13,7 +11,6 @@ const getCoverSrc = (filename) =>
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
 
-// ── Skeleton card ─────────────────────────────────────────────────────────────
 const BlogCardSkeleton = () => (
   <div className="blog-card blog-card-skel">
     <div className="blog-skel blog-skel-img"></div>
@@ -24,35 +21,21 @@ const BlogCardSkeleton = () => (
   </div>
 );
 
-// ── Main Blogs page ───────────────────────────────────────────────────────────
-const Blogs = () => {
+const BlogsView = ({ initialCategories = [], initialBlogs = [], initialTotalCount = 0 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initCategory = searchParams.get('category') || 'all';
 
-  const [blogs, setBlogs] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState(initialBlogs);
+  const [categories, setCategories] = useState(initialCategories);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState(initCategory);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalBlogs, setTotalBlogs] = useState(0);
+  const [totalPages, setTotalPages] = useState(Math.ceil(initialTotalCount / 6) || 1);
+  const [totalBlogs, setTotalBlogs] = useState(initialTotalCount);
   const LIMIT = 6;
-  const debRef = useRef(null);
-
-  useEffect(() => {
-    document.title = 'Blog — Cocofina';
-    window.scrollTo(0, 0);
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await blogAPI.getPublicCategories();
-      if (res.data.success) setCategories(res.data.categories);
-    } catch { /* ignore */ }
-  };
+  const searchDebounceRef = useRef(null);
 
   const fetchBlogs = useCallback(async () => {
     setLoading(true);
@@ -61,13 +44,14 @@ const Blogs = () => {
       if (searchTerm.trim()) params.search = searchTerm.trim();
       if (activeCategory !== 'all') params.category = activeCategory;
 
-      const res = await blogAPI.getPublicAll(params);
+      const res = await axios.get('/api/blogs', { params });
       if (res.data.success) {
         setBlogs(res.data.blogs);
         setTotalPages(res.data.totalPages || 1);
         setTotalBlogs(res.data.total || 0);
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setBlogs([]);
     } finally {
       setLoading(false);
@@ -75,8 +59,11 @@ const Blogs = () => {
   }, [currentPage, searchTerm, activeCategory]);
 
   useEffect(() => {
-    fetchBlogs();
-  }, [fetchBlogs]);
+    // Only call fetchBlogs if filters/page changed from initial state
+    if (currentPage !== 1 || searchTerm !== '' || activeCategory !== initCategory) {
+      fetchBlogs();
+    }
+  }, [currentPage, searchTerm, activeCategory, fetchBlogs, initCategory]);
 
   const handleSearch = (val) => {
     setSearchTerm(val);
@@ -98,7 +85,6 @@ const Blogs = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Pagination with ellipsis
   const buildPages = () => {
     if (totalPages <= 5) return Array.from({ length: totalPages }, (_, i) => i + 1);
     const pages = [1];
@@ -111,7 +97,6 @@ const Blogs = () => {
 
   return (
     <>
-      {/* ── Top bar ──────────────────────────────────────────────────────── */}
       <div className="blog-top-bar">
         <div className="container flex-header">
           <div className="breadcrumb">
@@ -144,7 +129,6 @@ const Blogs = () => {
         </div>
       </div>
 
-      {/* ── Category filter tabs ──────────────────────────────────────────── */}
       {categories.length > 0 && (
         <div className="blog-category-bar">
           <div className="container">
@@ -170,7 +154,6 @@ const Blogs = () => {
         </div>
       )}
 
-      {/* ── Grid ─────────────────────────────────────────────────────────── */}
       <main className="blog-section" style={{ marginBottom: "80px" }}>
         <div className="container">
 
@@ -226,7 +209,6 @@ const Blogs = () => {
             </div>
           )}
 
-          {/* Pagination */}
           {totalPages > 1 && !loading && (
             <div className="pagination">
               <button
@@ -253,4 +235,4 @@ const Blogs = () => {
   );
 };
 
-export default Blogs;
+export default BlogsView;

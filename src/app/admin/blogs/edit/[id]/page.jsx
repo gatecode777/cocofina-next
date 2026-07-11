@@ -1,3 +1,3 @@
 'use client';
-import AdminBlogForm from '../../../../../pages/admin/AdminBlogForm';
+import AdminBlogForm from '../../../../../legacy-pages/admin/AdminBlogForm';
 export default function Page() { return <AdminBlogForm />; }

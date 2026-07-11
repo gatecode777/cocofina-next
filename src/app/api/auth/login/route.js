@@ -25,7 +25,17 @@ export async function POST(request) {
     if (!isMatch) return NextResponse.json({ success: false, message: 'Invalid email or password' }, { status: 400 });
 
     const token = generateToken(user._id);
-    return NextResponse.json({ success: true, message: 'Login successful', token, user: safeUser(user) });
+    const response = NextResponse.json({ success: true, message: 'Login successful', token, user: safeUser(user) });
+
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    });
+
+    return response;
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }

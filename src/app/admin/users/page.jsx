@@ -1,3 +1,3 @@
 'use client';
-import AdminUsers from '../../../pages/admin/AdminUsers';
+import AdminUsers from '../../../legacy-pages/admin/AdminUsers';
 export default function Page() { return <AdminUsers />; }

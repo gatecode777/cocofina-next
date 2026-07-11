@@ -2,12 +2,11 @@
 // Singleton MongoDB connection — reused across hot reloads in dev
 import mongoose from "mongoose";
 import dns from "node:dns/promises";
-dns.setServers(["1.1.1.1"]);
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define MONGODB_URI in .env.local');
+try {
+  dns.setServers(["1.1.1.1"]);
+} catch (dnsErr) {
+  console.warn("Warning: Could not set DNS servers:", dnsErr.message);
 }
 
 // In development, store the connection on the global object so it
@@ -18,14 +17,34 @@ if (!cached) {
 }
 
 export async function connectDB() {
-  if (mongoose.connection.readyState >= 1) return;
+  const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/cocofina";
+
+  if (!process.env.MONGODB_URI) {
+    console.warn("Warning: MONGODB_URI is not defined in environment variables. Falling back to local MongoDB: mongodb://127.0.0.1:27017/cocofina");
+  }
+
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      console.log("MongoDB connected");
+      return mongooseInstance;
+    });
+  }
 
   try {
-
-    await mongoose.connect(MONGODB_URI);
-
-    console.log("MongoDB connected");
+    cached.conn = await cached.promise;
   } catch (error) {
+    cached.promise = null;
     console.error("MongoDB connection error:", error);
+    throw error;
   }
+
+  return cached.conn;
 }

@@ -10,13 +10,16 @@ import OTP from '@/models/OTP';
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 const sendOTPEmail = async (email, otp, firstName) => {
+  const mailUser = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const mailPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    auth: { user: mailUser, pass: mailPass },
   });
 
   await transporter.sendMail({
-    from:    `"Cocofina" <${process.env.SMTP_USER}>`,
+    from:    `"Cocofina" <${mailUser}>`,
     to:      email,
     subject: 'Your Password Reset OTP - Cocofina',
     html: `

@@ -12,7 +12,9 @@ export async function POST(request) {
     if (error) return error;
     await connectDB();
     await User.findByIdAndUpdate(user._id, { loginToken: null });
-    return NextResponse.json({ success: true, message: 'Logged out successfully' });
+    const response = NextResponse.json({ success: true, message: 'Logged out successfully' });
+    response.cookies.set('token', '', { path: '/', maxAge: 0 });
+    return response;
   } catch (err) {
     return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
   }

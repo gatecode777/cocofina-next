@@ -1,6 +1,6 @@
 'use client';
 import { Suspense } from 'react';
-import Login from '../../../pages/Login';
+import Login from '../../../legacy-pages/Login';
 
 export const dynamic = 'force-dynamic';
 

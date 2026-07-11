@@ -1,10 +1,8 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { productAPI, categoryAPI } from '@/services/api';
-import '@/styles/ourproducts.css';
+import axios from 'axios';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 const getImageSrc = (product) => {
@@ -129,7 +127,6 @@ const ProductCard = ({ product }) => {
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
-  // Build page numbers array with ellipsis logic
   const buildPages = () => {
     const pages = [];
     if (totalPages <= 5) {
@@ -185,11 +182,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
-const OurProducts = () => {
+const CatalogView = ({ initialCategories = [], initialCategoryProducts = {} }) => {
   const router = useRouter();
 
-  // ── State ───────────────────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -197,32 +192,22 @@ const OurProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Categories for sidebar (fetched from API)
-  const [categories, setCategories] = useState([]);
-  // Map of categoryId → array of products in that category (for sidebar checkboxes)
-  const [categoryProducts, setCategoryProducts] = useState({});
-
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-  // selectedProductIds: Set of product _ids (from sidebar checkboxes)
   const [selectedProductIds, setSelectedProductIds] = useState(new Set());
-  // selectedCategoryIds: Set of category _ids (for category-level filtering)
   const [selectedCategoryIds, setSelectedCategoryIds] = useState(new Set());
-  // Open/closed state for each filter group
-  const [openFilters, setOpenFilters] = useState({});
+  const [openFilters, setOpenFilters] = useState(() => {
+    const defaultOpen = {};
+    initialCategories.forEach((_, i) => { defaultOpen[i] = true; });
+    return defaultOpen;
+  });
 
   const searchDebounceRef = useRef(null);
   const LIMIT = 9;
 
-  // ── Page title ───────────────────────────────────────────────────────────────
-  useEffect(() => {
-    document.title = 'Our Products - Cocofina';
-    window.scrollTo(0, 0);
-  }, []);
-
-  // ── Debounce search ──────────────────────────────────────────────────────────
+  // Debounce search
   useEffect(() => {
     if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     searchDebounceRef.current = setTimeout(() => {
@@ -232,60 +217,16 @@ const OurProducts = () => {
     return () => clearTimeout(searchDebounceRef.current);
   }, [searchTerm]);
 
-  // ── Fetch categories + their products for sidebar ────────────────────────────
-  useEffect(() => {
-    const fetchSidebarData = async () => {
-      try {
-        const catRes = await categoryAPI.getAll({ isActive: true });
-        if (!catRes.data.success) return;
-
-        const cats = catRes.data.categories;
-        setCategories(cats);
-        // Default: all filter groups open
-        const defaultOpen = {};
-        cats.forEach((_, i) => { defaultOpen[i] = true; });
-        setOpenFilters(defaultOpen);
-
-        // For each category, fetch its products (name + _id only, large limit)
-        const catProductMap = {};
-        await Promise.all(
-          cats.map(async (cat) => {
-            try {
-              const res = await productAPI.getAll({ category: cat._id, limit: 100, page: 1 });
-              if (res.data.success) {
-                catProductMap[cat._id] = res.data.products.map((p) => ({
-                  _id: p._id,
-                  name: p.name,
-                  slug: p.slug,
-                }));
-              }
-            } catch {
-              catProductMap[cat._id] = [];
-            }
-          })
-        );
-        setCategoryProducts(catProductMap);
-      } catch (err) {
-        console.error('Sidebar fetch error:', err);
-      }
-    };
-    fetchSidebarData();
-  }, []);
-
-  // ── Fetch products (main grid) ───────────────────────────────────────────────
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
 
-      // Build sort param
       let sortParam = '-createdAt';
       if (sortBy === 'price_asc') sortParam = 'variants.0.price';
       if (sortBy === 'price_desc') sortParam = '-variants.0.price';
       if (sortBy === 'newest') sortParam = '-createdAt';
 
-      // If specific product checkboxes are ticked, we filter client-side
-      // Otherwise filter by selected categories
       const params = {
         page: currentPage,
         limit: LIMIT,
@@ -293,26 +234,19 @@ const OurProducts = () => {
         sort: sortParam,
       };
 
-      // If category checkboxes are selected (but no specific products),
-      // pass all selected category IDs joined (backend supports single category param,
-      // so we do separate requests and merge — or pass the first one for simplicity)
-      // Better: fetch all and filter client-side when multi-category needed.
-      // Single category filter (most common use case):
       if (selectedCategoryIds.size === 1) {
         params.category = [...selectedCategoryIds][0];
       }
 
-      const res = await productAPI.getAll(params);
+      const res = await axios.get('/api/products', { params });
 
       if (res.data.success) {
         let fetched = res.data.products;
 
-        // Client-side: filter by specific checked product IDs
         if (selectedProductIds.size > 0) {
           fetched = fetched.filter((p) => selectedProductIds.has(p._id));
         }
 
-        // Client-side: sort (since backend sort on nested variants may not work)
         if (sortBy === 'price_asc') {
           fetched = [...fetched].sort((a, b) => {
             const aMin = getLowestVariant(a)?.price ?? Infinity;
@@ -343,26 +277,20 @@ const OurProducts = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────────
   const toggleFilterGroup = (index) =>
     setOpenFilters((prev) => ({ ...prev, [index]: !prev[index] }));
 
-  // Toggle a specific product checkbox
   const toggleProductCheckbox = (productId, categoryId) => {
     setSelectedProductIds((prev) => {
       const next = new Set(prev);
-      if (next.has(productId)) {
-        next.delete(productId);
-      } else {
-        next.add(productId);
-      }
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
       return next;
     });
-    // Also track the category so we scope the API call
+
     setSelectedCategoryIds((prev) => {
       const next = new Set(prev);
-      // Check if any product in this category is still selected after toggle
-      const catProds = categoryProducts[categoryId] || [];
+      const catProds = initialCategoryProducts[categoryId] || [];
       const newProductIds = new Set(selectedProductIds);
       if (newProductIds.has(productId)) newProductIds.delete(productId);
       else newProductIds.add(productId);
@@ -374,9 +302,8 @@ const OurProducts = () => {
     setCurrentPage(1);
   };
 
-  // Toggle an entire category checkbox
   const toggleCategoryCheckbox = (categoryId) => {
-    const catProds = categoryProducts[categoryId] || [];
+    const catProds = initialCategoryProducts[categoryId] || [];
     const allSelected = catProds.every((p) => selectedProductIds.has(p._id));
 
     setSelectedProductIds((prev) => {
@@ -408,13 +335,10 @@ const OurProducts = () => {
 
   const hasActiveFilters = selectedProductIds.size > 0 || selectedCategoryIds.size > 0 || debouncedSearch;
 
-  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <main>
       <section className="prod-shop-section">
         <div className="prod-container">
-
-          {/* Breadcrumb */}
           <nav className="prod-breadcrumb">
             <span className="prod-breadcrumb-link" onClick={() => router.push('/')}> HOME </span>
             <span>&gt;</span>
@@ -422,10 +346,7 @@ const OurProducts = () => {
           </nav>
 
           <div className="prod-layout">
-
-            {/* ── Sidebar ──────────────────────────────────────────────────── */}
             <aside className="prod-sidebar">
-              {/* Search */}
               <div className="prod-search-box">
                 <svg className="custom-search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
@@ -439,24 +360,21 @@ const OurProducts = () => {
                 />
               </div>
 
-              {/* Clear filters button */}
               {hasActiveFilters && (
                 <button className="prod-clear-filters" onClick={clearAllFilters}>
                   Clear All Filters
                 </button>
               )}
 
-              {/* Dynamic category filter groups */}
-              {categories.length === 0 ? (
-                // Skeleton for sidebar
+              {initialCategories.length === 0 ? (
                 [1, 2, 3].map((i) => (
                   <div key={i} className="prod-filter-group prod-skel-group">
                     <div className="prod-skel-line" style={{ height: '20px', margin: '12px 16px' }}></div>
                   </div>
                 ))
               ) : (
-                categories.map((cat, index) => {
-                  const catProds = categoryProducts[cat._id] || [];
+                initialCategories.map((cat, index) => {
+                  const catProds = initialCategoryProducts[cat._id] || [];
                   const allSelected = catProds.length > 0 && catProds.every((p) => selectedProductIds.has(p._id));
                   const someSelected = catProds.some((p) => selectedProductIds.has(p._id));
 
@@ -468,7 +386,6 @@ const OurProducts = () => {
                       activeFilter={openFilters[index]}
                       onToggle={toggleFilterGroup}
                     >
-                      {/* "All" checkbox for the whole category */}
                       {catProds.length > 0 && (
                         <label className="prod-checkbox-item prod-checkbox-all">
                           <input
@@ -483,7 +400,6 @@ const OurProducts = () => {
                         </label>
                       )}
 
-                      {/* Individual product checkboxes */}
                       {catProds.length === 0 ? (
                         <p className="prod-no-items">No products in this category</p>
                       ) : (
@@ -504,7 +420,6 @@ const OurProducts = () => {
               )}
             </aside>
 
-            {/* ── Main content ─────────────────────────────────────────────── */}
             <main className="prod-main-content">
               <div className="prod-top-bar">
                 <div className="prod-count">
@@ -523,15 +438,14 @@ const OurProducts = () => {
                 </div>
               </div>
 
-              {/* Active filter chips */}
               {(selectedCategoryIds.size > 0 || selectedProductIds.size > 0) && (
                 <div className="prod-active-filters">
                   {[...selectedCategoryIds].map((catId) => {
-                    const cat = categories.find((c) => c._id === catId);
+                    const cat = initialCategories.find((c) => c._id === catId);
                     if (!cat) return null;
-                    const catProds = categoryProducts[catId] || [];
+                    const catProds = initialCategoryProducts[catId] || [];
                     const allInCat = catProds.every((p) => selectedProductIds.has(p._id));
-                    if (!allInCat) return null; // only show chip when whole category selected
+                    if (!allInCat) return null;
                     return (
                       <span key={catId} className="prod-filter-chip">
                         {cat.name}
@@ -540,18 +454,16 @@ const OurProducts = () => {
                     );
                   })}
                   {[...selectedProductIds].map((prodId) => {
-                    // Find this product in categoryProducts
                     let prodName = null;
-                    for (const prods of Object.values(categoryProducts)) {
+                    for (const prods of Object.values(initialCategoryProducts)) {
                       const found = prods.find((p) => p._id === prodId);
                       if (found) { prodName = found.name; break; }
                     }
                     if (!prodName) return null;
-                    // If entire category is selected, skip individual chips
-                    const catId = Object.keys(categoryProducts).find((cid) =>
-                      categoryProducts[cid].some((p) => p._id === prodId)
+                    const catId = Object.keys(initialCategoryProducts).find((cid) =>
+                      initialCategoryProducts[cid].some((p) => p._id === prodId)
                     );
-                    const catProds = categoryProducts[catId] || [];
+                    const catProds = initialCategoryProducts[catId] || [];
                     if (catProds.length > 0 && catProds.every((p) => selectedProductIds.has(p._id))) return null;
                     return (
                       <span key={prodId} className="prod-filter-chip">
@@ -570,7 +482,6 @@ const OurProducts = () => {
                 </div>
               )}
 
-              {/* Error */}
               {error && (
                 <div className="prod-error">
                   <p>{error}</p>
@@ -578,7 +489,6 @@ const OurProducts = () => {
                 </div>
               )}
 
-              {/* Grid */}
               {loading ? (
                 <div className="prod-grid">
                   {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonCard key={i} />)}
@@ -617,4 +527,4 @@ const OurProducts = () => {
   );
 };
 
-export default OurProducts;
+export default CatalogView;
