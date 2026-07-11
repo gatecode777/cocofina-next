@@ -73,7 +73,6 @@ async function getHomeProducts() {
 
   // Auto-migrate if database contains broken .png thumbnails that do not exist locally
   const brokenProduct = await Product.findOne({ thumbnail: /^products-177968/ });
-  console.log("DEBUG: brokenProduct found in DB:", brokenProduct ? brokenProduct.name : "NONE");
   if (brokenProduct) {
     console.log("Auto-migrating broken product image paths in database...");
     for (const [name, mapping] of Object.entries(imageMapping)) {
