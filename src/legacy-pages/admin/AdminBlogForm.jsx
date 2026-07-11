@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminBlogs.css';
 import '@/styles/admin/AdminOrders.css';
 
@@ -381,8 +382,8 @@ const AdminBlogForm = () => {
         seoTitle: b.seo?.metaTitle || '', seoDescription: b.seo?.metaDescription || '',
         seoKeywords: b.seo?.metaKeywords || '',
       });
-      if (b.coverImage) setCoverPreview(`/uploads/blogs/${b.coverImage}`);
-      if (b.author?.image) setAuthorImgPreview(`/uploads/profiles/${b.author.image}`);
+      if (b.coverImage) setCoverPreview(getUploadUrl(b.coverImage, 'blogs'));
+      if (b.author?.image) setAuthorImgPreview(getUploadUrl(b.author.image, 'profiles'));
       if (b.content?.length) {
         setBlocks(b.content.map((bl, i) => ({ ...bl, _id: Date.now() + i })));
       }

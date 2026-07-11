@@ -5,9 +5,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { userAuth, orderAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/myprofile.css';
 
-const getAvatarUrl = (filename) => filename ? `/uploads/profiles/${filename}` : null;
+const getAvatarUrl = (filename) => filename ? getUploadUrl(filename, 'profiles') : null;
 
 const AccountPage = () => {
   const router = useRouter();

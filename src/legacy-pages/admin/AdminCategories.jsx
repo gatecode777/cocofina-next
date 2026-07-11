@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminCategories.css';
 import '@/styles/admin/AdminOrders.css';
 
@@ -124,7 +125,7 @@ const AdminCategories = () => {
       order: category.order ?? 0,
       isActive: category.isActive,
     });
-    setImagePreview(category.image ? `/uploads/categories/${category.image}` : null);
+    setImagePreview(category.image ? getUploadUrl(category.image, 'categories') : null);
     setImageFile(null);
     setShowModal(true);
   };
@@ -251,7 +252,7 @@ const AdminCategories = () => {
                     <td>
                       {cat.image ? (
                         <img
-                          src={`/uploads/categories/${cat.image}`}
+                          src={getUploadUrl(cat.image, 'categories')}
                           alt={cat.name}
                           className="category-thumbnail"
                           onError={(e) => { e.target.src = 'https://via.placeholder.com/50x50?text=No+Image'; }}

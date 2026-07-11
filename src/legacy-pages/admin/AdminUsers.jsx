@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { userAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminUsers.css';
 
 const getAdminPerms = (module) => {
@@ -317,7 +318,7 @@ const AdminUsers = () => {
                     <div className="user-info">
                       <div className="user-avatar">
                         {user.profile ? (
-                          <img src={`/uploads/profiles/${user.profile}`} alt={user.firstName} />
+                           <img src={getUploadUrl(user.profile, 'profiles')} alt={user.firstName} />
                         ) : (
                           <i className="fas fa-user"></i>
                         )}

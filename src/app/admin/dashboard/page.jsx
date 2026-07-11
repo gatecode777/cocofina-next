@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { orderAPI, userAPI, adminProductAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminDashboard.css';
 
 const getAdminPerms = (module) => {
@@ -63,7 +64,7 @@ const UserDetailModal = ({ user, onClose }) => {
           <div className="udm-avatar-wrap">
             <div className="udm-avatar">
               {user.profile
-                ? <img src={`/uploads/profiles/${user.profile}`} alt={user.firstName}
+                ? <img key={user.profile} src={getUploadUrl(user.profile, 'profiles')} alt={user.firstName}
                   onError={(e) => { e.target.style.display = 'none'; }} />
                 : <span>{initials}</span>
               }
@@ -230,7 +231,7 @@ const OrderDetailModal = ({ order, onClose }) => {
                 <div className="odm-item-row" key={i}>
                   <div className="odm-item-img">
                     {item.image
-                      ? <img src={`/uploads/products/${item.image}`} alt={item.name} onError={(e) => { e.target.src = '/cocofinaproduct.png'; }} />
+                      ? <img src={getUploadUrl(item.image, 'products')} alt={item.name} onError={(e) => { e.target.src = '/cocofinaproduct.png'; }} />
                       : <i className="fas fa-cube"></i>
                     }
                   </div>
@@ -482,7 +483,7 @@ const AdminDashboard = () => {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#3b2a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                               {u.profile
-                                ? <img src={`/uploads/profiles/${u.profile}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" onError={(e) => { e.target.style.display = 'none'; }} />
+                                ? <img key={u.profile} src={getUploadUrl(u.profile, 'profiles')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" onError={(e) => { e.target.style.display = 'none'; }} />
                                 : <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>{(u.firstName?.[0] || '').toUpperCase()}{(u.lastName?.[0] || '').toUpperCase()}</span>
                               }
                             </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminOrderDetail.css';
 
 const tok = () => localStorage.getItem('adminToken');
@@ -420,7 +421,7 @@ const AdminOrderDetail = () => {
                   <div className="aod-item-row" key={i}>
                     <div className="aod-item-img">
                       {item.image
-                        ? <img src={`/uploads/products/${item.image}`} alt={item.name} onError={e => { e.target.src = '/cocofinaproduct.png'; }} />
+                        ? <img src={getUploadUrl(item.image, 'products')} alt={item.name} onError={e => { e.target.src = '/cocofinaproduct.png'; }} />
                         : <i className="fas fa-cube"></i>
                       }
                     </div>

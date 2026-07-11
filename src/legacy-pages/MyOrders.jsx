@@ -5,6 +5,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/myorders.css';
 
 // ── Status config ──────────────────────────────────────────────────────────────
@@ -65,7 +66,7 @@ const OrderDetailModal = ({ order, onClose, onCancel }) => {
               <div className="mo-item" key={i}>
                 <div className="mo-item-img">
                   <img
-                    src={item.image ? `/uploads/products/${item.image}` : '/cocofinaproduct.png'}
+                    src={item.image ? getUploadUrl(item.image, 'products') : '/cocofinaproduct.png'}
                     alt={item.name}
                     onError={(e) => { e.target.src = '/cocofinaproduct.png'; }}
                   />

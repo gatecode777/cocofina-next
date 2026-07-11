@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminLayout.css';
 
 // ── Permission check helper ────────────────────────────────────────────────────
@@ -214,7 +215,7 @@ const AdminLayout = ({ children }) => {
               <button className="profile-btn" onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
                 <div className="profile-avatar">
                   {adminData.profile
-                    ? <img src={`/uploads/profiles/${adminData.profile}`} alt={adminData.fullName} />
+                    ? <img src={getUploadUrl(adminData.profile, 'profiles')} alt={adminData.fullName} />
                     : <i className="fas fa-user"></i>
                   }
                 </div>

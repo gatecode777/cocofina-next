@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { adminProductAPI } from '@/services/api';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/admin/AdminProducts.css';
 import '@/styles/admin/ShippingModal.css';
 
@@ -131,8 +132,8 @@ const AdminProducts = () => {
   };
 
   const getImageSrc = (product) => {
-    if (product.images?.length) return `/uploads/products/${product.images[0]}`;
-    if (product.thumbnail) return `/uploads/products/${product.thumbnail}`;
+    if (product.images?.length) return getUploadUrl(product.images[0], 'products');
+    if (product.thumbnail) return getUploadUrl(product.thumbnail, 'products');
     return '/cocofinaproduct.png';
   };
 
