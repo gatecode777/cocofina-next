@@ -18,9 +18,14 @@ import HomeRevealObserver from '@/components/home/HomeRevealObserver';
 import '@/styles/style.css';
 
 export const metadata = {
-  title: 'Buy Organic Coconut Sugar Online in India – Cocofina',
-  description: 'Buy Cocofina premium organic coconut sugar online. 100% natural, unrefined, low glycemic index sweetener. Perfect for baking, cooking & healthy living. Free delivery on ₹499+.',
+  title: 'Best Coconut Sugar Brand in Jaipur – Buy Cocofina Organic',
+  description: 'Buy premium organic coconut sugar in Jaipur online from Cocofina — the best coconut sugar brand in Jaipur. 100% natural, unrefined, low glycemic index sweetener. Free home delivery in Jaipur & all India.',
   keywords: [
+    'best coconut sugar brand in jaipur',
+    'jaipur coconut sugar',
+    'organic coconut sugar jaipur',
+    'buy organic sugar in jaipur',
+    'healthy sugar substitute jaipur',
     'buy organic coconut sugar online India',
     'Cocofina coconut sugar',
     'natural sugar substitute',
@@ -31,16 +36,16 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://www.cocofinasugar.com' },
   openGraph: {
-    title: 'Cocofina – Buy Organic Coconut Sugar Online | Natural Sweetener India',
-    description: 'Discover Cocofina organic coconut sugar — naturally sweet, 100% unrefined and packed with nutrients. Order now and enjoy free delivery across India.',
+    title: 'Cocofina – Best Coconut Sugar Brand in Jaipur | Organic Sweetener',
+    description: 'Discover Cocofina, the best organic coconut sugar brand in Jaipur. 100% natural, unrefined, low GI, and packed with nutrients. Order online with free delivery in Jaipur.',
     url: 'https://www.cocofinasugar.com',
     type: 'website',
     images: [{ url: 'https://www.cocofinasugar.com/og-image.jpg', width: 1200, height: 630, alt: 'Cocofina Organic Coconut Sugar' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cocofina – Organic Coconut Sugar Online India',
-    description: 'Shop natural, unrefined coconut sugar from Cocofina. Low GI, chemical-free and perfect for healthy cooking.',
+    title: 'Cocofina – Best Coconut Sugar Brand in Jaipur',
+    description: 'Shop natural, unrefined organic coconut sugar from Cocofina. Low GI, chemical-free, and perfect for healthy living in Jaipur.',
     images: ['https://www.cocofinasugar.com/og-image.jpg'],
   },
 };
@@ -95,11 +100,11 @@ async function getHomeProducts() {
 const IntroSection = () => (
   <section className="cf-intro">
     <div className="cf-container">
-      <h1 className="cf-intro-title">Sweeten Your Life Naturally</h1>
+      <h1 className="cf-intro-title">Best Coconut Sugar Brand in Jaipur</h1>
       <div className="cf-title-line"></div>
       <p className="cf-intro-desc">
         Discover the rich caramel notes of premium organic coconut sugar, sourced
-        from the finest coconut blossoms. A pure, unrefined alternative to regular sugar.
+        from the finest coconut blossoms. As the best coconut sugar brand in Jaipur, Cocofina brings you 100% natural, unrefined, low-GI sweetener alternatives straight to your home.
       </p>
       <Link href="/our-products" className="cf-btn-primary">
         <Compass /> Explore Our Product
@@ -175,12 +180,12 @@ const AboutProductSection = () => (
   <section className="cf-about-product">
     <div className="cf-container">
       <div className="cf-about-header">
-        <h2 className="cf-about-title">About Our Product</h2>
+        <h2 className="cf-about-title">About Jaipur's Best Coconut Sugar Brand</h2>
         <div className="cf-about-underline"></div>
         <div className="cf-about-desc-container">
           <p>
-            Cocofina is a natural sweetener brand dedicated to offering a healthier
-            alternative to refined sugar. Our coconut sugar is made from the fresh
+            Cocofina is proudly recognized as the best coconut sugar brand in Jaipur, dedicated to offering a healthier
+            alternative to refined sugar for health-conscious families. Our coconut sugar is made from the fresh
             sap of coconut blossoms and gently processed to retain its natural
             minerals and rich caramel flavour.
           </p>
@@ -190,7 +195,7 @@ const AboutProductSection = () => (
             chemicals or preservatives, and responsibly sourced from coconut farmers
             who follow eco-friendly harvesting methods.
           </p>
-          <p>Every pack of Cocofina reflects our commitment to purity, quality, and mindful living.</p>
+          <p>Every pack of Cocofina reflects our commitment to purity, quality, and mindful living in Jaipur.</p>
         </div>
       </div>
       <div className="cf-about-visual">
