@@ -1,43 +1,148 @@
-// frontend/src/context/CartContext.jsx
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { cartAPI } from '../services/api';
+"use client";
 
-const CartContext = createContext({ count: 0, refreshCount: () => {} });
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { cartAPI } from "../services/api";
 
-export const CartProvider = ({ children }) => {
-  const [count, setCount] = useState(0);
+const CartContext = createContext(undefined);
 
-  const refreshCount = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) { setCount(0); return; }
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [backendCount, setBackendCount] = useState(0);
+
+  // Load local cart on mount
+  useEffect(() => {
     try {
-      const res = await cartAPI.getCartCount();
-      if (res.data.success) setCount(res.data.count ?? 0);
+      const savedCart = localStorage.getItem("cocofina_cart");
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      }
     } catch {
-      setCount(0);
+      // Ignore
     }
   }, []);
 
-  // Fetch on mount and whenever auth changes
+  // Sync with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("cocofina_cart", JSON.stringify(cart));
+    } catch {
+      // Ignore
+    }
+  }, [cart]);
+
+  // Sync with backend API if logged in
+  const refreshCount = useCallback(async () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
+      setBackendCount(0);
+      return;
+    }
+    try {
+      const res = await cartAPI.getCartCount();
+      if (res?.data?.success) {
+        setBackendCount(res.data.count ?? 0);
+      }
+    } catch {
+      setBackendCount(0);
+    }
+  }, []);
+
   useEffect(() => {
     refreshCount();
-    window.addEventListener('userAuthChanged', refreshCount);
-    window.addEventListener('cartUpdated', refreshCount);
+    window.addEventListener("userAuthChanged", refreshCount);
+    window.addEventListener("cartUpdated", refreshCount);
     return () => {
-      window.removeEventListener('userAuthChanged', refreshCount);
-      window.removeEventListener('cartUpdated', refreshCount);
+      window.removeEventListener("userAuthChanged", refreshCount);
+      window.removeEventListener("cartUpdated", refreshCount);
     };
   }, [refreshCount]);
 
+  const addToCart = (item, quantityToAdd = 1) => {
+    setCart((prevCart) => {
+      const existingIndex = prevCart.findIndex((i) => i.id === item.id);
+      if (existingIndex > -1) {
+        const newCart = [...prevCart];
+        newCart[existingIndex].quantity += quantityToAdd;
+        return newCart;
+      } else {
+        return [...prevCart, { ...item, quantity: quantityToAdd }];
+      }
+    });
+    setIsCartOpen(true);
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const removeFromCart = (id) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const updateQuantity = (id, quantity) => {
+    if (quantity <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    setCart((prevCart) =>
+      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
+    );
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const totalItems = Math.max(
+    cart.reduce((sum, item) => sum + item.quantity, 0),
+    backendCount
+  );
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   return (
-    <CartContext.Provider value={{ count, refreshCount }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        isCartOpen,
+        setIsCartOpen,
+        totalItems,
+        count: totalItems,
+        subtotal,
+        refreshCount,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
+}
+
+export const triggerCartUpdate = () => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("cartUpdated"));
+  }
 };
 
-// Fire this after any add/remove/update so the badge refreshes everywhere
-export const triggerCartUpdate = () =>
-  window.dispatchEvent(new Event('cartUpdated'));
-
-export const useCart = () => useContext(CartContext);
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) {
+    return {
+      cart: [],
+      addToCart: () => {},
+      removeFromCart: () => {},
+      updateQuantity: () => {},
+      clearCart: () => {},
+      isCartOpen: false,
+      setIsCartOpen: () => {},
+      totalItems: 0,
+      count: 0,
+      subtotal: 0,
+      refreshCount: () => {},
+    };
+  }
+  return context;
+}

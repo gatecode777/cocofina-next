@@ -1,201 +1,72 @@
-import React from 'react';
-import NewsletterForm from '@/components/about/NewsletterForm';
-import ChatSection from '@/components/about/ChatSection';
-import '@/styles/aboutus.css';
+import React from "react";
+import { Navbar } from "@/components/Navbar";
+import { StorySection } from "@/components/StorySection";
+import { ShieldCheck, Heart, Award, Sparkles } from "lucide-react";
 
 export const metadata = {
-  title: 'About Cocofina – Our Story, Mission & Organic Coconut Sugar Journey',
-  description: 'Learn about Cocofina — a brand committed to bringing you 100% natural, organic coconut sugar sourced sustainably from coconut farms. Discover our story, values, and mission for healthier sweetening.',
-  keywords: [
-    'about Cocofina',
-    'Cocofina brand story',
-    'organic coconut sugar company India',
-    'natural sweetener brand',
-    'sustainable coconut sugar',
-    'healthy food brand India',
-  ],
-  alternates: { canonical: 'https://www.cocofinasugar.com/about-us' },
-  openGraph: {
-    title: 'About Cocofina – Premium Organic Coconut Sugar Brand from India',
-    description: 'Meet the team behind Cocofina. We are passionate about natural, healthy sweeteners that are good for you and the planet.',
-    url: 'https://www.cocofinasugar.com/about-us',
-    type: 'website',
-    images: [{ url: 'https://www.cocofinasugar.com/og-image.jpg', width: 1200, height: 630, alt: 'About Cocofina' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'About Cocofina – Our Organic Coconut Sugar Story',
-    description: 'Discover who we are and why we believe in natural coconut sugar as the ultimate healthy sweetener.',
-    images: ['https://www.cocofinasugar.com/og-image.jpg'],
-  },
+  title: "About Us | Cocofina Sugar Story & Philosophy",
+  description: "Learn about Cocofina's mission to provide 100% unrefined, organic coconut sugar sustainably tapped high in tropical palm canopies.",
 };
 
-// Hero Banner Section Component
-const AboutHeroSection = () => (
-  <section className="abs-main-wrapper">
-    <div className="abs-container">
-      <div className="abs-hero-banner">
-        <div className="abs-banner-overlay"></div>
-      </div>
-    </div>
+export default function AboutPage() {
+  return (
+    <main className="min-h-screen bg-white dark:bg-neutral-950 pt-20">
+      <Navbar />
 
-    <div className="abs-container">
-      <div className="abs-content-box">
-        <h2 className="abs-title">About Cocofina</h2>
-        <p className="abs-description">
-          Cocofina is dedicated to creating a natural and healthier
-          alternative to regular refined sugar. Our coconut sugar is made
-          from the pure sap of coconut blossoms, carefully processed to
-          preserve its natural nutrients and rich caramel-like flavor. We
-          believe sweetness should come from nature, which is why our
-          product is minimally processed and free from chemicals or
-          artificial additives.
+      {/* Header Banner */}
+      <section className="py-16 px-6 sm:px-10 text-center max-w-4xl mx-auto space-y-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 dark:bg-amber-400/20 text-amber-700 dark:text-amber-300 text-xs font-semibold uppercase tracking-wider">
+          <Sparkles className="w-3.5 h-3.5" /> Our Passion & Purpose
+        </div>
+        <h1 className="text-4xl sm:text-6xl font-bold text-neutral-900 dark:text-white font-playfair italic leading-[1.1]">
+          Nurturing Earth & Body with Unrefined Pureness
+        </h1>
+        <p className="text-neutral-600 dark:text-neutral-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          At Cocofina, we believe that true sweetness comes directly from nature without chemical refining, bleaching, or artificial additives.
         </p>
-      </div>
-    </div>
-  </section>
-);
+      </section>
 
-// Our Mission Section Component
-const MissionSection = () => (
-  <section className="oms-wrapper">
-    <div className="oms-container">
-      <div className="oms-row">
-        <div className="oms-image-col">
-          <div className="oms-img-box"></div>
-        </div>
-
-        <div className="oms-content-col">
-          <h2 className="oms-heading">Our Mission</h2>
-          <p className="oms-text">
-            Our mission is to provide a natural sweetener that supports
-            healthier lifestyles while maintaining authentic taste. Cocofina
-            aims to promote sustainable sourcing, responsible farming, and
-            products that are both good for people and the planet.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// Why Choose Feature Card Component
-const WhyChooseCard = ({ icon, title, text }) => (
-  <div className="wcc-card">
-    <div className="wcc-icon-box">
-      <img src={icon} alt={title} loading="lazy" />
-    </div>
-    <h3 className="wcc-card-title">{title}</h3>
-    <p className="wcc-card-text">{text}</p>
-  </div>
-);
-
-// Why Choose Section Component
-const WhyChooseSection = () => {
-  const features = [
-    {
-      icon: "/icon1.png",
-      title: "100% Coconut Blossom Sap",
-      text: "Made exclusively from fresh sap collected from coconut blossoms - nothing else added."
-    },
-    {
-      icon: "/icon2.png",
-      title: "No Chemicals or Preservatives",
-      text: "Naturally processed without bleaching agents, additives, or artificial preservatives."
-    },
-    {
-      icon: "/icon3.png",
-      title: "Low Glycemic Index",
-      text: "Releases energy slowly, helping maintain more balanced blood sugar levels than refined sugar."
-    },
-    {
-      icon: "/icon4.png",
-      title: "Sustainably Sourced",
-      text: "Harvested using eco-friendly methods that support coconut farmers and protect nature."
-    }
-  ];
-
-  return (
-    <section className="wcc-wrapper">
-      <div className="wcc-container">
-        <h2 className="wcc-main-heading">Why Choose Cocofina</h2>
-
-        <div className="wcc-grid">
-          {features.map((feature, index) => (
-            <WhyChooseCard
-              key={index}
-              icon={feature.icon}
-              title={feature.title}
-              text={feature.text}
-            />
-          ))}
-        </div>
-
-        <div className="wcc-how-made">
-          <h2 className="wcc-main-heading">How Our Coconut Sugar Is Made</h2>
-          <p className="wcc-description">
-            Our coconut sugar is harvested from the nectar of coconut
-            blossoms. Farmers carefully collect the sap and gently heat it to
-            evaporate the moisture, forming natural sugar crystals. This
-            traditional process helps retain the natural minerals and
-            distinctive caramel flavor that make coconut sugar unique.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Our Promise Section Component
-const PromiseSection = () => (
-  <section className="ops-wrapper">
-    <div className="ops-container">
-      <div className="ops-row">
-        <div className="ops-content-col">
-          <h2 className="ops-heading">Our Promise</h2>
-          <p className="ops-text">
-            At Cocofina, quality and purity are our top priorities. We are
-            committed to delivering a product that is natural, sustainable,
-            and crafted with care so that every spoonful adds both sweetness
-            and value to your daily recipes.
+      {/* Core Values Cards */}
+      <section className="py-12 px-6 sm:px-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="p-8 rounded-3xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <Heart className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white font-playfair italic">
+            Health-First Philosophy
+          </h3>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            We provide a low-GI (35) unrefined alternative to white sugar that nourishes with naturally occurring Inulin fiber, Potassium, Zinc, and Iron.
           </p>
         </div>
 
-        <div className="ops-image-col">
-          <div className="ops-img-box"></div>
+        <div className="p-8 rounded-3xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white font-playfair italic">
+            Artisanal Integrity
+          </h3>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            Every batch is hand-harvested by local tappers and kettle-evaporated in small batches to preserve its natural butterscotch aroma.
+          </p>
         </div>
-      </div>
-    </div>
-  </section>
-);
 
-// Stay Connected Section Component
-const StayConnectedSection = () => (
-  <section className="cf-connect-section">
-    <div className="cf-container">
-      <div className="cf-connect-wrapper">
-        <div className="cf-newsletter-side">
-          <span className="cf-sub-title">New Harvest Updates</span>
-          <h2 className="cf-main-title">
-            Stay Connected <br />
-            with Cocofina
-          </h2>
-          <NewsletterForm />
+        <div className="p-8 rounded-3xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <Award className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white font-playfair italic">
+            100% Fair Harvest
+          </h3>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            We support tropical coconut farming communities with fair wages and zero-deforestation agricultural practices.
+          </p>
         </div>
-        <ChatSection />
-      </div>
-    </div>
-  </section>
-);
+      </section>
 
-export default function Page() {
-  return (
-    <main>
-      <AboutHeroSection />
-      <MissionSection />
-      <WhyChooseSection />
-      <PromiseSection />
-      <StayConnectedSection />
+      {/* Story Section */}
+      <StorySection />
     </main>
   );
 }

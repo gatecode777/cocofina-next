@@ -1,151 +1,29 @@
-import React from 'react';
-import '@/styles/howitsmade.css';
+import React from "react";
+import { Navbar } from "@/components/Navbar";
+import { ProcessSection } from "@/components/ProcessSection";
+import { StorySection } from "@/components/StorySection";
 
 export const metadata = {
-  title: 'How Cocofina Coconut Sugar is Made – Natural Production Process',
-  description: 'Discover the traditional, sustainable process of how Cocofina organic coconut sugar is harvested from coconut blossom sap, sun-dried, and prepared without any chemicals or additives.',
-  keywords: [
-    'how is coconut sugar made',
-    'coconut sugar production process',
-    'coconut blossom sap harvesting',
-    'natural coconut sugar manufacturing',
-    'sustainable coconut sugar India',
-    'coconut sugar unrefined process',
-  ],
-  alternates: { canonical: 'https://www.cocofinasugar.com/how-its-made' },
-  openGraph: {
-    title: 'How Cocofina Coconut Sugar is Made – Traditional & Natural Process',
-    description: 'See the sustainable, traditional production process of Cocofina coconut sugar from blossom sap to your kitchen table.',
-    url: 'https://www.cocofinasugar.com/how-its-made',
-    type: 'website',
-    images: [{ url: 'https://www.cocofinasugar.com/og-image.jpg', width: 1200, height: 630, alt: 'How Coconut Sugar is Made' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'How Cocofina Coconut Sugar is Made',
-    description: 'Traditional, chemical-free process of making Cocofina organic coconut sugar from coconut blossom sap.',
-    images: ['https://www.cocofinasugar.com/og-image.jpg'],
-  },
+  title: "Sustainable Process | Cocofina Coconut Sugar",
+  description: "Discover the 4-step artisan process of harvesting sweet coconut sap high in tropical palm canopies.",
 };
 
-export default function Page() {
+export default function ProcessPage() {
   return (
-    <main>
-      <section className="how-process-section">
-        <div className="container">
-          <div className="process-banner">
-            <img
-              src="/How.webp"
-              alt="Coconut Sugar Process"
-              className="responsive-banner"
-            />
-          </div>
+    <main className="min-h-screen bg-white dark:bg-neutral-950 pt-20">
+      <Navbar />
 
-          <div className="process-content">
-            <h2>From Coconut Blossom to Natural Sweetness</h2>
-            <p>
-              Cocofina Coconut Sugar is made using a traditional and natural
-              process that preserves the nutrients and rich flavor of coconut
-              blossom sap. Our production method focuses on sustainability,
-              purity, and minimal processing to ensure you receive a
-              high-quality natural sweetener.
-            </p>
-          </div>
-        </div>
-      </section>
+      <div className="py-12 px-6 text-center max-w-3xl mx-auto space-y-4">
+        <h1 className="text-4xl sm:text-6xl font-bold text-neutral-900 dark:text-white font-playfair italic">
+          Our Sustainable Craft Process
+        </h1>
+        <p className="text-neutral-600 dark:text-neutral-300 text-sm sm:text-base">
+          From morning tree tapping high in the palm canopy to slow kettle evaporation and amber granulation.
+        </p>
+      </div>
 
-      <section className="process-steps-section">
-        <div className="container">
-          <div className="step-row">
-            <div className="step-text">
-              <span className="step-number">Step 1</span>
-              <h3>Harvesting Coconut Blossom Sap</h3>
-              <p>
-                The process begins with carefully collecting sap from the
-                blossoms of coconut trees. Skilled farmers gently tap the
-                coconut flower buds and collect the naturally sweet sap in
-                containers. This sap is the raw ingredient used to create
-                coconut sugar.
-              </p>
-            </div>
-            <div className="step-image">
-              <img src="/How1.webp" alt="Harvesting" />
-            </div>
-          </div>
-
-          <div className="step-row">
-            <div className="step-text">
-              <span className="step-number">Step 2</span>
-              <h3>Natural Heating Process</h3>
-              <p>
-                Once the sap is collected, it is slowly heated in large pans.
-                The heating process evaporates the water content and thickens
-                the sap into a rich syrup. This step is done carefully to
-                preserve the natural minerals and nutrients present in the sap.
-              </p>
-            </div>
-            <div className="step-image">
-              <img src="/How2.webp" alt="Natural Heating" />
-            </div>
-          </div>
-
-          <div className="step-row">
-            <div className="step-text">
-              <span className="step-number">Step 3</span>
-              <h3>Crystallization</h3>
-              <p>
-                As the syrup continues to cook, it gradually forms fine sugar
-                crystals. The mixture is constantly stirred to achieve the
-                perfect texture and consistency.
-              </p>
-            </div>
-            <div className="step-image">
-              <img src="/How3.webp" alt="Crystallization" />
-            </div>
-          </div>
-
-          <div className="step-row">
-            <div className="step-text">
-              <span className="step-number">Step 4</span>
-              <h3>Cooling and Drying</h3>
-              <p>
-                After crystallization, the coconut sugar is allowed to cool and
-                dry naturally. This step helps develop its characteristic
-                golden-brown color and rich caramel-like flavor.
-              </p>
-            </div>
-            <div className="step-image">
-              <img src="/How4.webp" alt="Cooling and Drying" />
-            </div>
-          </div>
-
-          <div className="step-row">
-            <div className="step-text">
-              <span className="step-number">Step 5</span>
-              <h3>Packaging</h3>
-              <p>
-                Once the coconut sugar reaches the ideal texture, it is
-                carefully packed to maintain freshness and purity. Cocofina
-                ensures hygienic packaging so that every pack reaches customers
-                in perfect condition.
-              </p>
-            </div>
-            <div className="step-image">
-              <img src="/How5.webp" alt="Packaging" />
-            </div>
-          </div>
-
-          <div className="process-footer">
-            <h4>Natural, Sustainable, and Pure</h4>
-            <p>
-              The production of coconut sugar is environmentally friendly
-              because the coconut trees continue to produce sap for many years
-              without being cut down. This sustainable process supports local
-              farmers while providing a natural alternative to refined sugar.
-            </p>
-          </div>
-        </div>
-      </section>
+      <ProcessSection />
+      <StorySection />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 // src/app/layout.jsx (Server Component - NO 'use client' - Vercel trigger)
 import ClientLayout from './ClientLayout';
-import '@/styles/style.css';
+import './globals.css';
 
 export const metadata = {
   title: {

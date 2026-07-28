@@ -98,7 +98,6 @@ const productSchema = new mongoose.Schema(
 
 productSchema.index({ name: "text", "description.short": "text", "description.long": "text" });
 productSchema.index({ category: 1, status: 1 });
-productSchema.index({ slug: 1 });
 productSchema.index({ status: 1, stockStatus: 1 });
 
 productSchema.pre("save", function (next) {

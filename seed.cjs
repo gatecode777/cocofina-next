@@ -55,8 +55,8 @@ const productsData = [
       short: "Premium quality unrefined organic coconut sugar with a rich caramel note.",
       long: "Cocofina Organic Coconut Sugar is a natural sweetener made from the sap of coconut blossoms. It is unrefined, free from additives or chemicals, and offers a perfect 1:1 replacement for white refined sugar with a low Glycemic Index."
     },
-    images: ["cocofinaproduct.png"],
-    thumbnail: "cocofinaproduct.png",
+    images: ["/images/product_400g.png"],
+    thumbnail: "/images/product_400g.png",
     variants: [
       { weight: "250g", price: 180, oldPrice: 220, stock: 50 },
       { weight: "500g", price: 340, oldPrice: 399, stock: 40 },
@@ -83,8 +83,8 @@ const productsData = [
       short: "Rich liquid sweetener made from coconut blossom sap, ideal for pancakes and waffles.",
       long: "Cocofina Blossom Nectar is a delicious liquid sweetener collected sustainably from organic coconut trees. With a smooth caramel texture and natural vitamins, it acts as a superior alternative to honey and maple syrup."
     },
-    images: ["cocofinaproduct.png"],
-    thumbnail: "cocofinaproduct.png",
+    images: ["/images/product_1kg.png"],
+    thumbnail: "/images/product_1kg.png",
     variants: [
       { weight: "200ml", price: 210, oldPrice: 250, stock: 30 },
       { weight: "500ml", price: 450, oldPrice: 520, stock: 15 }

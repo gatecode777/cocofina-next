@@ -205,7 +205,7 @@ const Header = () => {
         {/* Logo */}
         <div className="cf-logo">
           <Link href="/" onClick={closeMobileMenu}>
-            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '65px', width: 'auto' }} />
+            <img src="/cocofina.png" alt="Cocofina Logo" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
           </Link>
           <div className='brandName'>
             <span className='brandName1'>Cocofina Sugar</span>
