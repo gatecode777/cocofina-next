@@ -82,7 +82,7 @@ const OrderSuccess = () => {
               Return Home
             </Link>
             <Link
-              href="/our-products"
+              href="/products"
               style={{ padding: '12px 28px', background: 'transparent', color: '#3b2a1a', border: '1.5px solid #3b2a1a', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none', display: 'inline-block' }}
             >
               Continue Shopping
@@ -140,7 +140,7 @@ const OrderSuccess = () => {
             View My Orders
           </button>
           <button
-            onClick={() => router.push('/our-products')}
+            onClick={() => router.push('/products')}
             style={{ padding: '12px 28px', background: 'transparent', color: '#3b2a1a', border: '1.5px solid #3b2a1a', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
           >
             Continue Shopping

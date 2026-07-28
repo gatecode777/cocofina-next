@@ -1,12 +1,10 @@
-// src/lib/db.js
-// Singleton MongoDB connection — reused across hot reloads in dev
 import mongoose from "mongoose";
-import dns from "node:dns/promises";
+import dns from "node:dns";
 
 try {
-  dns.setServers(["1.1.1.1"]);
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
 } catch (dnsErr) {
-  console.warn("Warning: Could not set DNS servers:", dnsErr.message);
+  // Fallback to default DNS
 }
 
 // In development, store the connection on the global object so it

@@ -5,7 +5,7 @@ import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import "@/models/Category";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "Products & Packs | Cocofina Organic Coconut Sugar",
@@ -15,13 +15,18 @@ export const metadata = {
 async function getProducts() {
   try {
     await connectDB();
-    const products = await Product.find({ status: "active" })
-      .populate("category", "name slug")
-      .sort({ createdAt: -1 })
-      .lean();
+    const products = await Promise.race([
+      Product.find({ status: "active" })
+        .populate("category", "name slug")
+        .sort({ createdAt: -1 })
+        .lean(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("DB Fetch Timeout")), 1500)
+      ),
+    ]);
     return JSON.parse(JSON.stringify(products));
   } catch (err) {
-    console.error("DB fetch fallback:", err);
+    console.error("DB fetch fallback:", err?.message || err);
     return [];
   }
 }

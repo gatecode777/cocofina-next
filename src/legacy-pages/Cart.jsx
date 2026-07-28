@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -250,7 +249,7 @@ const Cart = () => {
               <div className="cart-empty-icon">🛒</div>
               <h2>Your cart is empty</h2>
               <p>Looks like you haven't added anything yet.</p>
-              <Link href="/our-products" className="cart-empty-btn">Shop Now</Link>
+              <Link href="/products" className="cart-empty-btn">Shop Now</Link>
             </div>
           ) : (
             <div className="cart-items-section">
@@ -417,7 +416,7 @@ const Cart = () => {
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </button>
-                <Link href="/our-products" className="cart-continue-link">← Continue Shopping</Link>
+                <Link href="/products" className="cart-continue-link">← Continue Shopping</Link>
               </div>
             </div>
           )}

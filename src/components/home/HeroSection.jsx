@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 
 const heroSliderStyles = `
 /* Hero Slider Styles */
@@ -310,11 +310,13 @@ const HeroSection = () => {
                 transition: 'transform 0.5s ease-in-out'
               }}
             >
-              <img
+              <Image
                 src={slide.src}
                 alt={slide.alt}
-                className="cf-hero-img"
-                loading="lazy"
+                fill
+                priority={index === 0}
+                sizes="(max-width: 1400px) 100vw, 1400px"
+                className="cf-hero-img object-cover"
               />
             </div>
           ))}

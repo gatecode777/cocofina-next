@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { addressAPI } from '@/services/api';
+import { Navbar } from '@/components/Navbar';
 import '@/styles/addresses.css';
 
 // ── Empty form ─────────────────────────────────────────────────────────────────
@@ -404,25 +405,29 @@ const AddressesPage = () => {
   };
 
   return (
-    <main>
-      <div className="addr-page-header">
-        <div>
-          <h1 className="addr-page-title">My Addresses</h1>
-          <p className="addr-page-sub">Manage your saved delivery addresses</p>
-        </div>
-        <div className="addr-header-actions">
-          <button className="addr-btn-outline" onClick={() => router.push('/my-profile')}>
-            ← Back
-          </button>
-          {!showForm && (
-            <button className="addr-btn-add" onClick={openAdd}>
-              <i className="fas fa-plus"></i> Add Address
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="my-account-wrapper-ad">
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <Navbar />
+      <div className="addresses-page-wrapper">
         <div className="addr-container">
+          <div className="addr-header">
+            <div>
+              <h1>Saved Addresses</h1>
+              <p>Manage your delivery locations and default addresses</p>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <button
+                className="btn-addr-action"
+                onClick={() => router.push('/my-profile')}
+              >
+                ← Back to Profile
+              </button>
+              {!showForm && (
+                <button className="btn-add-addr" onClick={openAdd}>
+                  + Add Address
+                </button>
+              )}
+            </div>
+          </div>
           {toast && (
             <div className="addr-toast">
               <i className="fas fa-check-circle"></i> {toast}

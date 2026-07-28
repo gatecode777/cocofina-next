@@ -72,3 +72,8 @@
     opacity: 1;
   }
 }
+
+/* Automatic Dark Mode Logo Swap */
+.dark img[src*="cocofina.png"] {
+  content: url("/Cocofina-white.png");
+}

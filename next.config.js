@@ -6,11 +6,10 @@ const nextConfig = {
   // Serve uploaded files from /public/uploads
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'ik.imagekit.io',
-        pathname: '/**',
-      },
+      { protocol: 'https', hostname: 'ik.imagekit.io', pathname: '/**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.cocofinasugar.com', pathname: '/**' },
+      { protocol: 'http', hostname: 'localhost', pathname: '/**' },
     ],
     unoptimized: false,
   },

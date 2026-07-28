@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { userAuth } from '@/services/api';
+import { auth } from '@/lib/firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import '@/styles/signup.css';
 
 const Signup = () => {
@@ -19,47 +21,39 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // ── Firebase OTP State ──────────────────────────────────────────────────
+  const [step, setStep] = useState('form'); // 'form' | 'otp'
+  const [otp, setOtp] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [otpResendCooldown, setOtpResendCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer;
+    if (otpResendCooldown > 0) {
+      timer = setInterval(() => setOtpResendCooldown((c) => c - 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [otpResendCooldown]);
+
+  const setupRecaptcha = () => {
+    if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {},
+        'expired-callback': () => {
+          window.recaptchaVerifier = null;
+        },
+      });
+    }
+  };
+
   // Indian phone number validation function
   const validateIndianPhoneNumber = (phone) => {
-    // Remove any non-digit characters
     const cleaned = phone.replace(/\D/g, '');
-    
-    // Check if empty
-    if (!cleaned) {
-      return { isValid: false, message: 'Phone number is required' };
-    }
-    
-    // Check length (Indian numbers are 10 digits)
-    if (cleaned.length !== 10) {
-      return { isValid: false, message: 'Please enter a valid 10-digit phone number' };
-    }
-    
-    // Check if starts with valid Indian mobile prefixes
-    // Valid prefixes: 6,7,8,9 (mobile numbers in India start with these)
-    const firstDigit = cleaned[0];
-    if (!['6', '7', '8', '9'].includes(firstDigit)) {
-      return { isValid: false, message: 'Phone number must start with 6, 7, 8, or 9' };
-    }
-    
-    // Check if all digits are numbers (already done by regex)
-    if (!/^\d{10}$/.test(cleaned)) {
-      return { isValid: false, message: 'Please enter a valid 10-digit phone number' };
-    }
-    
-    // Optional: Check for repetitive patterns (1111111111, 1234567890, etc.)
-    const repetitivePatterns = [
-      /^(\d)\1{9}$/, // Same digit repeated 10 times
-      /^1234567890$/, // Sequential increasing
-      /^9876543210$/, // Sequential decreasing
-      /^0123456789$/, // Sequential with zero
-    ];
-    
-    for (const pattern of repetitivePatterns) {
-      if (pattern.test(cleaned)) {
-        return { isValid: false, message: 'Please enter a valid phone number' };
-      }
-    }
-    
+    if (!cleaned) return { isValid: false, message: 'Phone number is required' };
+    if (cleaned.length !== 10) return { isValid: false, message: 'Please enter a valid 10-digit phone number' };
+    if (!['6', '7', '8', '9'].includes(cleaned[0])) return { isValid: false, message: 'Phone number must start with 6, 7, 8, or 9' };
     return { isValid: true, message: '' };
   };
 
@@ -68,14 +62,11 @@ const Signup = () => {
     if (!formData.firstName.trim()) e.firstName = 'First name is required';
     if (!formData.lastName.trim()) e.lastName = 'Last name is required';
     
-    // Enhanced phone number validation
     if (!formData.contactNumber.trim()) {
       e.contactNumber = 'Contact number is required';
     } else {
       const phoneValidation = validateIndianPhoneNumber(formData.contactNumber);
-      if (!phoneValidation.isValid) {
-        e.contactNumber = phoneValidation.message;
-      }
+      if (!phoneValidation.isValid) e.contactNumber = phoneValidation.message;
     }
     
     if (!formData.email.trim()) {
@@ -97,171 +88,329 @@ const Signup = () => {
     return Object.keys(e).length === 0;
   };
 
-  // Format phone number as user types (optional)
-  const formatPhoneNumber = (value) => {
-    // Remove all non-digits
-    const cleaned = value.replace(/\D/g, '');
-    
-    // Limit to 10 digits
-    return cleaned.slice(0, 10);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Special handling for phone number to format it
     if (name === 'contactNumber') {
-      const formattedValue = formatPhoneNumber(value);
-      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+      const cleaned = value.replace(/\D/g, '').slice(0, 10);
+      setFormData((prev) => ({ ...prev, [name]: cleaned }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
     if (errors.submit) setErrors((prev) => ({ ...prev, submit: '' }));
   };
 
+  // ── Step 1: Send SMS OTP ────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
     setIsLoading(true);
-    try {
-      const res = await userAuth.register({
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        phone: formData.contactNumber.replace(/\D/g, ''), // Send only digits
-      });
+    setErrors({});
 
-      if (res.data.success) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        window.dispatchEvent(new Event('userAuthChanged'));
-        const redirect = searchParams.get('from') || '/';
-        router.push(redirect);
-      }
+    try {
+      setupRecaptcha();
+      const appVerifier = window.recaptchaVerifier;
+      const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
+      const confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
+
+      setConfirmationResult(confirmation);
+      setStep('otp');
+      setOtpResendCooldown(30);
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed. Please try again.';
-      // Show duplicate errors on the relevant field
-      if (msg.toLowerCase().includes('email')) {
-        setErrors((prev) => ({ ...prev, email: msg }));
-      } else if (msg.toLowerCase().includes('phone')) {
-        setErrors((prev) => ({ ...prev, contactNumber: msg }));
+      console.error('Firebase SMS Error:', err);
+      if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
+        setErrors({
+          submit: 'Firebase Phone Auth requires setting up a Test Phone Number in Firebase Console, or switching your Firebase project to the Blaze Plan (includes 10,000 free SMS/month).',
+        });
+      } else if (err.code === 'auth/network-request-failed' || err.message?.includes('network-request-failed')) {
+        setErrors({
+          submit: 'Network error: Please ensure "localhost" is added to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+        });
       } else {
-        setErrors((prev) => ({ ...prev, submit: msg }));
+        setErrors({ submit: err.message || 'Failed to send SMS OTP. Please check your phone number.' });
+      }
+      if (window.recaptchaVerifier) {
+        try { window.recaptchaVerifier.clear(); } catch {}
+        window.recaptchaVerifier = null;
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ── Step 2: Verify OTP & Complete Registration ──────────────────────────
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    if (!otp || otp.length !== 6) {
+      setErrors({ otp: 'Please enter a valid 6-digit OTP code' });
+      return;
+    }
+
+    setIsVerifying(true);
+    setErrors({});
+
+    try {
+      // 1. Verify OTP with Firebase Auth
+      await confirmationResult.confirm(otp);
+
+      // 2. Complete User Registration in MongoDB Backend
+      const res = await userAuth.register({
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        phone: formData.contactNumber.replace(/\D/g, ''),
+      });
+
+      if (res.data.success) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        document.cookie = `token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
+        window.dispatchEvent(new Event('userAuthChanged'));
+        const redirect = searchParams.get('from') || '/';
+        router.push(redirect);
+      }
+    } catch (err) {
+      console.error('Verification Error:', err);
+      if (err.code === 'auth/invalid-verification-code') {
+        setErrors({ otp: 'Invalid OTP code. Please check and try again.' });
+      } else {
+        const msg = err.response?.data?.message || err.message || 'OTP verification failed.';
+        setErrors({ otp: msg });
+      }
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   return (
-    <div className="registration-wrapper">
-      <div className="main-wrapper">
-        <div className="reg-card">
-          <div className="left-bg-image-s"></div>
-          <div className="form-side">
-            <div className="logo-container">
-              <Link href="/">
-                <img src="/cocofina.png" alt="Logo" className="logo" />
-              </Link>
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500 flex items-center justify-center">
+      {/* Firebase Invisible Recaptcha Element */}
+      <div id="recaptcha-container"></div>
+
+      <div className="registration-wrapper">
+        <div className="main-wrapper">
+          <div className="reg-card">
+            <div className="left-bg-image-s"></div>
+            <div className="form-side">
+              <div className="logo-container">
+                <Link href="/">
+                  <img src="/cocofina.png" alt="Logo" className="logo" />
+                </Link>
+              </div>
+
+              <h2 className="title">{step === 'otp' ? 'VERIFY MOBILE OTP' : 'REGISTRATION'}</h2>
+
+              {step === 'form' ? (
+                <>
+                  {errors.submit && (
+                    <div className="auth-error-msg">
+                      <i className="fa-solid fa-circle-exclamation"></i> {errors.submit}
+                    </div>
+                  )}
+
+                  <form className="reg-form" onSubmit={handleSubmit}>
+                    {/* First Name */}
+                    <div className="input-icon-container">
+                      <i className="fa-regular fa-user"></i>
+                      <input
+                        type="text"
+                        name="firstName"
+                        placeholder="First Name"
+                        className={`input-field-s ${errors.firstName ? 'error' : ''}`}
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.firstName && <span className="field-error">{errors.firstName}</span>}
+
+                    {/* Last Name */}
+                    <div className="input-icon-container">
+                      <i className="fa-regular fa-user"></i>
+                      <input
+                        type="text"
+                        name="lastName"
+                        placeholder="Last Name"
+                        className={`input-field-s ${errors.lastName ? 'error' : ''}`}
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.lastName && <span className="field-error">{errors.lastName}</span>}
+
+                    {/* Phone */}
+                    <div className="input-icon-container">
+                      <i className="fa-solid fa-phone-flip"></i>
+                      <input
+                        type="tel"
+                        name="contactNumber"
+                        placeholder="Contact Number (10 digits)"
+                        className={`input-field-s ${errors.contactNumber ? 'error' : ''}`}
+                        value={formData.contactNumber}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        maxLength={10}
+                      />
+                    </div>
+                    {errors.contactNumber && <span className="field-error">{errors.contactNumber}</span>}
+
+                    {/* Email */}
+                    <div className="input-icon-container">
+                      <i className="fa-regular fa-envelope"></i>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        className={`input-field-s ${errors.email ? 'error' : ''}`}
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.email && <span className="field-error">{errors.email}</span>}
+
+                    {/* Password */}
+                    <div className="input-icon-container">
+                      <i className="fa-solid fa-key"></i>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Password (min 6 characters)"
+                        className={`input-field-s ${errors.password ? 'error' : ''}`}
+                        value={formData.password}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        className="eye-toggle"
+                        onClick={() => setShowPassword((p) => !p)}
+                        disabled={isLoading}
+                      >
+                        <i className={showPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
+                      </button>
+                    </div>
+                    {errors.password && <span className="field-error">{errors.password}</span>}
+
+                    {/* Confirm Password */}
+                    <div className="input-icon-container">
+                      <i className="fa-solid fa-key"></i>
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        className={`input-field-s ${errors.confirmPassword ? 'error' : ''}`}
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        className="eye-toggle"
+                        onClick={() => setShowConfirmPassword((p) => !p)}
+                        disabled={isLoading}
+                      >
+                        <i className={showConfirmPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
+                      </button>
+                    </div>
+                    {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
+
+                    <p className="terms-text">
+                      By signing below, you agree to the{' '}
+                      <a href="/terms-and-conditions" className="cyan-link underline">terms of use</a> and{' '}
+                      <a href="/privacy-policy" className="cyan-link underline">privacy notice</a>
+                    </p>
+
+                    <button type="submit" className="submit-btn" disabled={isLoading}>
+                      {isLoading ? (
+                        <><i className="fa-solid fa-spinner fa-spin"></i> Sending SMS OTP…</>
+                      ) : (
+                        'Send OTP & Register'
+                      )}
+                    </button>
+
+                    <p className="footer-text">
+                      Already have an account?{' '}
+                      <Link href="/login" className="cyan-link bold-link">Login</Link>
+                    </p>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <div className="text-center mb-6">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                      We sent a 6-digit SMS verification code to:
+                    </p>
+                    <strong className="text-base text-amber-600 dark:text-amber-400 font-mono">
+                      +91 {formData.contactNumber}
+                    </strong>
+                  </div>
+
+                  {errors.otp && (
+                    <div className="auth-error-msg">
+                      <i className="fa-solid fa-circle-exclamation"></i> {errors.otp}
+                    </div>
+                  )}
+
+                  <form className="reg-form" onSubmit={handleVerifyOTP}>
+                    <div className="input-icon-container">
+                      <i className="fa-solid fa-shield-halved"></i>
+                      <input
+                        type="text"
+                        name="otp"
+                        placeholder="Enter 6-digit OTP"
+                        className={`input-field-s text-center tracking-widest font-mono text-lg ${errors.otp ? 'error' : ''}`}
+                        value={otp}
+                        onChange={(e) => {
+                          setOtp(e.target.value.replace(/\D/g, '').slice(0, 6));
+                          if (errors.otp) setErrors({});
+                        }}
+                        maxLength={6}
+                        disabled={isVerifying}
+                        autoFocus
+                      />
+                    </div>
+
+                    <button type="submit" className="submit-btn" disabled={isVerifying}>
+                      {isVerifying ? (
+                        <><i className="fa-solid fa-spinner fa-spin"></i> Verifying OTP…</>
+                      ) : (
+                        'Verify OTP & Complete Registration'
+                      )}
+                    </button>
+
+                    <div className="flex items-center justify-between mt-4 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStep('form');
+                          setOtp('');
+                          setErrors({});
+                        }}
+                        className="text-neutral-500 hover:text-neutral-800 dark:hover:text-white font-medium"
+                      >
+                        ← Edit Phone Number
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={otpResendCooldown > 0 || isLoading}
+                        className="text-amber-600 dark:text-amber-400 font-semibold disabled:opacity-50"
+                      >
+                        {otpResendCooldown > 0 ? `Resend OTP in ${otpResendCooldown}s` : 'Resend OTP'}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
-
-            <h2 className="title">REGISTRATION</h2>
-
-            {errors.submit && (
-              <div className="auth-error-msg">
-                <i className="fa-solid fa-circle-exclamation"></i> {errors.submit}
-              </div>
-            )}
-
-            <form className="reg-form" onSubmit={handleSubmit}>
-              {/* First Name */}
-              <div className="input-icon-container">
-                <i className="fa-regular fa-user"></i>
-                <input type="text" name="firstName" placeholder="First Name"
-                  className={`input-field-s ${errors.firstName ? 'error' : ''}`}
-                  value={formData.firstName} onChange={handleChange} disabled={isLoading} />
-              </div>
-                {errors.firstName && <span className="field-error">{errors.firstName}</span>}
-
-              {/* Last Name */}
-              <div className="input-icon-container">
-                <i className="fa-regular fa-user"></i>
-                <input type="text" name="lastName" placeholder="Last Name"
-                  className={`input-field-s ${errors.lastName ? 'error' : ''}`}
-                  value={formData.lastName} onChange={handleChange} disabled={isLoading} />
-              </div>
-                {errors.lastName && <span className="field-error">{errors.lastName}</span>}
-
-              {/* Phone */}
-              <div className="input-icon-container">
-                <i className="fa-solid fa-phone-flip"></i>
-                <input type="tel" name="contactNumber" placeholder="Contact Number (10 digits)"
-                  className={`input-field-s ${errors.contactNumber ? 'error' : ''}`}
-                  value={formData.contactNumber} onChange={handleChange}
-                  disabled={isLoading} maxLength={10} />
-              </div>
-                {errors.contactNumber && <span className="field-error">{errors.contactNumber}</span>}
-
-              {/* Email */}
-              <div className="input-icon-container">
-                <i className="fa-regular fa-envelope"></i>
-                <input type="email" name="email" placeholder="Email Address"
-                  className={`input-field-s ${errors.email ? 'error' : ''}`}
-                  value={formData.email} onChange={handleChange} disabled={isLoading} />
-                {errors.email && <span className="field-error">{errors.email}</span>}
-              </div>
-
-              {/* Password */}
-              <div className="input-icon-container">
-                <i className="fa-solid fa-key"></i>
-                <input type={showPassword ? 'text' : 'password'} name="password"
-                  placeholder="Password (min 6 characters)"
-                  className={`input-field-s ${errors.password ? 'error' : ''}`}
-                  value={formData.password} onChange={handleChange} disabled={isLoading} />
-                <button type="button" className="eye-toggle" onClick={() => setShowPassword(p => !p)} disabled={isLoading}>
-                  <i className={showPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
-                </button>
-              </div>
-                {errors.password && <span className="field-error">{errors.password}</span>}
-
-              {/* Confirm Password */}
-              <div className="input-icon-container">
-                <i className="fa-solid fa-key"></i>
-                <input type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword"
-                  placeholder="Confirm Password"
-                  className={`input-field-s ${errors.confirmPassword ? 'error' : ''}`}
-                  value={formData.confirmPassword} onChange={handleChange} disabled={isLoading} />
-                <button type="button" className="eye-toggle" onClick={() => setShowConfirmPassword(p => !p)} disabled={isLoading}>
-                  <i className={showConfirmPassword ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
-                </button>
-              </div>
-                {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
-
-              <p className="terms-text">
-                By signing below, you agree to the{' '}
-                <a href="/terms" className="cyan-link underline">terms of use</a> and{' '}
-                <a href="/privacy" className="cyan-link underline">privacy notice</a>
-              </p>
-
-              <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading
-                  ? <><i className="fa-solid fa-spinner fa-spin"></i> Registering…</>
-                  : 'Register'
-                }
-              </button>
-
-              <p className="footer-text">
-                Already have an account?{' '}
-                <Link href="/login" className="cyan-link bold-link">Login</Link>
-              </p>
-            </form>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

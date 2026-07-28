@@ -29,8 +29,13 @@ export function CartDrawer() {
     setTimeout(() => {
       setIsCheckingOut(false);
       setIsCartOpen(false);
-      router.push("/buynow");
-    }, 600);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (!token) {
+        router.push("/login?redirectAfterLogin=/buynow");
+      } else {
+        router.push("/buynow");
+      }
+    }, 400);
   };
 
   if (!isCartOpen) return null;

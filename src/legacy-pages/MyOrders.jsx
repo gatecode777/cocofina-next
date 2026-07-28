@@ -1,11 +1,11 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '@/services/api';
 import { getUploadUrl } from '@/lib/imageHelper';
+import { Navbar } from '@/components/Navbar';
 import '@/styles/myorders.css';
 
 // ── Status config ──────────────────────────────────────────────────────────────
@@ -221,18 +221,22 @@ const MyOrders = () => {
   };
 
   return (
-    <>
-      <div className="header-section">
-        <div className="container">
-          <div className="header-flex">
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <Navbar />
+      <div className="my-orders-wrapper">
+        <div className="mo-container">
+          <div className="mo-header">
             <div>
               <h1>My Orders</h1>
               <p>View, track and manage your orders. {totalOrders > 0 && `(${totalOrders} total)`}</p>
             </div>
-            <button className="back-link" onClick={() => router.push('/my-profile')}>← Back</button>
+            <button
+              className="btn-back"
+              onClick={() => router.push('/my-profile')}
+            >
+              ← Back to Profile
+            </button>
           </div>
-        </div>
-      </div>
 
       <div className="middle-content">
         <div className="container">
@@ -263,7 +267,7 @@ const MyOrders = () => {
               <i className="fas fa-shopping-bag"></i>
               <h3>No orders found</h3>
               <p>{filterStatus === 'all' ? "You haven't placed any orders yet." : `No ${filterStatus} orders.`}</p>
-              <Link href="/our-products" className="mo-shop-btn">Start Shopping</Link>
+              <Link href="/products" className="mo-shop-btn">Start Shopping</Link>
             </div>
           ) : (
             orders.map((order) => (
@@ -369,7 +373,9 @@ const MyOrders = () => {
           onCancel={handleCancel}
         />
       )}
-    </>
+        </div>
+      </div>
+    </main>
   );
 };
 

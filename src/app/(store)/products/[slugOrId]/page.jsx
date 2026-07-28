@@ -5,9 +5,10 @@ import { connectDB } from '@/lib/db';
 import Product from '@/models/Product';
 import ProductGallery from '@/components/products/ProductGallery';
 import AddToCartControls from '@/components/products/AddToCartControls';
+import { Navbar } from '@/components/Navbar';
 import '@/styles/productdetail.css';
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 async function getProduct(slugOrId) {
   await connectDB();
@@ -152,12 +153,13 @@ export default async function Page({ params }) {
   const isLimitedStock = product.stockStatus === 'Limited Stock';
 
   return (
-    <main>
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <Navbar />
       <div className="product-page-container">
         <nav className="prod-breadcrumb">
           <Link href="/" className="prod-breadcrumb-link">HOME</Link>
           <span>&gt;</span>
-          <Link href="/our-products" className="prod-breadcrumb-link">OUR PRODUCT</Link>
+          <Link href="/products" className="prod-breadcrumb-link">PRODUCTS</Link>
           <span>&gt;</span>
           <span className="current-prod">{product.name}</span>
         </nav>
@@ -165,38 +167,54 @@ export default async function Page({ params }) {
         <div className="product-main-layout">
           <ProductGallery product={product} images={images} initialImage={initialImage} />
  
-          <div className="product-info">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '15px' }}>
-              <h1 className="product-title" style={{ margin: 0 }}>{product.name}</h1>
-              {isOutOfStock && (
-                <span className="detail-out-of-stock-badge">🚫 Out of Stock</span>
-              )}
-              {isLimitedStock && (
-                <span className="detail-limited-stock-badge">⚠️ Limited Stock</span>
-              )}
-            </div>
-
-            <AddToCartControls product={product} isOutOfStock={isOutOfStock} />
-
-            <div className="features-bar">
-              {product.delivery && (
-                <div className="feature-item">
-                  <div className="f-icon">🚚</div>
-                  <div className="f-text"><strong>Delivery</strong><span>{product.delivery}</span></div>
-                </div>
-              )}
-              <div className="feature-item">
-                <div className="f-icon">🏠</div>
-                <div className="f-text"><strong>{product.stockStatus || 'In Stock'}</strong></div>
+            <div className="product-info">
+              <div className="flex items-center gap-2.5 flex-wrap mb-3">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-400/20 text-amber-700 dark:text-amber-300 text-xs font-extrabold">
+                  ★ 4.9 (125 reviews)
+                </span>
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/20 text-emerald-700 dark:text-emerald-300 text-xs font-extrabold">
+                  GI 35 Low Glycemic
+                </span>
+                {isOutOfStock && (
+                  <span className="detail-out-of-stock-badge">🚫 Out of Stock</span>
+                )}
+                {isLimitedStock && (
+                  <span className="detail-limited-stock-badge">⚠️ Limited Stock</span>
+                )}
               </div>
-              {product.shelfLife && (
+
+              <h1 className="product-title mb-2">{product.name}</h1>
+
+              <AddToCartControls product={product} isOutOfStock={isOutOfStock} />
+
+              <div className="features-bar">
+                {product.delivery && (
+                  <div className="feature-item">
+                    <span className="f-icon">🚚</span>
+                    <div className="f-text">
+                      <span className="f-label">Delivery: </span>
+                      <span className="f-val">{product.delivery}</span>
+                    </div>
+                  </div>
+                )}
                 <div className="feature-item">
-                  <div className="f-icon">🛡️</div>
-                  <div className="f-text"><strong>Best Before</strong><span>{product.shelfLife}</span></div>
+                  <span className="f-icon">🌱</span>
+                  <div className="f-text">
+                    <span className="f-label">Status: </span>
+                    <span className="f-val">{product.stockStatus || 'In Stock'}</span>
+                  </div>
                 </div>
-              )}
+                {product.shelfLife && (
+                  <div className="feature-item">
+                    <span className="f-icon">🛡️</span>
+                    <div className="f-text">
+                      <span className="f-label">Best Before: </span>
+                      <span className="f-val">{product.shelfLife}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
         </div>
       </div>
 

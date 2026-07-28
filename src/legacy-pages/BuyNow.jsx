@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { cartAPI, addressAPI, orderAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
 import { getUploadUrl } from '@/lib/imageHelper';
+import { Navbar } from '@/components/Navbar';
 import '@/styles/buynow.css';
 
 const getImageSrc = (item) => {
@@ -473,43 +474,70 @@ const BuyNowPage = () => {
   const fetchCart = async () => {
     try {
       setCartLoading(true);
-      const res = await cartAPI.getCart();
-      if (res.data.success) {
-        const items = res.data.cart?.items || [];
-        if (items.length === 0) {
-          router.push('/cart');
-          return;
+
+      // 1. Check local cart first (from CartDrawer / CartContext)
+      const localCartRaw = typeof window !== 'undefined' ? localStorage.getItem('cocofina_cart') : null;
+      if (localCartRaw) {
+        try {
+          const localItems = JSON.parse(localCartRaw);
+          if (Array.isArray(localItems) && localItems.length > 0) {
+            const snapshots = localItems.map((item) => ({
+              product: item.id || item._id || item.product,
+              name: item.name,
+              variantWeight: item.weight || item.variantWeight || '',
+              price: item.price ?? 0,
+              quantity: item.quantity || 1,
+              image: item.image || '',
+            }));
+            setCartItems(snapshots);
+
+            const savedCoupon = sessionStorage.getItem('appliedCoupon');
+            if (savedCoupon) {
+              try {
+                setCouponApplied(JSON.parse(savedCoupon));
+              } catch (e) {
+                sessionStorage.removeItem('appliedCoupon');
+              }
+            }
+
+            setCartLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing local cart:', e);
         }
+      }
 
-        // Build snapshot with price from variant
-        const snapshots = items.map((item) => {
-          const variant = item.product?.variants?.find((v) => v.weight === item.variantWeight);
-          return {
-            product: item.product?._id,
-            name: item.product?.name,
-            variantWeight: item.variantWeight,
-            price: variant?.price ?? 0,
-            quantity: item.quantity,
-            image: item.product?.images?.[0] || item.product?.thumbnail || '',
-          };
-        });
-        setCartItems(snapshots);
+      // 2. Fallback to backend cart API
+      const res = await cartAPI.getCart();
+      if (res?.data?.success) {
+        const items = res.data.cart?.items || [];
+        if (items.length > 0) {
+          const snapshots = items.map((item) => {
+            const variant = item.product?.variants?.find((v) => v.weight === item.variantWeight);
+            return {
+              product: item.product?._id,
+              name: item.product?.name,
+              variantWeight: item.variantWeight,
+              price: variant?.price ?? item.price ?? 0,
+              quantity: item.quantity,
+              image: item.product?.images?.[0] || item.product?.thumbnail || '',
+            };
+          });
+          setCartItems(snapshots);
 
-        // Retrieve coupon from sessionStorage
-        const savedCoupon = sessionStorage.getItem('appliedCoupon');
-        if (savedCoupon) {
-          try {
-            const parsed = JSON.parse(savedCoupon);
-            setCouponApplied(parsed);
-          } catch (e) {
-            console.error('Error parsing coupon:', e);
-            sessionStorage.removeItem('appliedCoupon');
+          const savedCoupon = sessionStorage.getItem('appliedCoupon');
+          if (savedCoupon) {
+            try {
+              setCouponApplied(JSON.parse(savedCoupon));
+            } catch (e) {
+              sessionStorage.removeItem('appliedCoupon');
+            }
           }
         }
       }
     } catch (err) {
       console.error('Error fetching cart:', err);
-      router.push('/cart');
     } finally {
       setCartLoading(false);
     }
@@ -572,8 +600,11 @@ const BuyNowPage = () => {
 
       const res = await orderAPI.createOrder(orderData);
 
-      // Clear coupon from sessionStorage after successful order
+      // Clear coupon & local cart after successful order
       sessionStorage.removeItem('appliedCoupon');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cocofina_cart');
+      }
       triggerCartUpdate();
 
       if (res.data.success) {
@@ -609,7 +640,8 @@ const BuyNowPage = () => {
   }
 
   return (
-    <main>
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <Navbar />
       <div className="checkout-container">
 
         {/* ── Stepper ──────────────────────────────────────────────────────── */}

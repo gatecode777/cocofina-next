@@ -421,7 +421,7 @@ const OrderDetail = () => {
                   <Link href="/my-orders" className="od-help-link">
                     <i className="fas fa-list"></i> All Orders
                   </Link>
-                  <Link href="/our-products" className="od-help-link">
+                  <Link href="/products" className="od-help-link">
                     <i className="fas fa-shopping-bag"></i> Continue Shopping
                   </Link>
                 </div>

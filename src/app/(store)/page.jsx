@@ -10,7 +10,7 @@ import { ProcessSection } from "@/components/ProcessSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { FaqSection } from "@/components/FaqSection";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "Cocofina Organic Coconut Sugar | 100% Pure, Unrefined & Low-GI",
@@ -33,14 +33,19 @@ export const metadata = {
 async function getHomeProducts() {
   try {
     await connectDB();
-    const products = await Product.find({ status: "active" })
-      .populate("category", "name slug")
-      .sort({ createdAt: -1 })
-      .limit(20)
-      .lean();
+    const products = await Promise.race([
+      Product.find({ status: "active" })
+        .populate("category", "name slug")
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .lean(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("DB Fetch Timeout")), 1500)
+      ),
+    ]);
     return JSON.parse(JSON.stringify(products));
   } catch (err) {
-    console.error("DB fetch fallback:", err);
+    console.error("DB fetch fallback:", err?.message || err);
     return [];
   }
 }

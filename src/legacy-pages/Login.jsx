@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = "force-dynamic";
-
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -26,10 +24,11 @@ const LoginForm = () => {
     setIsMounted(true);
     const token = localStorage.getItem('token');
     if (token) {
-      const from = searchParams.get('from') || '/';
+      const from = searchParams.get('redirectAfterLogin') || searchParams.get('from') || sessionStorage.getItem('redirectAfterLogin') || '/';
+      sessionStorage.removeItem('redirectAfterLogin');
       router.push(from);
     }
-  }, []);
+  }, [router, searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,16 +44,18 @@ const LoginForm = () => {
       const res = await userAuth.loginUser({ email, password });
 
       if (res.data.success) {
-        // Store user data
+        // Store user data & set cookie for middleware
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
+        document.cookie = `token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         
         // Trigger events for Header to update
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('userAuthChanged'));
 
-        // Redirect
-        const from = searchParams.get('from') || '/';
+        // Instant smooth redirect
+        const from = searchParams.get('redirectAfterLogin') || searchParams.get('from') || sessionStorage.getItem('redirectAfterLogin') || '/';
+        sessionStorage.removeItem('redirectAfterLogin');
         router.push(from);
       }
     } catch (err) {
@@ -98,6 +99,7 @@ const LoginForm = () => {
         
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(userData));
+        document.cookie = `token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
         
         console.log('Stored user data:', userData);
         console.log('Stored token:', data.token);
@@ -106,11 +108,10 @@ const LoginForm = () => {
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('userAuthChanged'));
         
-        // Small delay to ensure events are processed
-        setTimeout(() => {
-          const from = searchParams.get('from') || '/';
-          router.push(from);
-        }, 100);
+        // Instant smooth redirect
+        const from = searchParams.get('redirectAfterLogin') || searchParams.get('from') || sessionStorage.getItem('redirectAfterLogin') || '/';
+        sessionStorage.removeItem('redirectAfterLogin');
+        router.push(from);
       } else {
         setError(data.message || 'Google login failed. Please try again.');
       }
@@ -148,7 +149,8 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="login-wrapper">
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500 flex items-center justify-center">
+      <div className="login-wrapper">
       <div className="login-container">
         <div className="login-card">
           <div className="left-bg-image"></div>
@@ -222,16 +224,22 @@ const LoginForm = () => {
 
             {/* Google Login Button */}
             <div className="google-login-wrapper">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                theme="filled_blue"
-                shape="rectangular"
-                width="100%"
-                text="signin_with"
-                locale="en"
-              />
+              {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  useOneTap={false}
+                  theme="filled_blue"
+                  shape="pill"
+                  width="300"
+                  text="signin_with"
+                  locale="en"
+                />
+              ) : (
+                <div style={{ fontSize: '13px', color: '#b91c1c', textAlign: 'center', padding: '8px 12px', background: '#fef2f2', borderRadius: '6px', border: '1px solid #fca5a5' }}>
+                  Google Sign-In requires <code>NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> in <code>.env.local</code>.
+                </div>
+              )}
               {googleLoading && (
                 <div className="google-loading">
                   <i className="fa-solid fa-spinner fa-spin"></i> Connecting to Google...
@@ -247,6 +255,7 @@ const LoginForm = () => {
         </div>
       </div>
     </div>
+    </main>
   );
 };
 

@@ -58,7 +58,7 @@ export function CartProvider({ children }) {
     };
   }, [refreshCount]);
 
-  const addToCart = (item, quantityToAdd = 1) => {
+  const addToCart = useCallback((item, quantityToAdd = 1) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((i) => i.id === item.id);
       if (existingIndex > -1) {
@@ -71,14 +71,18 @@ export function CartProvider({ children }) {
     });
     setIsCartOpen(true);
     window.dispatchEvent(new Event("cartUpdated"));
-  };
+  }, []);
 
-  const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const removeFromCart = useCallback((id) => {
+    setCart((prevCart) => {
+      const nextCart = prevCart.filter((item) => item.id !== id);
+      if (nextCart.length === 0) setBackendCount(0);
+      return nextCart;
+    });
     window.dispatchEvent(new Event("cartUpdated"));
-  };
+  }, []);
 
-  const updateQuantity = (id, quantity) => {
+  const updateQuantity = useCallback((id, quantity) => {
     if (quantity <= 0) {
       removeFromCart(id);
       return;
@@ -87,35 +91,48 @@ export function CartProvider({ children }) {
       prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
     window.dispatchEvent(new Event("cartUpdated"));
-  };
+  }, [removeFromCart]);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
+    setBackendCount(0);
     window.dispatchEvent(new Event("cartUpdated"));
-  };
+  }, []);
 
-  const totalItems = Math.max(
-    cart.reduce((sum, item) => sum + item.quantity, 0),
-    backendCount
+  const localTotalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const totalItems = cart.length === 0 ? 0 : Math.max(localTotalItems, backendCount);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+
+  const value = React.useMemo(
+    () => ({
+      cart,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      isCartOpen,
+      setIsCartOpen,
+      totalItems,
+      count: totalItems,
+      subtotal,
+      refreshCount,
+    }),
+    [
+      cart,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      isCartOpen,
+      setIsCartOpen,
+      totalItems,
+      subtotal,
+      refreshCount,
+    ]
   );
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        isCartOpen,
-        setIsCartOpen,
-        totalItems,
-        count: totalItems,
-        subtotal,
-        refreshCount,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

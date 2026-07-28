@@ -57,7 +57,7 @@ export async function POST(request) {
     }
 
     const payload = ticket.getPayload();
-    const { email, given_name, family_name, picture, email_verified } = payload;
+    const { email, given_name, family_name, name, picture, email_verified } = payload;
 
     if (!email_verified) {
       return NextResponse.json(
@@ -66,14 +66,31 @@ export async function POST(request) {
       );
     }
 
+    // Determine firstName and lastName safely from Google profile
+    let firstName = given_name || '';
+    let lastName = family_name || '';
+
+    if (!firstName || !lastName) {
+      if (name) {
+        const nameParts = name.trim().split(/\s+/);
+        if (!firstName) firstName = nameParts[0] || 'User';
+        if (!lastName) lastName = nameParts.slice(1).join(' ') || 'User';
+      } else {
+        if (!firstName) firstName = 'Google';
+        if (!lastName) lastName = 'User';
+      }
+    }
+    firstName = firstName || 'User';
+    lastName = lastName || 'User';
+
     // Check if user exists
     let user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
       // Create new user if doesn't exist
       user = await User.create({
-        firstName: given_name || '',
-        lastName: family_name || '',
+        firstName,
+        lastName,
         email: email.toLowerCase(),
         password: Math.random().toString(36).slice(-16), // Random password (user will login via Google only)
         profile: picture || '',
@@ -94,12 +111,22 @@ export async function POST(request) {
     // user.loginToken = token;
     // await user.save({ validateBeforeSave: false });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Google login successful',
       token,
       user: safeUser(user),
     });
+
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    });
+
+    return response;
     
   } catch (error) {
     console.error('Google login error:', error);

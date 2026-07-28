@@ -11,17 +11,26 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// ── All routes where 401 means "wrong password", NOT "expired session"
+// ── All routes where 401 should NOT force a browser redirect
 const SKIP_REDIRECT_URLS = [
   '/api/admin/change-password',
   '/api/auth/change-password',
   '/api/admin/login',
   '/api/auth/login',
+  '/api/cart/count',
+  '/api/cart',
+  '/api/auth/profile',
+  '/api/products',
+  '/api/categories',
+  '/api/blogs',
+  '/api/coupons',
+  '/api/addresses',
+  '/api/orders',
 ];
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('adminToken') || localStorage.getItem('token')) : null;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
@@ -35,15 +44,13 @@ api.interceptors.response.use(
       const requestUrl = error.config?.url || '';
       const shouldSkip = SKIP_REDIRECT_URLS.some(url => requestUrl.includes(url));
       if (!shouldSkip) {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('token');
-        localStorage.removeItem('admin');
-        localStorage.removeItem('user');
-        localStorage.removeItem('adminData');
-        if (window.location.pathname.startsWith('/admin')) {
-          window.location.href = '/admin/login';
-        } else {
-          window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+          if (window.location.pathname.startsWith('/admin')) {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('admin');
+            localStorage.removeItem('adminData');
+            window.location.href = '/admin/login';
+          }
         }
       }
     }

@@ -1,11 +1,11 @@
 'use client';
 
-export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { userAuth, orderAPI } from '@/services/api';
 import { getUploadUrl } from '@/lib/imageHelper';
+import { Navbar } from '@/components/Navbar';
 import '@/styles/myprofile.css';
 
 const getAvatarUrl = (filename) => filename ? getUploadUrl(filename, 'profiles') : null;
@@ -16,6 +16,7 @@ const AccountPage = () => {
   // ── State ────────────────────────────────────────────────────────────────────
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'edit' | 'password'
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const modalRef = useRef(null);
@@ -37,12 +38,22 @@ const AccountPage = () => {
 
   // ── Fetch profile ────────────────────────────────────────────────────────────
   useEffect(() => {
+    setMounted(true);
     document.title = 'My Account - Cocofina';
     window.scrollTo(0, 0);
     const token = localStorage.getItem('token');
     if (!token) { 
       router.push('/login'); 
       return; 
+    }
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        const u = JSON.parse(stored);
+        setUser(u);
+        setProfileForm({ firstName: u.firstName || '', lastName: u.lastName || '', phone: u.phone || '' });
+        setLoading(false);
+      } catch (e) {}
     }
     fetchProfile();
   }, []);
@@ -175,7 +186,7 @@ const AccountPage = () => {
   const initials = () => `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase();
 
   // ── Loading ──────────────────────────────────────────────────────────────────
-  if (loading) return (
+  if (!mounted || loading) return (
     <div className="account-page-wrapper">
       <div className="acc-loading">
         <div className="acc-spinner"></div>
@@ -185,14 +196,37 @@ const AccountPage = () => {
   );
 
   return (
-    <div className="my-account-wrapper">
-      <div className="account-page-wrapper">
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <Navbar />
+      <div className="my-account-wrapper">
+        <div className="account-page-wrapper">
 
         {/* ── DASHBOARD ─────────────────────────────────────────────────────────── */}
         {currentView === 'dashboard' && (
           <>
             <div className="account-header">
               <div className="title-section">
+                <button
+                  onClick={() => router.push('/')}
+                  className="btn-back-to-store"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginBottom: '12px',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    background: '#fef3c7',
+                    color: '#92400e',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    border: '1px solid #fde68a',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  ← Back to Store
+                </button>
                 <h1>My Account</h1>
                 <p>Manage your profile, orders, and account settings.</p>
               </div>
@@ -398,6 +432,7 @@ const AccountPage = () => {
         )}
       </div>
     </div>
+    </main>
   );
 };
 
@@ -426,7 +461,7 @@ const RecentOrders = () => {
   if (loading) return <div className="acc-loading-sm"><i className="fas fa-spinner fa-spin"></i></div>;
   if (orders.length === 0) return (
     <div className="recent-orders-header" style={{ textAlign: 'center', padding: '20px', color: '#aaa' }}>
-      No orders yet. <Link href="/our-products" style={{ color: '#5a3e28' }}>Start shopping →</Link>
+      No orders yet. <Link href="/products" style={{ color: '#5a3e28' }}>Start shopping →</Link>
     </div>
   );
 
@@ -434,7 +469,7 @@ const RecentOrders = () => {
     <>
       <div className="recent-orders-header">Recent Orders</div>
       {orders.map((order) => (
-        <div className="order-row" key={order._id} onClick={() => window.location.href = '/my-orders'}>
+        <div className="order-row" key={order._id} onClick={() => router.push('/my-orders')}>
           <span>
             <strong>{order.orderNumber}</strong>
             <span style={{

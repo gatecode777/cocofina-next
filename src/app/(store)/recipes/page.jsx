@@ -1,9 +1,12 @@
-"use client";
-
 import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { Sparkles, Clock, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
+
+export const metadata = {
+  title: "Recipes & Uses | Cocofina Organic Coconut Sugar",
+  description: "Discover delicious 1:1 coconut sugar recipes for morning caramel lattes, organic cookies, and traditional Indian desserts.",
+};
 
 export default function RecipesPage() {
   const recipes = [
@@ -160,13 +163,15 @@ export default function RecipesPage() {
               </div>
             </div>
 
-            <div className="p-6 pt-0">
-              <button
-                onClick={() => alert(`Full recipe instructions for ${rec.title}:\n\n` + rec.steps.join("\n\n"))}
-                className="w-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-900 font-semibold py-3 rounded-full text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                View Cooking Steps <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+            <div className="p-6 pt-0 border-t border-neutral-200/60 dark:border-neutral-800 mt-4 space-y-2">
+              <h4 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+                Preparation Steps:
+              </h4>
+              <ol className="text-xs text-neutral-600 dark:text-neutral-400 space-y-1.5 list-decimal pl-4">
+                {rec.steps.map((step, sIdx) => (
+                  <li key={sIdx}>{step}</li>
+                ))}
+              </ol>
             </div>
           </div>
         ))}

@@ -134,7 +134,7 @@ const Header = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
-    router.push(`/our-products?search=${encodeURIComponent(searchTerm.trim())}`);
+    router.push(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
     closeDesktopSearch();
     closeMobileSearch();
   };
@@ -216,7 +216,7 @@ const Header = () => {
         <nav className="cf-nav">
           <ul className="cf-menu">
             <li><Link href="/" className={isActive('/') ? 'active' : ''}>Home</Link></li>
-            <li><Link href="/our-products" className={isActive('/our-products') ? 'active' : ''}>Our Product</Link></li>
+            <li><Link href="/products" className={isActive('/products') ? 'active' : ''}>Our Products</Link></li>
             <li><Link href="/benefits" className={isActive('/benefits') ? 'active' : ''}>Benefits</Link></li>
             <li><Link href="/about-us" className={isActive('/about-us') ? 'active' : ''}>About Us</Link></li>
             <li><Link href="/contact-us" className={isActive('/contact-us') ? 'active' : ''}>Contact Us</Link></li>
@@ -494,7 +494,7 @@ const Header = () => {
           </form>
 
           <Link href="/" className={isActive('/') ? 'active' : ''} onClick={closeMobileMenu}>Home</Link>
-          <Link href="/our-products" className={isActive('/our-products') ? 'active' : ''} onClick={closeMobileMenu}>Our Product</Link>
+          <Link href="/products" className={isActive('/products') ? 'active' : ''} onClick={closeMobileMenu}>Our Products</Link>
           <Link href="/benefits" className={isActive('/benefits') ? 'active' : ''} onClick={closeMobileMenu}>Benefits</Link>
           <Link href="/about-us" className={isActive('/about-us') ? 'active' : ''} onClick={closeMobileMenu}>About Us</Link>
           <Link href="/contact-us" className={isActive('/contact-us') ? 'active' : ''} onClick={closeMobileMenu}>Contact Us</Link>

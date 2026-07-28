@@ -70,8 +70,6 @@ userSchema.virtual("fullName").get(function () {
 });
 
 // ── Indexes ────────────────────────────────────────────────────────────────────
-userSchema.index({ email: 1 }, { unique: true });
-
 // Unique phone — sparse so that empty/missing phones don't conflict
 // Only non-empty phone values must be unique
 userSchema.index(

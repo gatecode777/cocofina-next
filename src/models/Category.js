@@ -42,7 +42,6 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Indexes for faster queries
-categorySchema.index({ slug: 1 });
 categorySchema.index({ isActive: 1 });
 categorySchema.index({ order: 1 });
 

@@ -7,7 +7,7 @@ import { useCart } from "../context/CartContext";
 import { ShoppingBag, Star, Check, Sparkles, Zap, Search, Filter, ShieldCheck } from "lucide-react";
 import { getProductImageUrl } from "@/lib/imageHelper";
 
-export function ProductsSection({ products = [] }) {
+function ProductsSectionComponent({ products = [] }) {
   const { addToCart, setIsCartOpen } = useCart();
   const router = useRouter();
 
@@ -197,6 +197,8 @@ export function ProductsSection({ products = [] }) {
               ? Math.round(((currentVariant.oldPrice - currentVariant.price) / currentVariant.oldPrice) * 100)
               : 12;
 
+            const isOutOfStock = product.stockStatus === "Out of Stock" || currentVariant?.stock === 0;
+
             return (
               <div
                 key={product._id}
@@ -314,45 +316,57 @@ export function ProductsSection({ products = [] }) {
                 </div>
 
                 {/* Card Actions (Qty + Add to Cart + Buy Now) */}
-                <div className="pt-6 space-y-3">
-                  <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
-                      Qty:
-                    </span>
-                    <div className="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-full px-2.5 py-0.5 bg-neutral-100 dark:bg-neutral-900">
-                      <button
-                        onClick={() => handleQtyChange(product._id, qty - 1)}
-                        className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white px-2 font-bold"
-                      >
-                        -
-                      </button>
-                      <span className="px-2 text-xs font-bold text-neutral-900 dark:text-white">
-                        {qty}
+                {isOutOfStock ? (
+                  <div className="pt-6" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      disabled
+                      className="w-full bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 font-bold py-3 rounded-full text-xs cursor-not-allowed border border-neutral-300/80 dark:border-neutral-700 flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                      Out of Stock
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-6 space-y-3">
+                    <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                      <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                        Qty:
                       </span>
+                      <div className="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-full px-2.5 py-0.5 bg-neutral-100 dark:bg-neutral-900">
+                        <button
+                          onClick={() => handleQtyChange(product._id, qty - 1)}
+                          className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white px-2 font-bold"
+                        >
+                          -
+                        </button>
+                        <span className="px-2 text-xs font-bold text-neutral-900 dark:text-white">
+                          {qty}
+                        </span>
+                        <button
+                          onClick={() => handleQtyChange(product._id, qty + 1)}
+                          className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white px-2 font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
                       <button
-                        onClick={() => handleQtyChange(product._id, qty + 1)}
-                        className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white px-2 font-bold"
+                        onClick={(e) => handleAddToCart(product, e)}
+                        className="bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-900 font-semibold py-2.5 rounded-full text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-md"
                       >
-                        +
+                        <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                      </button>
+                      <button
+                        onClick={(e) => handleBuyNow(product, e)}
+                        className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-full text-xs transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-md shadow-amber-600/20"
+                      >
+                        Buy Now (₹{currentVariant.price * qty})
                       </button>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <button
-                      onClick={(e) => handleAddToCart(product, e)}
-                      className="bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-900 font-semibold py-2.5 rounded-full text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-md"
-                    >
-                      <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
-                    </button>
-                    <button
-                      onClick={(e) => handleBuyNow(product, e)}
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-full text-xs transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-md shadow-amber-600/20"
-                    >
-                      Buy Now (₹{currentVariant.price * qty})
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             );
           })}
@@ -412,3 +426,6 @@ export function ProductsSection({ products = [] }) {
     </section>
   );
 }
+
+export const ProductsSection = React.memo(ProductsSectionComponent);
+
