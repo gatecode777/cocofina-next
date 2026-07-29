@@ -96,7 +96,8 @@ function ProductsSectionComponent({ products = [] }) {
 
     addToCart(
       {
-        id: `${product._id}-${variant.weight}`,
+        id: `${product._id}_${variant.weight}`,
+        productId: product._id,
         name: product.name,
         weight: variant.weight,
         price: variant.price,

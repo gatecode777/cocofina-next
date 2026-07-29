@@ -34,6 +34,17 @@ export async function GET(request) {
   }
 }
 
+const extractObjectId = (val) => {
+  if (!val) return null;
+  if (typeof val === 'object') {
+    if (val._id) return extractObjectId(val._id);
+    if (val.id) return extractObjectId(val.id);
+  }
+  const str = String(val);
+  const match = str.match(/[0-9a-fA-F]{24}/);
+  return match ? match[0] : null;
+};
+
 // POST /api/orders — place order
 export async function POST(request) {
   try {
@@ -67,7 +78,7 @@ export async function POST(request) {
       rawItems = bodyItems;
     } else if (dbCart && dbCart.items && dbCart.items.length > 0) {
       rawItems = dbCart.items.map(item => ({
-        product: item.product?._id || item.product,
+        product: extractObjectId(item.product),
         variantWeight: item.variantWeight,
         quantity: item.quantity,
         price: item.price,
@@ -81,7 +92,8 @@ export async function POST(request) {
     // ── Build order items with DB validation & shipping snapshot ──────────────
     const orderItems = [];
     for (const item of rawItems) {
-      const productId = item.product?._id || item.product || item.productId || item.id?.split('_')?.[0];
+      const rawId = item.product || item.productId || item._id || item.id;
+      const productId = extractObjectId(rawId);
       if (!productId) continue;
 
       const p = await Product.findById(productId).select('name images thumbnail variants stockStatus status shipping');

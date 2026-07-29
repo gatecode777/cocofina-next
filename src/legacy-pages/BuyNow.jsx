@@ -676,7 +676,9 @@ const BuyNowPage = () => {
           const localItems = JSON.parse(localCartRaw);
           if (Array.isArray(localItems) && localItems.length > 0) {
             const snapshots = localItems.map((item) => {
-              const cleanId = item.productId || item._id || (typeof item.id === 'string' && item.id.includes('_') ? item.id.split('_')[0] : item.id) || item.product;
+              const rawVal = String(item.productId || item._id || item.product || item.id || '');
+              const hexMatch = rawVal.match(/[0-9a-fA-F]{24}/);
+              const cleanId = hexMatch ? hexMatch[0] : rawVal;
               return {
                 product: cleanId,
                 name: item.name,
