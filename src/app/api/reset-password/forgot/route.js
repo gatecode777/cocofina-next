@@ -12,10 +12,18 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const sendOTPEmail = async (email, otp, firstName) => {
   const mailUser = process.env.SMTP_USER || process.env.EMAIL_USER;
   const mailPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+  const mailHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const mailPort = parseInt(process.env.SMTP_PORT || '587', 10);
+  const mailSecure = process.env.SMTP_SECURE === 'true';
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: mailHost,
+    port: mailPort,
+    secure: mailSecure,
     auth: { user: mailUser, pass: mailPass },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 
   await transporter.sendMail({
@@ -72,6 +80,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, message: 'OTP sent successfully to your email' });
   } catch (err) {
     console.error('forgotPassword error:', err);
-    return NextResponse.json({ success: false, message: 'Failed to send OTP. Please try again.' }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message || 'Failed to send OTP. Please try again.' }, { status: 500 });
   }
 }

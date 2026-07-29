@@ -12,8 +12,10 @@ export function StorySection() {
         <div className="lg:col-span-6 relative">
           <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-neutral-800">
             <img
-              src="/03.png"
+              src="/03.webp"
               alt="Sustainable Coconut Tapping Process"
+              loading="lazy"
+              decoding="async"
               className="w-full h-[460px] object-cover hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">

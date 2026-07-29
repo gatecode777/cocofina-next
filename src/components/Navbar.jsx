@@ -92,15 +92,15 @@ export function Navbar() {
           />
         </Link>
 
-        {/* Center Pill (Desktop) */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 rounded-full px-2 py-2 items-center gap-1 transition-colors duration-500">
+        {/* Center Pill (Desktop LG+) */}
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 rounded-full px-2 py-2 items-center gap-1 transition-colors duration-500">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-bold shadow-sm"
                     : "text-neutral-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/20 hover:text-neutral-900 dark:hover:text-white"
@@ -112,8 +112,8 @@ export function Navbar() {
           })}
         </div>
 
-        {/* Right CTA, Cart, Theme & Profile Section (Desktop) */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right CTA, Cart, Theme & Profile Section (Desktop LG+) */}
+        <div className="hidden lg:flex items-center gap-3">
           <button
             onClick={() => setIsCartOpen(true)}
             aria-label="View Shopping Basket"
@@ -230,14 +230,14 @@ export function Navbar() {
 
           <Link
             href="/products"
-            className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors cursor-pointer active:scale-95"
+            className="whitespace-nowrap bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors cursor-pointer active:scale-95"
           >
             Shop Now
           </Link>
         </div>
 
-        {/* Mobile Controls */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile & Tablet Controls (Below LG) */}
+        <div className="flex lg:hidden items-center gap-2">
           <button
             onClick={() => setIsCartOpen(true)}
             aria-label="View Basket"
@@ -280,9 +280,9 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile & Tablet Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-x-4 top-20 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-black/10 dark:border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-3 z-50">
+          <div className="lg:hidden fixed inset-x-4 top-20 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-black/10 dark:border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col gap-3 z-50">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -358,4 +358,3 @@ export function Navbar() {
     </header>
   );
 }
-

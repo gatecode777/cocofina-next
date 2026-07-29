@@ -4,7 +4,8 @@ export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { passwordResetAPI } from '@/services/api';
+import { auth } from '@/lib/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import '@/styles/forgetpassword.css';
 
 const ForgotPasswordPage = () => {
@@ -31,17 +32,17 @@ const ForgotPasswordPage = () => {
 
     setSubmitting(true);
     try {
-      const res = await passwordResetAPI.forgotPassword(trimmed);
-
-      if (res.data.success) {
-        setSuccess(true);
-        sessionStorage.setItem('resetEmail', trimmed);
-        setTimeout(() => router.push('/verify-otp'), 1800);
-      } else {
-        setError(res.data.message || 'Failed to send OTP. Please try again.');
-      }
+      await sendPasswordResetEmail(auth, trimmed);
+      setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
+      console.error('Password Reset Error:', err);
+      if (err.code === 'auth/user-not-found') {
+        setError('No account found for this email address. Please check your email or Sign Up.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Please enter a valid email address.');
+      } else {
+        setError(err.message || 'Failed to send password reset email. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -60,25 +61,26 @@ const ForgotPasswordPage = () => {
 
             <h2 className="welcome-text">Forgot Password?</h2>
             <p className="auth-description">
-              Enter your registered email address and we'll send you a 6-digit OTP code.
+              Enter your registered email address and we'll send you a password reset link.
             </p>
 
-            {success && (
-              <div className="auth-success-msg">
-                <i className="fa-solid fa-circle-check"></i>
-                <span>OTP sent to <strong>{email}</strong>! Redirecting…</span>
+            {success ? (
+              <div className="auth-success-msg flex-col text-center py-2">
+                <i className="fa-solid fa-circle-check text-2xl mb-2 text-emerald-500"></i>
+                <span className="font-semibold text-sm">Password Reset Link Sent!</span>
+                <p className="text-xs text-neutral-600 dark:text-neutral-300 mt-1">
+                  We've sent a password reset email to <strong>{email}</strong>. Please check your inbox and spam folder.
+                </p>
               </div>
-            )}
-
-            {error && (
-              <div className="auth-error-msg">
-                <i className="fa-solid fa-circle-exclamation"></i>
-                <span>{error}</span>
-              </div>
-            )}
-
-            {!success && (
+            ) : (
               <form className="forgot-form" onSubmit={handleSubmit}>
+                {error && (
+                  <div className="auth-error-msg mb-4">
+                    <i className="fa-solid fa-circle-exclamation"></i>
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <div className="input-icon-container-l">
                   <i className="fa-regular fa-envelope"></i>
                   <input
@@ -95,9 +97,9 @@ const ForgotPasswordPage = () => {
 
                 <button type="submit" className="btn-submit" disabled={submitting}>
                   {submitting ? (
-                    <><i className="fa-solid fa-spinner fa-spin"></i> Sending OTP…</>
+                    <><i className="fa-solid fa-spinner fa-spin"></i> Sending Reset Link…</>
                   ) : (
-                    'Send OTP'
+                    'Send Reset Link'
                   )}
                 </button>
               </form>

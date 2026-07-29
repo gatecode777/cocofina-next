@@ -12,10 +12,18 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const sendOTPEmail = async (email, otp, firstName) => {
   const mailUser = process.env.SMTP_USER || process.env.EMAIL_USER;
   const mailPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+  const mailHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const mailPort = parseInt(process.env.SMTP_PORT || '587', 10);
+  const mailSecure = process.env.SMTP_SECURE === 'true';
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: mailHost,
+    port: mailPort,
+    secure: mailSecure,
     auth: { user: mailUser, pass: mailPass },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 
   await transporter.sendMail({
@@ -54,11 +62,9 @@ export async function POST(request) {
 
     const user = await User.findOne({ email });
 
-    // Always 200 for security
     if (!user)
       return NextResponse.json({ success: true, message: 'If your email is registered, you will receive a new OTP' });
 
-    // Rate limit: max 1 resend per 2 minutes
     const recent = await OTP.findOne({
       email,
       type:      'password_reset',
@@ -67,7 +73,6 @@ export async function POST(request) {
     if (recent)
       return NextResponse.json({ success: false, message: 'Please wait before requesting another OTP' }, { status: 429 });
 
-    // Delete old unused OTPs and create fresh one
     await OTP.deleteMany({ email, type: 'password_reset', isUsed: false });
 
     const otp       = generateOTP();
@@ -78,6 +83,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, message: 'New OTP sent successfully' });
   } catch (err) {
     console.error('resendOTP error:', err);
-    return NextResponse.json({ success: false, message: 'Failed to resend OTP. Please try again.' }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message || 'Failed to resend OTP. Please try again.' }, { status: 500 });
   }
 }

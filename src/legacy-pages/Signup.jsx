@@ -157,9 +157,13 @@ const Signup = () => {
         } catch (retryErr) {
           setErrors({ submit: retryErr.message || 'Error initializing reCAPTCHA. Please refresh the page.' });
         }
+      } else if (err.code === 'auth/captcha-check-failed' || err.message?.includes('captcha-check-failed') || err.message?.includes('Hostname match not found')) {
+        setErrors({
+          submit: 'Domain authorization error: Please add your live website domain (e.g. cocofinasugar.com) to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+        });
       } else if (err.code === 'auth/invalid-app-credential' || err.message?.includes('invalid-app-credential')) {
         setErrors({
-          submit: 'Domain authorization error: Please add "localhost" to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+          submit: 'Domain authorization error: Please add your website domain to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
         });
       } else if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
         setErrors({
@@ -167,7 +171,7 @@ const Signup = () => {
         });
       } else if (err.code === 'auth/network-request-failed' || err.message?.includes('network-request-failed')) {
         setErrors({
-          submit: 'Network error: Please ensure "localhost" is added to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+          submit: 'Network error: Please ensure your domain is added to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
         });
       } else {
         setErrors({ submit: err.message || 'Failed to send SMS OTP. Please check your phone number.' });
@@ -389,9 +393,6 @@ const Signup = () => {
                     <strong className="text-base text-amber-600 dark:text-amber-400 font-mono">
                       +91 {formData.contactNumber}
                     </strong>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
-                      (If using a Firebase Test Phone Number, enter the test verification code configured in your Firebase Console, e.g. <strong>123456</strong>)
-                    </p>
                   </div>
 
                   {errors.otp && (

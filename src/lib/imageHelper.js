@@ -7,8 +7,8 @@ const STATIC_IMAGES = [
   "product_1kg.png",
   "01.png",
   "02.png",
-  "03.png",
-  "04.png",
+  "03.webp",
+  "04.webp",
 ];
 
 export const getUploadUrl = (filename, folder = 'products') => {
@@ -37,4 +37,3 @@ export const getUploadUrl = (filename, folder = 'products') => {
 export const getProductImageUrl = (filename) => {
   return getUploadUrl(filename, 'products') || '/cocofinaproduct.png';
 };
-

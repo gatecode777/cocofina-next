@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import Link from "next/link";
 import { RevealLayer } from "./RevealLayer";
 import { Navbar } from "./Navbar";
 
-const BG_IMAGE_1 = "/04.png";
-const BG_IMAGE_2 = "/03.png";
+const BG_IMAGE_1 = "/04.webp";
+const BG_IMAGE_2 = "/03.webp";
 
 export function HeroSection() {
   const mouseRef = useRef({ x: -999, y: -999 });
   const smoothRef = useRef({ x: -999, y: -999 });
+  const revealRef = useRef(null);
   const rafRef = useRef(null);
-
-  const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
 
   useEffect(() => {
     if (mouseRef.current.x === -999 && typeof window !== "undefined") {
@@ -24,16 +24,15 @@ export function HeroSection() {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     const loop = () => {
       smoothRef.current.x += (mouseRef.current.x - smoothRef.current.x) * 0.1;
       smoothRef.current.y += (mouseRef.current.y - smoothRef.current.y) * 0.1;
 
-      setCursorPos({
-        x: smoothRef.current.x,
-        y: smoothRef.current.y,
-      });
+      if (revealRef.current) {
+        revealRef.current.updatePosition(smoothRef.current.x, smoothRef.current.y);
+      }
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -65,11 +64,7 @@ export function HeroSection() {
         />
 
         {/* Reveal Layer with Spotlight Mask (z-30) */}
-        <RevealLayer
-          image={BG_IMAGE_2}
-          cursorX={cursorPos.x}
-          cursorY={cursorPos.y}
-        />
+        <RevealLayer ref={revealRef} image={BG_IMAGE_2} />
 
         {/* Heading (z-50) */}
         <div className="absolute top-[18%] left-0 right-0 flex flex-col items-center text-center px-5 pointer-events-none z-50">
@@ -109,12 +104,12 @@ export function HeroSection() {
             — Discover how we transform sweet, organic coconut sap into an
             unrefined, low-glycemic sugar that nourishes both body and earth.
           </p>
-          <a
-            href="#products"
+          <Link
+            href="/our-products"
             className="bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-amber-600/30 cursor-pointer"
           >
             Taste the Pureness
-          </a>
+          </Link>
         </div>
       </section>
     </div>
