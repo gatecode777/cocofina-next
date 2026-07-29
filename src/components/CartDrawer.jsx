@@ -48,10 +48,10 @@ export function CartDrawer() {
         onClick={() => setIsCartOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-white dark:bg-neutral-900 border-l border-neutral-200 dark:border-neutral-800 shadow-2xl flex flex-col justify-between transition-all">
           {/* Header */}
-          <div className="p-6 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+          <div className="p-4 sm:p-6 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-500/10 dark:bg-amber-400/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <ShoppingBag className="w-5 h-5" />
@@ -75,7 +75,7 @@ export function CartDrawer() {
 
           {/* Free Shipping Progress */}
           {cart.length > 0 && (
-            <div className="px-6 py-3 bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200/50 dark:border-amber-900/30">
+            <div className="px-4 sm:px-6 py-3 bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200/50 dark:border-amber-900/30">
               <div className="flex items-center justify-between text-xs font-medium text-amber-900 dark:text-amber-200 mb-1">
                 <span className="flex items-center gap-1.5">
                   <Truck className="w-3.5 h-3.5" />
@@ -95,7 +95,7 @@ export function CartDrawer() {
           )}
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-center py-16 text-neutral-400 space-y-3">
                 <ShoppingBag className="w-16 h-16 stroke-[1.2] text-neutral-300 dark:text-neutral-700" />

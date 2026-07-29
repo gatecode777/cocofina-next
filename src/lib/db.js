@@ -1,4 +1,12 @@
 import mongoose from "mongoose";
+import dns from "dns";
+
+// Fix querySrv ECONNREFUSED on Windows / local network DNS lookup for MongoDB Atlas SRV records
+try {
+  dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
+} catch (e) {
+  console.warn("Could not set custom DNS servers for MongoDB connection:", e);
+}
 
 // In development, store the connection on the global object so it
 // survives hot module replacement (Next.js re-imports modules on change)

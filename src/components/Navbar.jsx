@@ -18,6 +18,7 @@ export function Navbar() {
   const [user, setUser] = useState(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const mobileDropdownRef = useRef(null);
 
   useEffect(() => {
     const timer = requestAnimationFrame(() => setMounted(true));
@@ -46,15 +47,21 @@ export function Navbar() {
     };
   }, []);
 
-  // ── Outside click to close profile dropdown ─────────────────────────────
+  // ── Outside click / touch to close profile dropdown ─────────────────────
   useEffect(() => {
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      const inDesktop = dropdownRef.current && dropdownRef.current.contains(e.target);
+      const inMobile = mobileDropdownRef.current && mobileDropdownRef.current.contains(e.target);
+      if (!inDesktop && !inMobile) {
         setIsProfileDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -263,13 +270,97 @@ export function Navbar() {
             )}
           </button>
 
-          <button
-            onClick={() => setIsProfileDropdownOpen((prev) => !prev)}
-            aria-label="User Profile"
-            className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer"
-          >
-            <User className="w-4 h-4" />
-          </button>
+          {/* User Profile Button & Dropdown for Mobile & Tablet */}
+          <div className="relative" ref={mobileDropdownRef}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileDropdownOpen((prev) => !prev);
+              }}
+              aria-label="User Profile"
+              title={user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : "Account"}
+              className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer active:scale-95"
+            >
+              {user ? (
+                <div className="w-5 h-5 rounded-full bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                  {user.firstName?.[0]?.toUpperCase() || "U"}
+                </div>
+              ) : (
+                <User className="w-4 h-4 text-neutral-800 dark:text-white" />
+              )}
+            </button>
+
+            {isProfileDropdownOpen && (
+              <div className="absolute right-0 mt-3 w-56 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-black/10 dark:border-white/15 rounded-2xl p-2 shadow-2xl z-[110] flex flex-col gap-1 text-sm font-medium">
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 border-b border-neutral-100 dark:border-neutral-800">
+                      <p className="font-bold text-neutral-900 dark:text-white truncate">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <Link
+                      href="/my-profile"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span>My Profile</span>
+                    </Link>
+                    <Link
+                      href="/my-orders"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <Package className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span>My Orders</span>
+                    </Link>
+                    <Link
+                      href="/addresses"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span>Saved Addresses</span>
+                    </Link>
+                    <div className="my-1 border-t border-neutral-100 dark:border-neutral-800" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors text-left cursor-pointer font-medium"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Log Out</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="px-3 py-1.5 border-b border-neutral-100 dark:border-neutral-800 text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                      User Account
+                    </div>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-900 dark:text-white font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span>Log In</span>
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <UserPlus className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span>Create Account</span>
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

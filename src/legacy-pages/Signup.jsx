@@ -271,35 +271,40 @@ const Signup = () => {
                   )}
 
                   <form className="reg-form" onSubmit={handleSubmit}>
-                    {/* First Name */}
-                    <div className="input-icon-container">
-                      <i className="fa-regular fa-user"></i>
-                      <input
-                        type="text"
-                        name="firstName"
-                        placeholder="First Name"
-                        className={`input-field-s ${errors.firstName ? 'error' : ''}`}
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        disabled={isLoading}
-                      />
-                    </div>
-                    {errors.firstName && <span className="field-error">{errors.firstName}</span>}
+                    {/* Name Row (2-column on desktop, stacked on mobile) */}
+                    <div className="name-row-grid">
+                      <div className="name-col">
+                        <div className="input-icon-container">
+                          <i className="fa-regular fa-user"></i>
+                          <input
+                            type="text"
+                            name="firstName"
+                            placeholder="First Name"
+                            className={`input-field-s ${errors.firstName ? 'error' : ''}`}
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            disabled={isLoading}
+                          />
+                        </div>
+                        {errors.firstName && <span className="field-error">{errors.firstName}</span>}
+                      </div>
 
-                    {/* Last Name */}
-                    <div className="input-icon-container">
-                      <i className="fa-regular fa-user"></i>
-                      <input
-                        type="text"
-                        name="lastName"
-                        placeholder="Last Name"
-                        className={`input-field-s ${errors.lastName ? 'error' : ''}`}
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        disabled={isLoading}
-                      />
+                      <div className="name-col">
+                        <div className="input-icon-container">
+                          <i className="fa-regular fa-user"></i>
+                          <input
+                            type="text"
+                            name="lastName"
+                            placeholder="Last Name"
+                            className={`input-field-s ${errors.lastName ? 'error' : ''}`}
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            disabled={isLoading}
+                          />
+                        </div>
+                        {errors.lastName && <span className="field-error">{errors.lastName}</span>}
+                      </div>
                     </div>
-                    {errors.lastName && <span className="field-error">{errors.lastName}</span>}
 
                     {/* Phone */}
                     <div className="input-icon-container">

@@ -819,3 +819,76 @@
 .btn-next:active {
   transform: translateY(0) scale(0.99);
 }
+
+/* ── Mobile Responsive Rules for Checkout ────────────────────────────────── */
+@media (max-width: 640px) {
+  .checkout-container {
+    margin: 20px 10px 40px 10px;
+    padding: 20px 14px;
+    border-radius: 20px;
+    max-width: 100%;
+  }
+
+  .stepper {
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 0;
+    margin-bottom: 24px;
+  }
+
+  .step {
+    gap: 6px;
+  }
+
+  .step-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .step-info span {
+    display: none;
+  }
+
+  .step-info strong {
+    font-size: 12.5px;
+  }
+
+  .step-connector {
+    margin: 0 4px;
+    min-width: 8px;
+  }
+
+  .selection-card {
+    padding: 14px;
+    gap: 10px;
+    border-radius: 16px;
+  }
+
+  .payment-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .summary-panel,
+  .payment-panel {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .checkout-footer {
+    margin-top: 24px;
+    padding-top: 18px;
+    gap: 10px;
+  }
+
+  .btn-back {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .btn-next {
+    padding: 12px 28px;
+    font-size: 13.5px;
+  }
+}
