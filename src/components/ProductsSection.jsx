@@ -198,12 +198,12 @@ function ProductsSectionComponent({ products = [] }) {
               : 12;
 
             const isOutOfStock = product.stockStatus === "Out of Stock" || currentVariant?.stock === 0;
+            const productUrl = `/products/${product.slug || product._id}`;
 
             return (
               <div
                 key={product._id}
-                onClick={() => router.push(`/products/${product.slug || product._id}`)}
-                className={`group relative bg-white dark:bg-neutral-800/90 border rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1 ${
+                className={`group relative bg-white dark:bg-neutral-800/90 border rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 ${
                   isBestValue
                     ? "border-2 border-amber-500/70 dark:border-amber-400/70"
                     : "border-neutral-200/80 dark:border-neutral-700/80"
@@ -218,7 +218,7 @@ function ProductsSectionComponent({ products = [] }) {
 
                 <div className="space-y-5">
                   {/* Image Showcase Container */}
-                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-amber-50/60 dark:bg-neutral-900/80 flex items-center justify-center p-4">
+                  <Link href={productUrl} prefetch={true} className="relative aspect-4/3 rounded-2xl overflow-hidden bg-amber-50/60 dark:bg-neutral-900/80 flex items-center justify-center p-4 block cursor-pointer">
                     <img
                       src={img}
                       alt={product.name}
@@ -236,7 +236,7 @@ function ProductsSectionComponent({ products = [] }) {
                         SAVE {discount}%
                       </span>
                     )}
-                  </div>
+                  </Link>
 
                   {/* Product Header & Rating */}
                   <div className="space-y-2">
@@ -255,7 +255,9 @@ function ProductsSectionComponent({ products = [] }) {
                     </div>
 
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white font-playfair italic line-clamp-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                      {product.name}
+                      <Link href={productUrl} prefetch={true} className="cursor-pointer">
+                        {product.name}
+                      </Link>
                     </h3>
                     <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed line-clamp-2">
                       {product.description?.short || "100% unrefined organic coconut sugar tapped from tropical coconut blossoms."}

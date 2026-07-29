@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getUploadUrl } from '@/lib/imageHelper';
@@ -44,16 +45,16 @@ const SkeletonCard = () => (
 
 // ── Product Card ───────────────────────────────────────────────────────────────
 const ProductCard = ({ product }) => {
-  const router = useRouter();
   const lowestVar = getLowestVariant(product);
   const isComingSoon = product.isComingSoon;
   const isOutOfStock = product.stockStatus === 'Out of Stock';
   const isLimitedStock = product.stockStatus === 'Limited Stock';
   const [selectedVariant, setSelectedVariant] = useState(lowestVar);
+  const productUrl = `/products/${product.slug || product._id}`;
 
   return (
     <div className="prod-card">
-      <div className="prod-img-bg" style={{ position: 'relative' }}>
+      <Link href={productUrl} prefetch={true} className="prod-img-bg" style={{ position: 'relative', display: 'block' }}>
         <img
           src={getImageSrc(product)}
           alt={product.name}
@@ -69,17 +70,26 @@ const ProductCard = ({ product }) => {
         {isLimitedStock && !isComingSoon && (
           <span className="prod-limited-stock-badge">⚠️ Limited Stock</span>
         )}
-      </div>
+      </Link>
       <div className="prod-info">
-        <h3>{product.name}</h3>
+        <h3>
+          <Link href={productUrl} prefetch={true} style={{ color: 'inherit', textDecoration: 'none' }}>
+            {product.name}
+          </Link>
+        </h3>
 
         {product.variants?.length > 1 && !isComingSoon && (
           <div className="prod-variant-btns">
             {product.variants.map((v) => (
               <button
                 key={v.weight}
+                type="button"
                 className={`prod-variant-btn ${selectedVariant?.weight === v.weight ? 'active' : ''}`}
-                onClick={() => setSelectedVariant(v)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedVariant(v);
+                }}
               >
                 {v.weight}
               </button>
@@ -103,18 +113,28 @@ const ProductCard = ({ product }) => {
               <span className="prod-price" style={{ color: '#999' }}>—</span>
             )}
           </div>
-          <button
-            className="prod-order-btn"
-            onClick={() => !isComingSoon && !isOutOfStock && router.push(`/products/${product.slug || product._id}`)}
-            disabled={isComingSoon || isOutOfStock}
-            style={{ 
-              border: 'none', 
-              ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af', boxShadow: 'none' } : {}),
-              ...(isOutOfStock ? { opacity: 0.65, cursor: 'not-allowed', background: '#dc2626', color: '#fff', boxShadow: 'none' } : {})
-            }}
-          >
-            {isComingSoon ? 'Coming Soon' : isOutOfStock ? 'Out of Stock' : 'Order Now'}
-          </button>
+          {isComingSoon || isOutOfStock ? (
+            <button
+              className="prod-order-btn"
+              disabled
+              style={{ 
+                border: 'none', 
+                ...(isComingSoon ? { opacity: 0.55, cursor: 'not-allowed', background: '#9ca3af', boxShadow: 'none' } : {}),
+                ...(isOutOfStock ? { opacity: 0.65, cursor: 'not-allowed', background: '#dc2626', color: '#fff', boxShadow: 'none' } : {})
+              }}
+            >
+              {isComingSoon ? 'Coming Soon' : 'Out of Stock'}
+            </button>
+          ) : (
+            <Link
+              href={productUrl}
+              prefetch={true}
+              className="prod-order-btn"
+              style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              Order Now
+            </Link>
+          )}
         </div>
       </div>
     </div>

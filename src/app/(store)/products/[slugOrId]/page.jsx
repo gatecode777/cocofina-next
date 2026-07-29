@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cache } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { connectDB } from '@/lib/db';
@@ -10,16 +10,34 @@ import '@/styles/productdetail.css';
 
 export const revalidate = 60;
 
-async function getProduct(slugOrId) {
-  await connectDB();
-  let product = null;
-  if (slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
-    product = await Product.findById(slugOrId).lean();
+// Memoize DB lookups per request so generateMetadata and Page share the result
+const getProduct = cache(async (slugOrId) => {
+  try {
+    await connectDB();
+    let product = null;
+    if (slugOrId && slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(slugOrId).lean();
+    }
+    if (!product && slugOrId) {
+      product = await Product.findOne({ slug: slugOrId }).lean();
+    }
+    return product ? JSON.parse(JSON.stringify(product)) : null;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
   }
-  if (!product) {
-    product = await Product.findOne({ slug: slugOrId }).lean();
+});
+
+export async function generateStaticParams() {
+  try {
+    await connectDB();
+    const products = await Product.find({ status: { $ne: 'archived' } }, 'slug _id').lean();
+    return products.map((p) => ({
+      slugOrId: p.slug || p._id.toString(),
+    }));
+  } catch {
+    return [];
   }
-  return product ? JSON.parse(JSON.stringify(product)) : null;
 }
 
 export async function generateMetadata({ params }) {
