@@ -41,53 +41,80 @@ export async function POST(request) {
     if (error) return error;
     await connectDB();
 
+    const body = await request.json();
     const {
       addressSnapshot,
       shippingMethod = 'free',
       paymentMethod  = 'cod',
       notes          = '',
       couponCode     = null,
-    } = await request.json();
+      items: bodyItems = null,
+    } = body;
 
     if (!addressSnapshot?.fullName || !addressSnapshot?.line1)
       return NextResponse.json({ success: false, message: 'Shipping address is required' }, { status: 400 });
     if (!['cod', 'prepaid'].includes(paymentMethod))
       return NextResponse.json({ success: false, message: 'Invalid payment method' }, { status: 400 });
 
-    // ── Fetch cart with product shipping dimensions ──────────────────────────
-    const cart = await Cart.findOne({ user: authUser._id }).populate({
-      path:   'items.product',
+    // ── Determine Cart Items to Order ─────────────────────────────────────────
+    let rawItems = [];
+    const dbCart = await Cart.findOne({ user: authUser._id }).populate({
+      path: 'items.product',
       select: 'name images thumbnail variants stockStatus status shipping',
     });
-    if (!cart || cart.items.length === 0)
+
+    if (Array.isArray(bodyItems) && bodyItems.length > 0) {
+      rawItems = bodyItems;
+    } else if (dbCart && dbCart.items && dbCart.items.length > 0) {
+      rawItems = dbCart.items.map(item => ({
+        product: item.product?._id || item.product,
+        variantWeight: item.variantWeight,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+    }
+
+    if (!rawItems || rawItems.length === 0) {
       return NextResponse.json({ success: false, message: 'Cart is empty' }, { status: 400 });
+    }
 
-    // ── Build order items with shipping snapshot ──────────────────────────────
+    // ── Build order items with DB validation & shipping snapshot ──────────────
     const orderItems = [];
-    for (const item of cart.items) {
-      const p = item.product;
-      if (!p || p.status !== 'active')
-        return NextResponse.json({ success: false, message: `"${p?.name || 'A product'}" is no longer available` }, { status: 400 });
+    for (const item of rawItems) {
+      const productId = item.product?._id || item.product || item.productId || item.id?.split('_')?.[0];
+      if (!productId) continue;
 
-      const variant = p.variants.find(v => v.weight === item.variantWeight);
-      if (!variant)
-        return NextResponse.json({ success: false, message: `Variant "${item.variantWeight}" not found for "${p.name}"` }, { status: 400 });
+      const p = await Product.findById(productId).select('name images thumbnail variants stockStatus status shipping');
+      if (!p || p.status !== 'active') {
+        return NextResponse.json({ success: false, message: `"${p?.name || 'A product'}" is no longer available` }, { status: 400 });
+      }
+
+      const variantWeight = item.variantWeight || item.weight;
+      const variant = p.variants?.find(v => v.weight === variantWeight) || p.variants?.[0];
+      if (!variant) {
+        return NextResponse.json({ success: false, message: `Variant "${variantWeight}" not found for "${p.name}"` }, { status: 400 });
+      }
+
+      const itemQty = Math.max(1, parseInt(item.quantity || 1));
 
       orderItems.push({
-        product:       p._id,
-        name:          p.name,
-        variantWeight: item.variantWeight,
-        price:         variant.price,
-        quantity:      item.quantity,
-        image:         p.images?.[0] || p.thumbnail || '',
-        // ← Snapshot shipping dimensions at order time
+        product: p._id,
+        name: p.name,
+        variantWeight: variant.weight,
+        price: variant.price,
+        quantity: itemQty,
+        image: p.images?.[0] || p.thumbnail || item.image || '',
         shipping: {
-          length:  p.shipping?.length  ?? 10,
+          length: p.shipping?.length ?? 10,
           breadth: p.shipping?.breadth ?? 10,
-          height:  p.shipping?.height  ?? 10,
-          weight:  p.shipping?.weight  ?? 0.5,
+          height: p.shipping?.height ?? 10,
+          weight: p.shipping?.weight ?? 0.5,
         },
       });
+    }
+
+    if (orderItems.length === 0) {
+      return NextResponse.json({ success: false, message: 'Cart is empty' }, { status: 400 });
     }
 
     // ── Pricing ───────────────────────────────────────────────────────────────
@@ -143,8 +170,10 @@ export async function POST(request) {
     });
 
     // ── Clear cart ─────────────────────────────────────────────────────────────
-    cart.items = [];
-    await cart.save();
+    if (dbCart) {
+      dbCart.items = [];
+      await dbCart.save();
+    }
 
     // ── Create Shiprocket order (non-blocking — don't fail the order if SR fails) ──
     try {

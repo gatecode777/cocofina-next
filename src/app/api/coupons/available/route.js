@@ -8,11 +8,6 @@ import Coupon from '@/models/Coupon';
 // GET /api/coupons/available?cartTotal=XXX
 export async function GET(request) {
   try {
-    // ✅ Auth (same as your system)
-    const { user, error } = await requireUser(request);
-    if (error) return error;
-
-    // ✅ DB
     await connectDB();
 
     // ✅ Get query param
@@ -21,15 +16,47 @@ export async function GET(request) {
 
     const now = new Date();
 
-    // ✅ Same as Express
-    const all = await Coupon.find({
+    let all = await Coupon.find({
       isActive: true,
       startDate: { $lte: now },
     }).lean();
 
+    if (!all || all.length === 0) {
+      all = [
+        {
+          _id: 'default-coco10',
+          code: 'COCO10',
+          description: '10% OFF on all orders above ₹299',
+          type: 'percentage',
+          value: 10,
+          maxDiscount: 100,
+          minOrderValue: 299,
+          isActive: true,
+        },
+        {
+          _id: 'default-healthy50',
+          code: 'HEALTHY50',
+          description: 'Flat ₹50 OFF on orders above ₹499',
+          type: 'flat',
+          value: 50,
+          minOrderValue: 499,
+          isActive: true,
+        },
+        {
+          _id: 'default-welcome100',
+          code: 'WELCOME100',
+          description: 'Flat ₹100 OFF on orders above ₹999',
+          type: 'flat',
+          value: 100,
+          minOrderValue: 999,
+          isActive: true,
+        },
+      ];
+    }
+
     const valid = all.filter((c) => {
       if (c.expiryDate && now > new Date(c.expiryDate)) return false;
-      if (c.usageLimit !== null && c.usedCount >= c.usageLimit) return false;
+      if (c.usageLimit !== null && c.usageLimit !== undefined && c.usedCount >= c.usageLimit) return false;
       return true;
     });
 

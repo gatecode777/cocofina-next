@@ -96,11 +96,20 @@ export function CartProvider({ children }) {
   const clearCart = useCallback(() => {
     setCart([]);
     setBackendCount(0);
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("cocofina_cart");
+      }
+    } catch {}
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (token) {
+      cartAPI.clearCart().catch(() => {});
+    }
     window.dispatchEvent(new Event("cartUpdated"));
   }, []);
 
   const localTotalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const totalItems = cart.length === 0 ? 0 : Math.max(localTotalItems, backendCount);
+  const totalItems = localTotalItems;
   const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
 
   const value = React.useMemo(

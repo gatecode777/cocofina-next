@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { cartAPI, addressAPI, orderAPI, couponAPI } from '@/services/api';
-import { triggerCartUpdate } from '@/context/CartContext';
+import { triggerCartUpdate, useCart } from '@/context/CartContext';
 import { getUploadUrl } from '@/lib/imageHelper';
 import Link from 'next/link';
 import '@/styles/buynow.css';
@@ -349,6 +349,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
   const [couponInput, setCouponInput] = useState('');
   const [applyingCoupon, setApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
 
   const getItemPrice = (item) => item.price ?? 0;
   const subtotal = cartItems.reduce((s, i) => s + getItemPrice(i) * i.quantity, 0);
@@ -357,10 +358,52 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
   const discount = couponApplied?.discount || 0;
   const total = subtotal + tax + shippingCharge - discount;
 
-  const handleApplyCoupon = async (e) => {
-    e.preventDefault();
-    const code = couponInput.trim().toUpperCase();
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCoupons = async () => {
+      try {
+        const res = await couponAPI.getAvailable(subtotal);
+        if (res?.data?.success && isMounted) {
+          setAvailableCoupons(res.data.coupons || []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setAvailableCoupons([
+            {
+              code: 'COCO10',
+              label: '10% off (max ₹100)',
+              description: '10% OFF on all orders above ₹299',
+              minOrderValue: 299,
+              eligible: subtotal >= 299,
+              previewDiscount: subtotal >= 299 ? Math.round(subtotal * 0.1) : 0,
+            },
+            {
+              code: 'HEALTHY50',
+              label: '₹50 off',
+              description: 'Flat ₹50 OFF on orders above ₹499',
+              minOrderValue: 499,
+              eligible: subtotal >= 499,
+              previewDiscount: subtotal >= 499 ? 50 : 0,
+            },
+          ]);
+        }
+      }
+    };
+    fetchCoupons();
+    return () => { isMounted = false; };
+  }, [subtotal]);
+
+  const executeApplyCoupon = async (codeToApply) => {
+    const code = codeToApply.trim().toUpperCase();
     if (!code) return;
+
+    // Check condition first!
+    const targetCoupon = availableCoupons.find((c) => c.code.toUpperCase() === code);
+    if (targetCoupon && subtotal < (targetCoupon.minOrderValue || 0)) {
+      const needed = targetCoupon.minOrderValue - subtotal;
+      setCouponError(`Minimum order of ₹${targetCoupon.minOrderValue} required for promo code "${code}". Add ₹${needed} more to unlock!`);
+      return;
+    }
 
     setApplyingCoupon(true);
     setCouponError('');
@@ -379,10 +422,15 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
         setCouponError(res.data.message || 'Invalid coupon code');
       }
     } catch (err) {
-      setCouponError(err.response?.data?.message || 'Invalid or expired coupon code');
+      setCouponError(err.response?.data?.message || 'Coupon conditions not met or code is expired.');
     } finally {
       setApplyingCoupon(false);
     }
+  };
+
+  const handleApplyCoupon = async (e) => {
+    e.preventDefault();
+    await executeApplyCoupon(couponInput);
   };
 
   const payMethods = [
@@ -413,7 +461,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
           ))}
         </div>
 
-        {/* ── Coupon Form ──────────────────────────────────────────────── */}
+        {/* ── Coupon Form & Active Offers ───────────────────────────────── */}
         <div className="coupon-section-summary my-4 pt-2 pb-1 border-t border-b border-neutral-100 dark:border-neutral-800">
           {couponApplied ? (
             <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl my-2">
@@ -434,25 +482,81 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
               </button>
             </div>
           ) : (
-            <form onSubmit={handleApplyCoupon} className="flex gap-2 my-2">
-              <input
-                type="text"
-                placeholder="Promo Code (e.g. COCO10)"
-                value={couponInput}
-                onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
-                className="flex-1 px-3.5 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-sm font-mono focus:outline-none focus:border-amber-600 dark:focus:border-amber-500"
-              />
-              <button
-                type="submit"
-                disabled={applyingCoupon || !couponInput.trim()}
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-sm"
-              >
-                {applyingCoupon ? <i className="fas fa-spinner fa-spin"></i> : 'Apply'}
-              </button>
-            </form>
+            <>
+              <form onSubmit={handleApplyCoupon} className="flex gap-2 my-2">
+                <input
+                  type="text"
+                  placeholder="Promo Code (e.g. COCO10)"
+                  value={couponInput}
+                  onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                  className="flex-1 px-3.5 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-sm font-mono focus:outline-none focus:border-amber-600 dark:focus:border-amber-500"
+                />
+                <button
+                  type="submit"
+                  disabled={applyingCoupon || !couponInput.trim()}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-sm"
+                >
+                  {applyingCoupon ? <i className="fas fa-spinner fa-spin"></i> : 'Apply'}
+                </button>
+              </form>
+
+              {/* ── Active Offers & Coupons List ───────────────────────────── */}
+              {availableCoupons.length > 0 && (
+                <div className="available-coupons-section my-3">
+                  <div className="available-coupons-title">
+                    <span>🎟️</span> Active Store Offers
+                  </div>
+                  <div className="available-coupons-list">
+                    {availableCoupons.map((c) => {
+                      const isEligible = c.eligible !== undefined ? c.eligible : subtotal >= (c.minOrderValue || 0);
+                      const shortFall = (c.minOrderValue || 0) - subtotal;
+
+                      return (
+                        <div
+                          key={c.code}
+                          className={`coupon-offer-card ${!isEligible ? 'ineligible' : ''}`}
+                        >
+                          <div className="coupon-left-info">
+                            <div className="coupon-code-badge">
+                              <span>🏷️</span> {c.code}
+                              {c.label && <span className="text-xs font-normal">({c.label})</span>}
+                            </div>
+                            {c.description && <span className="coupon-offer-desc">{c.description}</span>}
+                            <span className="coupon-req-text">
+                              {isEligible
+                                ? `Min order: ₹${c.minOrderValue || 0}`
+                                : `Requires min order of ₹${c.minOrderValue || 0} (Add ₹${shortFall} more)`}
+                            </span>
+                          </div>
+
+                          {isEligible ? (
+                            <button
+                              type="button"
+                              onClick={() => executeApplyCoupon(c.code)}
+                              className="btn-apply-coupon-badge"
+                            >
+                              Apply Code
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setCouponError(`Min order ₹${c.minOrderValue} required for ${c.code}. Add ₹${shortFall} more to unlock!`)}
+                              className="btn-apply-coupon-badge disabled-btn"
+                            >
+                              Min ₹{c.minOrderValue}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </>
           )}
+
           {couponError && (
-            <p className="text-xs text-rose-500 mb-2 flex items-center gap-1 font-medium">
+            <p className="text-xs text-rose-500 mb-2 mt-2 flex items-center gap-1 font-medium bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-xl border border-rose-200 dark:border-rose-900">
               <i className="fas fa-circle-exclamation"></i> {couponError}
             </p>
           )}
@@ -519,6 +623,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
 // ── Main BuyNow Page ───────────────────────────────────────────────────────────
 const BuyNowPage = () => {
   const router = useRouter();
+  const { clearCart } = useCart();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [addresses, setAddresses] = useState([]);
@@ -570,14 +675,17 @@ const BuyNowPage = () => {
         try {
           const localItems = JSON.parse(localCartRaw);
           if (Array.isArray(localItems) && localItems.length > 0) {
-            const snapshots = localItems.map((item) => ({
-              product: item.id || item._id || item.product,
-              name: item.name,
-              variantWeight: item.weight || item.variantWeight || '',
-              price: item.price ?? 0,
-              quantity: item.quantity || 1,
-              image: item.image || '',
-            }));
+            const snapshots = localItems.map((item) => {
+              const cleanId = item.productId || item._id || (typeof item.id === 'string' && item.id.includes('_') ? item.id.split('_')[0] : item.id) || item.product;
+              return {
+                product: cleanId,
+                name: item.name,
+                variantWeight: item.weight || item.variantWeight || '',
+                price: item.price ?? 0,
+                quantity: item.quantity || 1,
+                image: item.image || '',
+              };
+            });
             setCartItems(snapshots);
 
             const savedCoupon = sessionStorage.getItem('appliedCoupon');
@@ -652,7 +760,11 @@ const BuyNowPage = () => {
 
   const handleBack = () => {
     setStepError('');
-    if (currentStep > 0) setCurrentStep(currentStep - 1);
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      router.push('/products');
+    }
   };
 
   // ── Place order ────────────────────────────────────────────────────────────
@@ -660,6 +772,11 @@ const BuyNowPage = () => {
     const address = addresses.find((a) => a._id === selectedAddr);
     if (!address) {
       setStepError('Please select a delivery address.');
+      return;
+    }
+
+    if (!cartItems || cartItems.length === 0) {
+      setStepError('Your cart is empty. Please add products before checking out.');
       return;
     }
 
@@ -689,12 +806,9 @@ const BuyNowPage = () => {
 
       const res = await orderAPI.createOrder(orderData);
 
-      // Clear coupon & local cart after successful order
+      // Clear coupon & cart context after successful order
       sessionStorage.removeItem('appliedCoupon');
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('cocofina_cart');
-      }
-      triggerCartUpdate();
+      clearCart();
 
       if (res.data.success) {
         router.push(`/order-success?orderId=${res.data.order._id}`);

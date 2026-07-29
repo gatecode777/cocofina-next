@@ -1071,3 +1071,126 @@
     font-size: 13.5px;
   }
 }
+
+/* ── Available Coupons Section ────────────────────────────────────────────── */
+.available-coupons-section {
+  margin-top: 14px;
+}
+
+.available-coupons-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #78716c;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dark .available-coupons-title {
+  color: #a8a29e;
+}
+
+.available-coupons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coupon-offer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px dashed rgba(217, 119, 6, 0.4);
+  background: rgba(254, 243, 199, 0.4);
+  transition: all 0.2s ease;
+}
+
+.dark .coupon-offer-card {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.coupon-offer-card.ineligible {
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  opacity: 0.8;
+}
+
+.dark .coupon-offer-card.ineligible {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.coupon-left-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coupon-code-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 13px;
+  color: #b45309;
+}
+
+.dark .coupon-code-badge {
+  color: #fbbf24;
+}
+
+.coupon-offer-desc {
+  font-size: 11.5px;
+  color: #44403c;
+  font-weight: 500;
+}
+
+.dark .coupon-offer-desc {
+  color: #d6d3d1;
+}
+
+.coupon-req-text {
+  font-size: 10.5px;
+  color: #78716c;
+}
+
+.dark .coupon-req-text {
+  color: #a8a29e;
+}
+
+.btn-apply-coupon-badge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #d97706;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-apply-coupon-badge:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.btn-apply-coupon-badge.disabled-btn {
+  background: rgba(0, 0, 0, 0.08);
+  color: #78716c;
+  cursor: pointer;
+}
+
+.dark .btn-apply-coupon-badge.disabled-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #a8a29e;
+}
