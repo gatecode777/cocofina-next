@@ -37,15 +37,10 @@ const Signup = () => {
   }, [otpResendCooldown]);
 
   const setupRecaptcha = () => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return null;
 
     if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (e) {
-        console.warn('Error clearing recaptchaVerifier:', e);
-      }
-      window.recaptchaVerifier = null;
+      return window.recaptchaVerifier;
     }
 
     const container = document.getElementById('recaptcha-container');
@@ -64,12 +59,25 @@ const Signup = () => {
           }
         },
       });
+      return window.recaptchaVerifier;
     } catch (err) {
-      console.error('Error setting up RecaptchaVerifier:', err);
+      console.warn('Error creating RecaptchaVerifier:', err);
+      return null;
     }
   };
 
-  // Indian phone number validation function
+  const resetRecaptcha = () => {
+    if (typeof window === 'undefined') return;
+    if (window.recaptchaVerifier) {
+      try { window.recaptchaVerifier.clear(); } catch {}
+      window.recaptchaVerifier = null;
+    }
+    const container = document.getElementById('recaptcha-container');
+    if (container) {
+      container.innerHTML = '';
+    }
+  };
+
   const validateIndianPhoneNumber = (phone) => {
     const cleaned = phone.replace(/\D/g, '');
     if (!cleaned) return { isValid: false, message: 'Phone number is required' };
@@ -128,36 +136,36 @@ const Signup = () => {
     setIsLoading(true);
     setErrors({});
 
+    const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
+
     try {
-      setupRecaptcha();
-      const appVerifier = window.recaptchaVerifier;
-      const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
-      const confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
+      let appVerifier = setupRecaptcha();
+      let confirmation;
+
+      try {
+        confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
+      } catch (firstErr) {
+        if (
+          firstErr.message?.includes('already been rendered') ||
+          firstErr.code === 'auth/already-initialized' ||
+          firstErr.message?.includes('already-initialized')
+        ) {
+          resetRecaptcha();
+          appVerifier = setupRecaptcha();
+          confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
+        } else {
+          throw firstErr;
+        }
+      }
 
       setConfirmationResult(confirmation);
       setStep('otp');
       setOtpResendCooldown(30);
     } catch (err) {
       console.error('Firebase SMS Error:', err);
-      if (err.message?.includes('already been rendered') || err.code === 'auth/already-initialized') {
-        try {
-          if (window.recaptchaVerifier) {
-            try { window.recaptchaVerifier.clear(); } catch {}
-            window.recaptchaVerifier = null;
-          }
-          const container = document.getElementById('recaptcha-container');
-          if (container) container.innerHTML = '';
-          setupRecaptcha();
-          const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
-          const confirmation = await signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier);
-          setConfirmationResult(confirmation);
-          setStep('otp');
-          setOtpResendCooldown(30);
-          return;
-        } catch (retryErr) {
-          setErrors({ submit: retryErr.message || 'Error initializing reCAPTCHA. Please refresh the page.' });
-        }
-      } else if (err.code === 'auth/captcha-check-failed' || err.message?.includes('captcha-check-failed') || err.message?.includes('Hostname match not found')) {
+      resetRecaptcha();
+
+      if (err.code === 'auth/captcha-check-failed' || err.message?.includes('captcha-check-failed') || err.message?.includes('Hostname match not found')) {
         setErrors({
           submit: 'Domain authorization error: Please add your live website domain (e.g. cocofinasugar.com) to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
         });
@@ -167,7 +175,7 @@ const Signup = () => {
         });
       } else if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
         setErrors({
-          submit: 'Firebase Phone Auth requires setting up a Test Phone Number in Firebase Console, or switching your Firebase project to the Blaze Plan (includes 10,000 free SMS/month).',
+          submit: 'Firebase Phone Auth requires setting up a Test Phone Number in Firebase Console, or switching your Firebase project to the Blaze Plan.',
         });
       } else if (err.code === 'auth/network-request-failed' || err.message?.includes('network-request-failed')) {
         setErrors({
@@ -175,10 +183,6 @@ const Signup = () => {
         });
       } else {
         setErrors({ submit: err.message || 'Failed to send SMS OTP. Please check your phone number.' });
-      }
-      if (window.recaptchaVerifier) {
-        try { window.recaptchaVerifier.clear(); } catch {}
-        window.recaptchaVerifier = null;
       }
     } finally {
       setIsLoading(false);
@@ -432,11 +436,12 @@ const Signup = () => {
                       <button
                         type="button"
                         onClick={() => {
+                          resetRecaptcha();
                           setStep('form');
                           setOtp('');
                           setErrors({});
                         }}
-                        className="text-neutral-500 hover:text-neutral-800 dark:hover:text-white font-medium"
+                        className="text-neutral-500 hover:text-neutral-800 dark:hover:text-white font-medium cursor-pointer"
                       >
                         ← Edit Phone Number
                       </button>
@@ -445,7 +450,7 @@ const Signup = () => {
                         type="button"
                         onClick={handleSubmit}
                         disabled={otpResendCooldown > 0 || isLoading}
-                        className="text-amber-600 dark:text-amber-400 font-semibold disabled:opacity-50"
+                        className="text-amber-600 dark:text-amber-400 font-semibold disabled:opacity-50 cursor-pointer"
                       >
                         {otpResendCooldown > 0 ? `Resend OTP in ${otpResendCooldown}s` : 'Resend OTP'}
                       </button>

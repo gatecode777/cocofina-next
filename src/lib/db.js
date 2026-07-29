@@ -1,11 +1,4 @@
 import mongoose from "mongoose";
-import dns from "node:dns";
-
-try {
-  dns.setServers(["8.8.8.8", "1.1.1.1"]);
-} catch (dnsErr) {
-  // Fallback to default DNS
-}
 
 // In development, store the connection on the global object so it
 // survives hot module replacement (Next.js re-imports modules on change)
@@ -21,17 +14,20 @@ export async function connectDB() {
     console.warn("Warning: MONGODB_URI is not defined in environment variables. Falling back to local MongoDB: mongodb://127.0.0.1:27017/cocofina");
   }
 
-  if (cached.conn) {
+  if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
   }
 
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log("MongoDB connected");
+      console.log("MongoDB connected successfully");
       return mongooseInstance;
     });
   }
