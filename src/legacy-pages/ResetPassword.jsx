@@ -22,10 +22,12 @@ const ResetPasswordPage = () => {
     document.title = 'Reset Password - Cocofina';
     window.scrollTo(0, 0);
     // Guard: must have gone through OTP step
-    const email = sessionStorage.getItem('resetEmail');
-    const resetToken = sessionStorage.getItem('resetToken');
-    if (!email && !resetToken) router.push('/forgot-password');
-  }, []);
+    if (typeof window !== "undefined") {
+      const email = sessionStorage.getItem('resetEmail');
+      const resetToken = sessionStorage.getItem('resetToken');
+      if (!email && !resetToken) router.push('/forgot-password');
+    }
+  }, [router]);
 
   const validateField = (name, value) => {
     if (name === 'newPassword') {
@@ -46,7 +48,6 @@ const ResetPasswordPage = () => {
     setForm(p => ({ ...p, [name]: value }));
     setServerErr('');
     if (errors[name]) setErrors(p => ({ ...p, [name]: '' }));
-    // Live confirm-password check
     if (name === 'confirmPassword' || name === 'newPassword') {
       setErrors(p => ({ ...p, confirmPassword: '' }));
     }
@@ -62,12 +63,11 @@ const ResetPasswordPage = () => {
     e.preventDefault();
     setServerErr('');
 
-    // Full validation
     const newErr = {
       newPassword: validateField('newPassword', form.newPassword),
       confirmPassword: validateField('confirmPassword', form.confirmPassword),
     };
-    // Cross-check
+
     if (!newErr.confirmPassword && form.newPassword !== form.confirmPassword) {
       newErr.confirmPassword = 'Passwords do not match';
     }
@@ -81,14 +81,13 @@ const ResetPasswordPage = () => {
 
       const res = await passwordResetAPI.resetPassword(
         email,
-        null,          // otp not needed — server uses resetToken
+        null,
         form.newPassword,
         resetToken
       );
 
       if (res.data.success) {
         setSuccess(true);
-        // Clear all session data
         sessionStorage.removeItem('resetEmail');
         sessionStorage.removeItem('resetToken');
         setTimeout(() => router.push('/login'), 2200);
@@ -102,7 +101,6 @@ const ResetPasswordPage = () => {
     }
   };
 
-  // Password strength indicator
   const strength = (() => {
     const p = form.newPassword;
     if (!p) return { level: 0, label: '', color: '' };
@@ -119,108 +117,126 @@ const ResetPasswordPage = () => {
   })();
 
   return (
-    <div className="reset-password-wrapper">
-      <div className="container">
-        <div className="image-side"></div>
-
-        <div className="form-side">
-          <Link href="/">
-            <img src="/cocofina.png" alt="Cocofina" className="logo" />
-          </Link>
-
-          <h2>RESET PASSWORD</h2>
-          <p style={{ fontSize: '14px', color: '#888', marginBottom: '20px', marginTop: '-4px' }}>
-            Choose a strong new password for your account.
-          </p>
-
-          {success && (
-            <div className="rp-success">
-              <i className="fas fa-check-circle"></i>
-              Password reset successfully! Redirecting to login…
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500 flex items-center justify-center">
+      <div className="reset-password-wrapper">
+        <div className="reset-container">
+          <div className="reset-card">
+            <div className="logo-wrapper">
+              <Link href="/">
+                <img src="/cocofina.png" alt="Cocofina Logo" className="logo-img" />
+              </Link>
             </div>
-          )}
-          {serverErr && (
-            <div className="rp-error">
-              <i className="fas fa-exclamation-circle"></i> {serverErr}
-            </div>
-          )}
 
-          {!success && (
-            <form className="reset-form" onSubmit={handleSubmit}>
+            <h2 className="welcome-text">Reset Password</h2>
+            <p className="auth-description">
+              Choose a strong new password for your account.
+            </p>
 
-              {/* New Password */}
-              <div className="input-group-r">
-                <i className="fa-solid fa-shield-halved left-icon"></i>
-                <input
-                  type={showNew ? 'text' : 'password'}
-                  name="newPassword"
-                  placeholder="New Password"
-                  value={form.newPassword}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  disabled={submitting}
-                  className={errors.newPassword ? 'error' : ''}
-                />
-                <i
-                  className={`fa-regular ${showNew ? 'fa-eye' : 'fa-eye-slash'} toggle-password`}
-                  onClick={() => setShowNew(p => !p)}
-                />
+            {success && (
+              <div className="auth-success-msg">
+                <i className="fa-solid fa-circle-check"></i>
+                <span>Password reset successfully! Redirecting to login…</span>
               </div>
-              {errors.newPassword && <span className="field-error">{errors.newPassword}</span>}
+            )}
 
-              {/* Strength bar */}
-              {form.newPassword && (
-                <div className="rp-strength">
-                  <div className="rp-strength-bar">
-                    {[1, 2, 3, 4].map(l => (
-                      <div key={l} className="rp-strength-seg"
-                        style={{ background: l <= strength.level ? strength.color : '#e5e7eb' }} />
-                    ))}
-                  </div>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: strength.color }}>
-                    {strength.label}
-                  </span>
+            {serverErr && (
+              <div className="auth-error-msg">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <span>{serverErr}</span>
+              </div>
+            )}
+
+            {!success && (
+              <form className="reset-form" onSubmit={handleSubmit}>
+
+                {/* New Password */}
+                <div className="input-icon-container-l">
+                  <i className="fa-solid fa-key left-icon"></i>
+                  <input
+                    type={showNew ? 'text' : 'password'}
+                    name="newPassword"
+                    placeholder="New Password"
+                    value={form.newPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={submitting}
+                    className={`input-field-s ${errors.newPassword ? 'input-error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowNew(p => !p)}
+                    disabled={submitting}
+                  >
+                    <i className={showNew ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
+                  </button>
                 </div>
-              )}
+                {errors.newPassword && <span className="field-error-text">{errors.newPassword}</span>}
 
-              {/* Confirm Password */}
-              <div className="input-group-r">
-                <i className="fa-solid fa-shield-halved left-icon"></i>
-                <input
-                  type={showConf ? 'text' : 'password'}
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  disabled={submitting}
-                  className={errors.confirmPassword ? 'error' : ''}
-                />
-                <i
-                  className={`fa-regular ${showConf ? 'fa-eye' : 'fa-eye-slash'} toggle-password`}
-                  onClick={() => setShowConf(p => !p)}
-                />
-              </div>
-              {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
-              {!errors.confirmPassword && form.confirmPassword && form.confirmPassword === form.newPassword && (
-                <span className="field-success"><i className="fas fa-check"></i> Passwords match</span>
-              )}
+                {/* Strength bar */}
+                {form.newPassword && (
+                  <div className="rp-strength">
+                    <div className="rp-strength-bar">
+                      {[1, 2, 3, 4].map(l => (
+                        <div key={l} className="rp-strength-seg"
+                          style={{ background: l <= strength.level ? strength.color : '#e2e8f0' }} />
+                      ))}
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: strength.color }}>
+                      {strength.label}
+                    </span>
+                  </div>
+                )}
 
-              <button type="submit" className="submit-btn" disabled={submitting}>
-                {submitting
-                  ? <><i className="fas fa-spinner fa-spin"></i> Resetting…</>
-                  : 'Reset Password'
-                }
-              </button>
-            </form>
-          )}
+                {/* Confirm Password */}
+                <div className="input-icon-container-l">
+                  <i className="fa-solid fa-lock left-icon"></i>
+                  <input
+                    type={showConf ? 'text' : 'password'}
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={submitting}
+                    className={`input-field-s ${errors.confirmPassword ? 'input-error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowConf(p => !p)}
+                    disabled={submitting}
+                  >
+                    <i className={showConf ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash'}></i>
+                  </button>
+                </div>
+                {errors.confirmPassword && <span className="field-error-text">{errors.confirmPassword}</span>}
+                {!errors.confirmPassword && form.confirmPassword && form.confirmPassword === form.newPassword && (
+                  <span className="field-success-text"><i className="fa-solid fa-check"></i> Passwords match</span>
+                )}
 
-          <div className="back-to-login">
-            <Link href="/login">← Back to Login</Link>
+                <button type="submit" className="reset-btn" disabled={submitting}>
+                  {submitting ? (
+                    <><i className="fa-solid fa-spinner fa-spin"></i> Resetting…</>
+                  ) : (
+                    'Reset Password'
+                  )}
+                </button>
+              </form>
+            )}
+
+            <p className="fp-back-link">
+              Remember your password?{' '}
+              <Link href="/login" className="maroon-text">
+                Back to Login
+              </Link>
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

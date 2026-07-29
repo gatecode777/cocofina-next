@@ -31,14 +31,11 @@ const ForgotPasswordPage = () => {
 
     setSubmitting(true);
     try {
-      // passwordResetAPI.forgotPassword returns an axios response
       const res = await passwordResetAPI.forgotPassword(trimmed);
 
       if (res.data.success) {
         setSuccess(true);
-        // Store email for the OTP step
         sessionStorage.setItem('resetEmail', trimmed);
-        // Navigate after a brief success flash
         setTimeout(() => router.push('/verify-otp'), 1800);
       } else {
         setError(res.data.message || 'Failed to send OTP. Please try again.');
@@ -51,66 +48,71 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="forgot-password-wrapper">
-      <div className="auth-container">
-        <div className="auth-image-side"></div>
-
-        <div className="auth-form-side">
-          <div className="logo-container">
-            <Link href="/">
-              <img src="/cocofina.png" alt="Cocofina" className="auth-logo" />
-            </Link>
-          </div>
-
-          <h2 className="auth-title">FORGOT PASSWORD</h2>
-          <p className="auth-description">
-            Enter your registered email address and we'll send you a 6-digit OTP.
-          </p>
-
-          {success && (
-            <div className="fp-success">
-              <i className="fas fa-check-circle"></i> OTP sent to <strong>{email}</strong>!
-              <span> Redirecting…</span>
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500 flex items-center justify-center">
+      <div className="forgot-password-wrapper">
+        <div className="auth-container">
+          <div className="auth-card">
+            <div className="logo-wrapper">
+              <Link href="/">
+                <img src="/cocofina.png" alt="Cocofina Logo" className="logo-img" />
+              </Link>
             </div>
-          )}
 
-          {error && (
-            <div className="fp-error">
-              <i className="fas fa-exclamation-circle"></i> {error}
-            </div>
-          )}
+            <h2 className="welcome-text">Forgot Password?</h2>
+            <p className="auth-description">
+              Enter your registered email address and we'll send you a 6-digit OTP code.
+            </p>
 
-          {!success && (
-            <form className="forgot-form" onSubmit={handleSubmit}>
-              <div className="input-group-f">
-                <i className="fa-regular fa-envelope"></i>
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className={`form-input-f ${error ? 'error' : ''}`}
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                  disabled={submitting}
-                  autoFocus
-                  required
-                />
+            {success && (
+              <div className="auth-success-msg">
+                <i className="fa-solid fa-circle-check"></i>
+                <span>OTP sent to <strong>{email}</strong>! Redirecting…</span>
               </div>
+            )}
 
-              <button type="submit" className="btn-submit" disabled={submitting}>
-                {submitting
-                  ? <><i className="fas fa-spinner fa-spin"></i> Sending OTP…</>
-                  : 'Send OTP'
-                }
-              </button>
+            {error && (
+              <div className="auth-error-msg">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <span>{error}</span>
+              </div>
+            )}
 
-              <p className="fp-back-link">
-                Remember your password? <Link href="/login">Back to Login</Link>
-              </p>
-            </form>
-          )}
+            {!success && (
+              <form className="forgot-form" onSubmit={handleSubmit}>
+                <div className="input-icon-container-l">
+                  <i className="fa-regular fa-envelope"></i>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    className="input-field-s"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                    disabled={submitting}
+                    autoFocus
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="btn-submit" disabled={submitting}>
+                  {submitting ? (
+                    <><i className="fa-solid fa-spinner fa-spin"></i> Sending OTP…</>
+                  ) : (
+                    'Send OTP'
+                  )}
+                </button>
+              </form>
+            )}
+
+            <p className="fp-back-link">
+              Remember your password?{' '}
+              <Link href="/login" className="maroon-text">
+                Back to Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

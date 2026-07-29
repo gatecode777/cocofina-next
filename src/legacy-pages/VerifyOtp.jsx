@@ -40,7 +40,7 @@ const VerifyOTPPage = () => {
     }
 
     inputRefs.current[0]?.focus();
-  }, []);
+  }, [router]);
 
   // Countdown timer
   useEffect(() => {
@@ -133,7 +133,6 @@ const VerifyOTPPage = () => {
       const res = await passwordResetAPI.verifyOTP(email, otpValue);
       if (res.data.success) {
         setSuccess(true);
-        // Store reset token returned by server
         if (res.data.resetToken) {
           sessionStorage.setItem('resetToken', res.data.resetToken);
         }
@@ -153,37 +152,40 @@ const VerifyOTPPage = () => {
   };
 
   return (
-    <div className="verify-otp-wrapper">
-      <div className="main-wrapper">
-        <div className="otp-card">
-          <div className="left-bg-image"></div>
-
-          <div className="form-section">
+    <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500 flex items-center justify-center">
+      <div className="verify-otp-wrapper">
+        <div className="main-wrapper">
+          <div className="otp-card">
             <div className="logo-wrapper">
               <Link href="/">
-                <img src="/cocofina.png" alt="Cocofina" className="logo" />
+                <img src="/cocofina.png" alt="Cocofina Logo" className="logo-img" />
               </Link>
             </div>
 
-            <h2 className="title">VERIFY OTP</h2>
-            <p className="subtitle">
-              Enter the 6-digit code sent to<br />
+            <h2 className="welcome-text">Verify OTP</h2>
+            <p className="auth-description">
+              Enter the 6-digit verification code sent to<br />
               <strong>{email}</strong>
             </p>
 
             {success && (
-              <div className="otp-success">
-                <i className="fas fa-check-circle"></i> OTP verified! Redirecting…
+              <div className="auth-success-msg">
+                <i className="fa-solid fa-circle-check"></i>
+                <span>OTP verified! Redirecting to password reset…</span>
               </div>
             )}
+
             {error && (
-              <div className="otp-error">
-                <i className="fas fa-exclamation-circle"></i> {error}
+              <div className="auth-error-msg">
+                <i className="fa-solid fa-circle-exclamation"></i>
+                <span>{error}</span>
               </div>
             )}
+
             {resendMsg && (
-              <div className="otp-resend-msg">
-                <i className="fas fa-paper-plane"></i> {resendMsg}
+              <div className="auth-info-msg">
+                <i className="fa-solid fa-paper-plane"></i>
+                <span>{resendMsg}</span>
               </div>
             )}
 
@@ -215,10 +217,11 @@ const VerifyOTPPage = () => {
                       onClick={handleResend}
                       disabled={resending}
                     >
-                      {resending
-                        ? <><i className="fas fa-spinner fa-spin"></i> Sending…</>
-                        : 'Resend OTP'
-                      }
+                      {resending ? (
+                        <><i className="fa-solid fa-spinner fa-spin"></i> Resending…</>
+                      ) : (
+                        'Resend OTP'
+                      )}
                     </button>
                   ) : (
                     <p className="timer-text">
@@ -228,21 +231,25 @@ const VerifyOTPPage = () => {
                 </div>
 
                 <button type="submit" className="verify-btn" disabled={submitting || otp.join('').length < 6}>
-                  {submitting
-                    ? <><i className="fas fa-spinner fa-spin"></i> Verifying…</>
-                    : 'Verify & Continue'
-                  }
+                  {submitting ? (
+                    <><i className="fa-solid fa-spinner fa-spin"></i> Verifying…</>
+                  ) : (
+                    'Verify & Continue'
+                  )}
                 </button>
 
-                <p className="fp-back-link" style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px' }}>
-                  Wrong email? <Link href="/forgot-password">Go back</Link>
+                <p className="fp-back-link">
+                  Entered wrong email?{' '}
+                  <Link href="/forgot-password" className="maroon-text">
+                    Change Email
+                  </Link>
                 </p>
               </form>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
