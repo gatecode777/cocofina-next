@@ -917,7 +917,6 @@ const BuyNowPage = () => {
           <button
             type="button"
             className="btn btn-back"
-            style={{ visibility: currentStep === 0 ? 'hidden' : 'visible' }}
             onClick={handleBack}
             disabled={placing}
           >

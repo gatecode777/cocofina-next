@@ -293,3 +293,110 @@
   color: #a3a3a3;
   cursor: pointer;
 }
+
+/* ── Action Buttons (Cancel & View Details) ────────────────────────────── */
+.order-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-view-o {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: #d97706;
+  color: #ffffff !important;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  white-space: nowrap;
+}
+
+.btn-view-o:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.45);
+}
+
+.dark .btn-view-o {
+  background: #d97706;
+  color: #ffffff !important;
+}
+
+.mo-cancel-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.mo-cancel-inline-btn:hover {
+  background: #ef4444;
+  color: #ffffff !important;
+  border-color: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+.dark .mo-cancel-inline-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.dark .mo-cancel-inline-btn:hover {
+  background: #ef4444;
+  color: #ffffff !important;
+}
+
+.mo-modal-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dark .mo-modal-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.mo-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mo-cancel-btn:hover:not(:disabled) {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.mo-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

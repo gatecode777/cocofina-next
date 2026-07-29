@@ -5,7 +5,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '@/services/api';
-import '@/styles/buynow.css';
+import { Navbar } from '@/components/Navbar';
+import { getUploadUrl } from '@/lib/imageHelper';
+import { CheckCircle2, ShoppingBag, Package, AlertCircle } from 'lucide-react';
 
 const OrderSuccess = () => {
   const router = useRouter();
@@ -29,7 +31,7 @@ const OrderSuccess = () => {
         if (res.data.success) {
           setOrder(res.data.order);
         } else {
-          setError('Order not found');
+          setError('Order details not found');
         }
       } catch (err) {
         console.error('Error fetching order:', err);
@@ -42,50 +44,48 @@ const OrderSuccess = () => {
     fetchOrder();
   }, [orderId]);
 
-  // If loading
   if (loading) {
     return (
-      <main>
-        <div className="checkout-container" style={{ maxWidth: '560px', textAlign: 'center', padding: '60px 24px' }}>
-          <div className="loading-spinner">
-            <i className="fas fa-spinner fa-spin" style={{ fontSize: '48px', color: '#3b2a1a' }}></i>
-            <p style={{ marginTop: '20px', color: '#666' }}>Loading order details...</p>
-          </div>
+      <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-500">
+        <Navbar />
+        <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            Loading your order confirmation...
+          </p>
         </div>
       </main>
     );
   }
 
-  // If error or no order
   if (error || !order) {
     return (
-      <main>
-        <div className="checkout-container" style={{ maxWidth: '560px', textAlign: 'center', padding: '60px 24px' }}>
-          <div className="error-circle">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
+      <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-500">
+        <Navbar />
+        <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto">
+            <AlertCircle className="w-10 h-10" />
           </div>
-          <h1 style={{ fontSize: '26px', fontWeight: 700, margin: '24px 0 8px', color: '#1a1a1a' }}>
-            {error || 'Order Not Found'}
-          </h1>
-          <p style={{ color: '#666', marginBottom: '32px' }}>
-            We couldn't find your order information.
-          </p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white font-playfair italic">
+              {error || 'Order Not Found'}
+            </h1>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              We couldn't retrieve the details for this order. Please check your account history.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
-              href="/"
-              style={{ padding: '12px 28px', background: '#3b2a1a', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none', display: 'inline-block' }}
+              href="/my-orders"
+              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-full text-sm font-semibold transition-all shadow-md"
             >
-              Return Home
+              View My Orders
             </Link>
             <Link
               href="/products"
-              style={{ padding: '12px 28px', background: 'transparent', color: '#3b2a1a', border: '1.5px solid #3b2a1a', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none', display: 'inline-block' }}
+              className="px-6 py-3 border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-full text-sm font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             >
-              Continue Shopping
+              Explore Products
             </Link>
           </div>
         </div>
@@ -94,89 +94,131 @@ const OrderSuccess = () => {
   }
 
   return (
-    <main>
-      <div className="checkout-container" style={{ maxWidth: '560px', textAlign: 'center', padding: '60px 24px' }}>
-
-        {/* Success animation */}
-        <div className="success-circle">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-
-        <h1 style={{ fontSize: '26px', fontWeight: 700, margin: '24px 0 8px', color: '#1a1a1a' }}>
-          Order Placed!
-        </h1>
-        <p style={{ color: '#666', marginBottom: '6px' }}>
-          Thank you for your order. We'll confirm it shortly.
-        </p>
-        <p style={{ color: '#888', fontSize: '14px', marginBottom: '32px' }}>
-          Order ID: <strong style={{ color: '#3b2a1a' }}>{order.orderNumber}</strong>
-        </p>
-
-        {/* Summary strip */}
-        <div style={{
-          background: '#faf7f4', border: '1px solid #e8e0d8', borderRadius: '12px',
-          padding: '20px 24px', textAlign: 'left', marginBottom: '32px'
-        }}>
-          {[
-            { label: 'Items', value: `${order.items?.length} item(s)` },
-            { label: 'Payment', value: order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online' },
-            { label: 'Deliver to', value: `${order.shippingAddress?.fullName}, ${order.shippingAddress?.city}` },
-            { label: 'Total', value: `₹${order.total?.toLocaleString('en-IN')}` },
-          ].map(({ label, value }) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #ede8e2', fontSize: '14px' }}>
-              <span style={{ color: '#888' }}>{label}</span>
-              <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{value}</span>
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-500 pb-16">
+      <Navbar />
+      
+      <div className="max-w-2xl mx-auto px-4 pt-8 sm:pt-12">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 text-center">
+          
+          {/* Animated Success Check Badge */}
+          <div className="relative inline-flex items-center justify-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-500 flex items-center justify-center">
+              <CheckCircle2 className="w-12 h-12 sm:w-14 sm:h-14 stroke-[2.2]" />
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => router.push('/my-orders')}
-            style={{ padding: '12px 28px', background: '#3b2a1a', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
-          >
-            View My Orders
-          </button>
-          <button
-            onClick={() => router.push('/products')}
-            style={{ padding: '12px 28px', background: 'transparent', color: '#3b2a1a', border: '1.5px solid #3b2a1a', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
-          >
-            Continue Shopping
-          </button>
+          {/* Heading */}
+          <div className="space-y-2 max-w-md mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-amber-500/10 dark:bg-amber-400/20 text-amber-700 dark:text-amber-300 font-mono text-xs sm:text-sm font-bold">
+              <Package className="w-3.5 h-3.5" /> Order ID: {order.orderNumber || order._id}
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-bold text-neutral-900 dark:text-white font-playfair italic pt-1">
+              Order Placed Successfully!
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+              Thank you for shopping with Cocofina! Your order has been placed and is being prepared for dispatch.
+            </p>
+          </div>
+
+          {/* Purchased Items List */}
+          {order.items && order.items.length > 0 && (
+            <div className="space-y-3 text-left">
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-1">
+                Ordered Items ({order.items.length})
+              </span>
+              <div className="space-y-2">
+                {order.items.map((item, idx) => {
+                  const img = item.image ? getUploadUrl(item.image, 'products') : '/cocofinaproduct.png';
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-700/60"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={img}
+                          alt={item.name}
+                          onError={(e) => { e.currentTarget.src = '/cocofinaproduct.png'; }}
+                          className="w-14 h-14 object-cover rounded-xl bg-neutral-200 dark:bg-neutral-800 flex-shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-bold text-neutral-900 dark:text-white truncate">
+                            {item.name}
+                          </h4>
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                            {item.variantWeight} × {item.quantity}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-neutral-900 dark:text-white flex-shrink-0 ml-3">
+                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Order Details Breakdown Card */}
+          <div className="bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-700/60 rounded-2xl p-5 text-left space-y-3 text-xs sm:text-sm">
+            <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
+              <span className="text-neutral-500 dark:text-neutral-400">Payment Method</span>
+              <span className="font-semibold text-neutral-900 dark:text-white">
+                {order.paymentMethod === 'cod' ? '💵 Cash on Delivery' : '💳 Online Payment'}
+              </span>
+            </div>
+
+            {order.shippingAddress && (
+              <div className="flex justify-between items-start text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
+                <span className="text-neutral-500 dark:text-neutral-400 flex-shrink-0">Deliver To</span>
+                <span className="font-semibold text-neutral-900 dark:text-white text-right max-w-[220px] truncate">
+                  {order.shippingAddress.fullName}, {order.shippingAddress.city}
+                </span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
+              <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
+              <span className="font-semibold text-neutral-900 dark:text-white">
+                ₹{order.subtotal?.toLocaleString('en-IN')}
+              </span>
+            </div>
+
+            {order.discount > 0 && (
+              <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60 font-semibold">
+                <span>Coupon Discount ({order.coupon?.code || 'Applied'})</span>
+                <span>−₹{order.discount.toLocaleString('en-IN')}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-1 text-base font-bold text-neutral-900 dark:text-white">
+              <span>Total Amount</span>
+              <span className="text-amber-600 dark:text-amber-400 text-lg font-extrabold">
+                ₹{order.total?.toLocaleString('en-IN')}
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button
+              onClick={() => router.push('/my-orders')}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3.5 rounded-full text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-600/25 active:scale-[0.98]"
+            >
+              <Package className="w-4 h-4" /> View My Orders
+            </button>
+
+            <button
+              onClick={() => router.push('/products')}
+              className="w-full bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white font-semibold py-3.5 rounded-full text-xs sm:text-sm border border-neutral-300/80 dark:border-neutral-700 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+            >
+              <ShoppingBag className="w-4 h-4" /> Continue Shopping
+            </button>
+          </div>
+
         </div>
       </div>
-
-      <style jsx>{`
-        .success-circle {
-          width: 80px; height: 80px;
-          background: #22c55e;
-          border-radius: 50%;
-          display: inline-flex; align-items: center; justify-content: center;
-          animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
-          box-shadow: 0 8px 24px rgba(34,197,94,0.3);
-        }
-        .error-circle {
-          width: 80px; height: 80px;
-          background: #ef4444;
-          border-radius: 50%;
-          display: inline-flex; align-items: center; justify-content: center;
-          animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
-          box-shadow: 0 8px 24px rgba(239,68,68,0.3);
-        }
-        @keyframes pop { 
-          from { transform: scale(0); opacity: 0; } 
-          to { transform: scale(1); opacity: 1; } 
-        }
-        .loading-spinner {
-          animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
     </main>
   );
 };

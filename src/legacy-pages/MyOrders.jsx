@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { orderAPI } from '@/services/api';
 import { getUploadUrl } from '@/lib/imageHelper';
 import { Navbar } from '@/components/Navbar';
+import { Eye, XCircle } from 'lucide-react';
 import '@/styles/myorders.css';
 
 // ── Status config ──────────────────────────────────────────────────────────────
@@ -303,14 +304,16 @@ const MyOrders = () => {
                       <span style={{ fontSize: '12px', color: '#888' }}>+{order.items.length - 2} more items</span>
                     )}
                   </div>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div className="order-card-actions">
                     {['placed', 'confirmed'].includes(order.status) && (
                       <button className="mo-cancel-inline-btn" onClick={() => handleCancel(order._id)}>
-                        Cancel
+                        <XCircle style={{ width: '14px', height: '14px' }} />
+                        <span>Cancel Order</span>
                       </button>
                     )}
-                    <button className="btn-view-o" onClick={() => router.push(`/orders/${order._id}`)}>
-                      View Details
+                    <button className="btn-view-o" onClick={() => setSelectedOrder(order)}>
+                      <Eye style={{ width: '14px', height: '14px' }} />
+                      <span>View Details</span>
                     </button>
                   </div>
                 </div>
