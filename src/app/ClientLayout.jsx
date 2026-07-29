@@ -10,7 +10,7 @@ import { Footer } from "../components/Footer";
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-  const isAuthOrAdminPage = ["/login", "/signup"].includes(pathname) || pathname?.startsWith("/admin");
+  const isAuthOrAdminPage = ["/login", "/signup"].includes(pathname) || pathname?.startsWith("/admin") || pathname?.startsWith("/buynow");
 
   const content = (
     <CartProvider>

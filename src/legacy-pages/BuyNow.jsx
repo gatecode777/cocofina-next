@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { cartAPI, addressAPI, orderAPI } from '@/services/api';
+import { cartAPI, addressAPI, orderAPI, couponAPI } from '@/services/api';
 import { triggerCartUpdate } from '@/context/CartContext';
 import { getUploadUrl } from '@/lib/imageHelper';
-import { Navbar } from '@/components/Navbar';
+import Link from 'next/link';
 import '@/styles/buynow.css';
 
 const getImageSrc = (item) => {
@@ -345,13 +345,45 @@ const StepShipping = ({ selected, setSelected }) => {
 };
 
 // ── Step 3: Payment + Summary ──────────────────────────────────────────────────
-const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPaymentMethod, couponApplied }) => {
+const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPaymentMethod, couponApplied, setCouponApplied }) => {
+  const [couponInput, setCouponInput] = useState('');
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState('');
+
   const getItemPrice = (item) => item.price ?? 0;
   const subtotal = cartItems.reduce((s, i) => s + getItemPrice(i) * i.quantity, 0);
   const tax = Math.round(subtotal * 0.05);
   const shippingCharge = shippingMethod === 'express' ? 50 : 0;
   const discount = couponApplied?.discount || 0;
   const total = subtotal + tax + shippingCharge - discount;
+
+  const handleApplyCoupon = async (e) => {
+    e.preventDefault();
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+
+    setApplyingCoupon(true);
+    setCouponError('');
+
+    try {
+      const res = await couponAPI.apply(code, subtotal);
+      if (res.data.success) {
+        const couponData = {
+          code: res.data.coupon?.code || code,
+          discount: res.data.discount || 0,
+        };
+        setCouponApplied(couponData);
+        sessionStorage.setItem('appliedCoupon', JSON.stringify(couponData));
+        setCouponInput('');
+      } else {
+        setCouponError(res.data.message || 'Invalid coupon code');
+      }
+    } catch (err) {
+      setCouponError(err.response?.data?.message || 'Invalid or expired coupon code');
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
 
   const payMethods = [
     { id: 'cod', icon: '₹', label: 'Cash on Delivery', desc: 'Pay when your order arrives' },
@@ -380,7 +412,52 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
             </div>
           ))}
         </div>
-        <div className="summary-divider"></div>
+
+        {/* ── Coupon Form ──────────────────────────────────────────────── */}
+        <div className="coupon-section-summary my-4 pt-2 pb-1 border-t border-b border-neutral-100 dark:border-neutral-800">
+          {couponApplied ? (
+            <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl my-2">
+              <div className="flex items-center gap-2">
+                <i className="fas fa-tag text-emerald-600 dark:text-emerald-400"></i>
+                <span className="font-bold text-sm font-mono text-emerald-700 dark:text-emerald-300">{couponApplied.code}</span>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400"> (Saved ₹{discount.toLocaleString('en-IN')})</span>
+              </div>
+              <button
+                type="button"
+                className="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
+                onClick={() => {
+                  setCouponApplied(null);
+                  sessionStorage.removeItem('appliedCoupon');
+                }}
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleApplyCoupon} className="flex gap-2 my-2">
+              <input
+                type="text"
+                placeholder="Promo Code (e.g. COCO10)"
+                value={couponInput}
+                onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                className="flex-1 px-3.5 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-sm font-mono focus:outline-none focus:border-amber-600 dark:focus:border-amber-500"
+              />
+              <button
+                type="submit"
+                disabled={applyingCoupon || !couponInput.trim()}
+                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-sm"
+              >
+                {applyingCoupon ? <i className="fas fa-spinner fa-spin"></i> : 'Apply'}
+              </button>
+            </form>
+          )}
+          {couponError && (
+            <p className="text-xs text-rose-500 mb-2 flex items-center gap-1 font-medium">
+              <i className="fas fa-circle-exclamation"></i> {couponError}
+            </p>
+          )}
+        </div>
+
         {address && (
           <div className="summary-row">
             <span>Deliver to</span>
@@ -397,7 +474,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
           <span>Shipping</span><span>{shippingCharge === 0 ? 'Free' : `₹${shippingCharge}`}</span>
         </div>
         {discount > 0 && (
-          <div className="summary-row summary-discount">
+          <div className="summary-row summary-discount text-emerald-600 dark:text-emerald-400 font-semibold">
             <span><i className="fas fa-tag"></i> Coupon ({couponApplied?.code})</span>
             <span>−₹{discount.toLocaleString('en-IN')}</span>
           </div>
@@ -419,7 +496,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
             <div className={`radio-circle ${paymentMethod === pm.id ? 'filled' : ''}`}></div>
             <div className="pay-info">
               <span className="pay-icon">{pm.icon}</span>
-              <div>
+              <div className="pay-info-text">
                 <strong>{pm.label}</strong>
                 <span className="pay-desc">{pm.desc}</span>
               </div>
@@ -430,7 +507,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
 
         {paymentMethod === 'cod' && (
           <div className="cod-note">
-            <span>💡</span>
+            <span className="cod-icon">💡</span>
             <p>Pay ₹{(subtotal + tax + shippingCharge - discount).toLocaleString('en-IN')} in cash when your order is delivered. No online payment needed.</p>
           </div>
         )}
@@ -653,7 +730,16 @@ const BuyNowPage = () => {
 
   return (
     <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
-      <Navbar />
+      <header className="checkout-top-header border-b border-neutral-200 dark:border-neutral-800 py-4 px-6 sm:px-12 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between shadow-sm">
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/cocofina.png" alt="Cocofina Logo" className="h-10 w-auto dark:hidden" />
+          <img src="/Cocofina-white.png" alt="Cocofina Logo" className="h-10 w-auto hidden dark:block" />
+        </Link>
+        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800/80 px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-700">
+          <i className="fa-solid fa-shield-halved text-amber-600 dark:text-amber-400 text-sm"></i>
+          <span>256-Bit SSL Secure Checkout</span>
+        </div>
+      </header>
       <div className="checkout-container">
 
         {/* ── Stepper ──────────────────────────────────────────────────────── */}
@@ -698,6 +784,7 @@ const BuyNowPage = () => {
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
               couponApplied={couponApplied}
+              setCouponApplied={setCouponApplied}
             />
           )}
         </div>
