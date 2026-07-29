@@ -219,33 +219,39 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
         <div className="address-form-box">
           <h3>{editId ? 'Edit Address' : 'New Address'}</h3>
           {formError && <div className="bn-error">{formError}</div>}
-          <form onSubmit={handleSave}>
-            <div className="bn-form-row">
-              <div className="bn-field">
-                <label>Label</label>
-                <select name="label" value={form.label} onChange={handleInput}>
-                  <option>Home</option>
-                  <option>Office</option>
-                  <option>Other</option>
-                </select>
-              </div>
+          <form onSubmit={handleSave} className="bn-form">
+            <div className="addr-label-row">
+              {['Home', 'Office', 'Other'].map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  className={`addr-label-btn ${form.label === l ? 'active' : ''}`}
+                  onClick={() => setForm((p) => ({ ...p, label: l }))}
+                >
+                  <i className={`fas fa-${l === 'Home' ? 'home' : l === 'Office' ? 'briefcase' : 'map-marker-alt'}`}></i>
+                  {l}
+                </button>
+              ))}
             </div>
+
             <div className="bn-form-row">
               <div className="bn-field">
                 <label>Full Name *</label>
-                <input name="fullName" value={form.fullName} onChange={handleInput} placeholder="Rahul Sharma" />
+                <input name="fullName" value={form.fullName} onChange={handleInput} placeholder="Rahul Sharma" required />
               </div>
               <div className="bn-field">
-                <label>Phone *</label>
-                <input name="phone" value={form.phone} onChange={handleInput} placeholder="9876543210" maxLength={10} />
+                <label>Phone Number *</label>
+                <input name="phone" value={form.phone} onChange={handleInput} placeholder="9876543210" maxLength={10} required />
               </div>
             </div>
+
             <div className="bn-form-row">
               <div className="bn-field full">
                 <label>House / Flat / Street *</label>
-                <input name="line1" value={form.line1} onChange={handleInput} placeholder="208 Shiv Vihar, MG Road" />
+                <input name="line1" value={form.line1} onChange={handleInput} placeholder="208 Shiv Vihar, MG Road" required />
               </div>
             </div>
+
             <div className="bn-form-row">
               <div className="bn-field full">
                 <label>Area / Landmark</label>
@@ -253,7 +259,7 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
               </div>
             </div>
 
-            {/* Pincode field with lookup */}
+            {/* Pincode & City */}
             <div className="bn-form-row">
               <div className="bn-field">
                 <label>Pincode *</label>
@@ -265,6 +271,7 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
                     onBlur={handlePincodeBlur}
                     placeholder="302020"
                     maxLength={6}
+                    required
                   />
                   {isLookingUp && (
                     <i className="fas fa-spinner fa-spin pincode-spinner"></i>
@@ -277,24 +284,29 @@ const StepAddress = ({ selected, setSelected, addresses, setAddresses, onRefresh
                   </div>
                 )}
               </div>
+
+              <div className="bn-field">
+                <label>City *</label>
+                <input name="city" value={form.city} onChange={handleCityStateChange} placeholder="Jaipur" required />
+              </div>
             </div>
 
-            <div className="bn-field">
-              <label>City *</label>
-              <input name="city" value={form.city} onChange={handleCityStateChange} placeholder="Jaipur" />
-            </div>
-            <div className="bn-field">
-              <label>State *</label>
-              <input name="state" value={form.state} onChange={handleCityStateChange} placeholder="Rajasthan" />
+            <div className="bn-form-row">
+              <div className="bn-field full">
+                <label>State *</label>
+                <input name="state" value={form.state} onChange={handleCityStateChange} placeholder="Rajasthan" required />
+              </div>
             </div>
 
             <label className="bn-checkbox">
               <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={handleInput} />
-              Set as default address
+              <span>Set as default address</span>
             </label>
+
             <div className="bn-form-actions">
               <button type="button" className="btn-outline" onClick={() => setShowForm(false)}>Cancel</button>
               <button type="submit" className="btn-save" disabled={saving}>
+                <i className="fas fa-save"></i>
                 {saving ? 'Saving…' : (editId ? 'Update Address' : 'Save Address')}
               </button>
             </div>
