@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { userAuth } from '@/services/api';
 import { auth } from '@/lib/firebase';
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { RecaptchaVerifier, signInWithPhoneNumber, createUserWithEmailAndPassword } from 'firebase/auth';
 import '@/styles/signup.css';
 
 const Signup = () => {
@@ -36,36 +36,6 @@ const Signup = () => {
     return () => clearInterval(timer);
   }, [otpResendCooldown]);
 
-  const setupRecaptcha = () => {
-    if (typeof window === 'undefined') return null;
-
-    if (window.recaptchaVerifier) {
-      return window.recaptchaVerifier;
-    }
-
-    const container = document.getElementById('recaptcha-container');
-    if (container) {
-      container.innerHTML = '';
-    }
-
-    try {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-        callback: () => {},
-        'expired-callback': () => {
-          if (window.recaptchaVerifier) {
-            try { window.recaptchaVerifier.clear(); } catch {}
-            window.recaptchaVerifier = null;
-          }
-        },
-      });
-      return window.recaptchaVerifier;
-    } catch (err) {
-      console.warn('Error creating RecaptchaVerifier:', err);
-      return null;
-    }
-  };
-
   const resetRecaptcha = () => {
     if (typeof window === 'undefined') return;
     if (window.recaptchaVerifier) {
@@ -75,6 +45,26 @@ const Signup = () => {
     const container = document.getElementById('recaptcha-container');
     if (container) {
       container.innerHTML = '';
+    }
+  };
+
+  const setupRecaptcha = () => {
+    if (typeof window === 'undefined') return null;
+
+    resetRecaptcha();
+
+    try {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {},
+        'expired-callback': () => {
+          resetRecaptcha();
+        },
+      });
+      return window.recaptchaVerifier;
+    } catch (err) {
+      console.warn('Error creating RecaptchaVerifier:', err);
+      return null;
     }
   };
 
@@ -129,13 +119,33 @@ const Signup = () => {
     if (errors.submit) setErrors((prev) => ({ ...prev, submit: '' }));
   };
 
-  // ── Step 1: Send SMS OTP ────────────────────────────────────────────────
+  // ── Step 1: Pre-check User & Send SMS OTP ────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
     setIsLoading(true);
     setErrors({});
 
+    // 1. Pre-check if email/phone already exist in DB BEFORE calling Firebase SMS
+    try {
+      const checkRes = await userAuth.checkUser({
+        email: formData.email.trim(),
+        phone: formData.contactNumber.replace(/\D/g, ''),
+      });
+      if (!checkRes.data.success) {
+        setErrors({ submit: checkRes.data.message || 'Email or phone number already registered.' });
+        setIsLoading(false);
+        return;
+      }
+    } catch (checkErr) {
+      if (checkErr.response?.status === 409) {
+        setErrors({ submit: checkErr.response.data.message || 'This email or phone number is already registered.' });
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    // 2. If available, proceed with Firebase Phone Auth SMS OTP
     const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
 
     try {
@@ -145,17 +155,10 @@ const Signup = () => {
       try {
         confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       } catch (firstErr) {
-        if (
-          firstErr.message?.includes('already been rendered') ||
-          firstErr.code === 'auth/already-initialized' ||
-          firstErr.message?.includes('already-initialized')
-        ) {
-          resetRecaptcha();
-          appVerifier = setupRecaptcha();
-          confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
-        } else {
-          throw firstErr;
-        }
+        console.warn('First SMS attempt warning:', firstErr);
+        resetRecaptcha();
+        appVerifier = setupRecaptcha();
+        confirmation = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       }
 
       setConfirmationResult(confirmation);
@@ -204,7 +207,14 @@ const Signup = () => {
       // 1. Verify OTP with Firebase Auth
       await confirmationResult.confirm(otp);
 
-      // 2. Complete User Registration in MongoDB Backend
+      // 2. Register/Sync in Firebase Auth
+      try {
+        await createUserWithEmailAndPassword(auth, formData.email.trim(), formData.password);
+      } catch (fbErr) {
+        console.warn('Firebase Auth user sync info:', fbErr.message);
+      }
+
+      // 3. Complete User Registration in MongoDB Backend
       const res = await userAuth.register({
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),

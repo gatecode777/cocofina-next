@@ -3,13 +3,9 @@
 export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import '@/styles/forgetpassword.css';
 
 const ForgotPasswordPage = () => {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -32,17 +28,22 @@ const ForgotPasswordPage = () => {
 
     setSubmitting(true);
     try {
-      await sendPasswordResetEmail(auth, trimmed);
-      setSuccess(true);
+      const res = await fetch('/api/auth/firebase-reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSuccess(true);
+      } else {
+        setError(data.message || 'Failed to send password reset email. Please try again.');
+      }
     } catch (err) {
       console.error('Password Reset Error:', err);
-      if (err.code === 'auth/user-not-found') {
-        setError('No account found for this email address. Please check your email or Sign Up.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Please enter a valid email address.');
-      } else {
-        setError(err.message || 'Failed to send password reset email. Please try again.');
-      }
+      setError('Network error. Please try again.');
     } finally {
       setSubmitting(false);
     }

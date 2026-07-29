@@ -69,6 +69,7 @@ export const adminAuth = {
 
 // ==================== USER AUTH ====================
 export const userAuth = {
+  checkUser:   (data)      => api.post('/api/auth/check-user', data),
   register:    (data)      => api.post('/api/auth/register', data),
   loginUser:   (data)      => api.post('/api/auth/login', data),
   logout:      ()          => api.post('/api/auth/logout'),
@@ -156,7 +157,7 @@ export const addressAPI = {
   getAll:     ()          => api.get('/api/addresses'),
   getOne:     (id)        => api.get(`/api/addresses/${id}`),
   create:     (data)      => api.post('/api/addresses', data),
-  update:     (id, data)  => api.put(`/api/addresses/${id}`, data),
+  update:     (data)      => api.put('/api/addresses', data),
   delete:     (id)        => api.delete(`/api/addresses/${id}`),
   setDefault: (id)        => api.put(`/api/addresses/${id}/default`),
 };
