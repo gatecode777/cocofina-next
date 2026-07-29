@@ -37,14 +37,35 @@ const Signup = () => {
   }, [otpResendCooldown]);
 
   const setupRecaptcha = () => {
-    if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
+    if (typeof window === 'undefined') return;
+
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (e) {
+        console.warn('Error clearing recaptchaVerifier:', e);
+      }
+      window.recaptchaVerifier = null;
+    }
+
+    const container = document.getElementById('recaptcha-container');
+    if (container) {
+      container.innerHTML = '';
+    }
+
+    try {
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
         callback: () => {},
         'expired-callback': () => {
-          window.recaptchaVerifier = null;
+          if (window.recaptchaVerifier) {
+            try { window.recaptchaVerifier.clear(); } catch {}
+            window.recaptchaVerifier = null;
+          }
         },
       });
+    } catch (err) {
+      console.error('Error setting up RecaptchaVerifier:', err);
     }
   };
 
@@ -118,7 +139,29 @@ const Signup = () => {
       setOtpResendCooldown(30);
     } catch (err) {
       console.error('Firebase SMS Error:', err);
-      if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
+      if (err.message?.includes('already been rendered') || err.code === 'auth/already-initialized') {
+        try {
+          if (window.recaptchaVerifier) {
+            try { window.recaptchaVerifier.clear(); } catch {}
+            window.recaptchaVerifier = null;
+          }
+          const container = document.getElementById('recaptcha-container');
+          if (container) container.innerHTML = '';
+          setupRecaptcha();
+          const fullPhone = `+91${formData.contactNumber.replace(/\D/g, '')}`;
+          const confirmation = await signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier);
+          setConfirmationResult(confirmation);
+          setStep('otp');
+          setOtpResendCooldown(30);
+          return;
+        } catch (retryErr) {
+          setErrors({ submit: retryErr.message || 'Error initializing reCAPTCHA. Please refresh the page.' });
+        }
+      } else if (err.code === 'auth/invalid-app-credential' || err.message?.includes('invalid-app-credential')) {
+        setErrors({
+          submit: 'Domain authorization error: Please add "localhost" to Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+        });
+      } else if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
         setErrors({
           submit: 'Firebase Phone Auth requires setting up a Test Phone Number in Firebase Console, or switching your Firebase project to the Blaze Plan (includes 10,000 free SMS/month).',
         });
@@ -346,6 +389,9 @@ const Signup = () => {
                     <strong className="text-base text-amber-600 dark:text-amber-400 font-mono">
                       +91 {formData.contactNumber}
                     </strong>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                      (If using a Firebase Test Phone Number, enter the test verification code configured in your Firebase Console, e.g. <strong>123456</strong>)
+                    </p>
                   </div>
 
                   {errors.otp && (
