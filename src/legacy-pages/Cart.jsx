@@ -137,8 +137,9 @@ const Cart = () => {
   }, [router]);
 
   useEffect(() => {
+    router.prefetch('/buynow');
     fetchCart();
-  }, [fetchCart]);
+  }, [fetchCart, router]);
 
   const updateQty = async (item, delta) => {
     const newQty = (item.quantity || 1) + delta;

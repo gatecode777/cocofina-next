@@ -98,7 +98,7 @@ const OrderSuccess = () => {
       <Navbar />
       
       <div className="max-w-2xl mx-auto px-4 pt-8 sm:pt-12">
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 text-center">
+        <div className="order-success-card space-y-8 text-center">
           
           {/* Animated Success Check Badge */}
           <div className="relative inline-flex items-center justify-center">
@@ -132,7 +132,7 @@ const OrderSuccess = () => {
                   return (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-700/60"
+                      className="order-success-inner-box flex items-center justify-between p-3.5"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <img
@@ -142,15 +142,15 @@ const OrderSuccess = () => {
                           className="w-14 h-14 object-cover rounded-xl bg-neutral-200 dark:bg-neutral-800 flex-shrink-0"
                         />
                         <div className="min-w-0">
-                          <h4 className="text-sm font-bold text-neutral-900 dark:text-white truncate">
+                          <h4 className="text-sm font-bold truncate">
                             {item.name}
                           </h4>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          <p className="text-xs opacity-70">
                             {item.variantWeight} × {item.quantity}
                           </p>
                         </div>
                       </div>
-                      <span className="text-sm font-bold text-neutral-900 dark:text-white flex-shrink-0 ml-3">
+                      <span className="text-sm font-bold flex-shrink-0 ml-3">
                         ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -161,38 +161,38 @@ const OrderSuccess = () => {
           )}
 
           {/* Order Details Breakdown Card */}
-          <div className="bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-700/60 rounded-2xl p-5 text-left space-y-3 text-xs sm:text-sm">
-            <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
-              <span className="text-neutral-500 dark:text-neutral-400">Payment Method</span>
-              <span className="font-semibold text-neutral-900 dark:text-white">
+          <div className="order-success-inner-box p-5 text-left space-y-3 text-xs sm:text-sm">
+            <div className="flex justify-between items-center pb-2.5 border-b border-neutral-200/40 dark:border-neutral-700/40">
+              <span className="opacity-70">Payment Method</span>
+              <span className="font-semibold">
                 {order.paymentMethod === 'cod' ? '💵 Cash on Delivery' : '💳 Online Payment'}
               </span>
             </div>
 
             {order.shippingAddress && (
-              <div className="flex justify-between items-start text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
-                <span className="text-neutral-500 dark:text-neutral-400 flex-shrink-0">Deliver To</span>
-                <span className="font-semibold text-neutral-900 dark:text-white text-right max-w-[220px] truncate">
+              <div className="flex justify-between items-start pb-2.5 border-b border-neutral-200/40 dark:border-neutral-700/40">
+                <span className="opacity-70 flex-shrink-0">Deliver To</span>
+                <span className="font-semibold text-right max-w-[220px] truncate">
                   {order.shippingAddress.fullName}, {order.shippingAddress.city}
                 </span>
               </div>
             )}
 
-            <div className="flex justify-between items-center text-neutral-600 dark:text-neutral-300 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60">
-              <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
-              <span className="font-semibold text-neutral-900 dark:text-white">
+            <div className="flex justify-between items-center pb-2.5 border-b border-neutral-200/40 dark:border-neutral-700/40">
+              <span className="opacity-70">Subtotal</span>
+              <span className="font-semibold">
                 ₹{order.subtotal?.toLocaleString('en-IN')}
               </span>
             </div>
 
             {order.discount > 0 && (
-              <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400 pb-2.5 border-b border-neutral-200/60 dark:border-neutral-700/60 font-semibold">
+              <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400 pb-2.5 border-b border-neutral-200/40 dark:border-neutral-700/40 font-semibold">
                 <span>Coupon Discount ({order.coupon?.code || 'Applied'})</span>
-                <span>−₹{order.discount.toLocaleString('en-IN')}</span>
+                <span className="ml-auto text-right">−₹{order.discount.toLocaleString('en-IN')}</span>
               </div>
             )}
 
-            <div className="flex justify-between items-center pt-1 text-base font-bold text-neutral-900 dark:text-white">
+            <div className="flex justify-between items-center pt-1 text-base font-bold">
               <span>Total Amount</span>
               <span className="text-amber-600 dark:text-amber-400 text-lg font-extrabold">
                 ₹{order.total?.toLocaleString('en-IN')}

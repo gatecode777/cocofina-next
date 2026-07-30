@@ -19,8 +19,12 @@ export async function PUT(request, { params }) {
     if (!['placed', 'confirmed'].includes(order.status))
       return NextResponse.json({ success: false, message: `Cannot cancel an order in "${order.status}" status` }, { status: 400 });
 
+    const body = await request.json().catch(() => ({}));
+    const reason = body.reason || body.cancelReason || 'Cancelled by customer';
+
     order.status = 'cancelled';
     order.cancelledAt = new Date();
+    order.cancelReason = reason;
     await order.save();
 
     // Restore coupon usage

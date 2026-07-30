@@ -993,6 +993,37 @@
   color: #fca5a5;
 }
 
+/* Order Success Card & Inner Boxes for Light/Dark Mode */
+.order-success-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+  color: #171717;
+}
+
+.dark .order-success-card {
+  background: #1c1c1c;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+}
+
+.order-success-inner-box {
+  background: #f7f5f2;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  color: #171717;
+}
+
+.dark .order-success-inner-box {
+  background: #262626;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
 /* ── Mobile Responsive Rules for Checkout ────────────────────────────────── */
 @media (max-width: 640px) {
   .checkout-container {

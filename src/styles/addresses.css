@@ -62,8 +62,34 @@
   margin-top: 4px;
 }
 
-.dark .addr-header p {
-  color: #a3a3a3;
+.btn-addr-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: #171717;
+  color: #ffffff;
+  border: 1px solid #171717;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-addr-action:hover {
+  background: #262626;
+  transform: translateY(-1px);
+}
+
+.dark .btn-addr-action {
+  background: #ffffff;
+  color: #171717;
+  border-color: #ffffff;
 }
 
 .btn-add-addr,
@@ -76,6 +102,8 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
   display: inline-flex;
@@ -205,16 +233,21 @@
 /* Label Buttons (Home / Office / Other) */
 .addr-label-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 8px;
+  width: 100%;
 }
 
 .addr-label-btn {
+  flex: 1;
+  min-width: 80px;
+  justify-content: center;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 10px 14px;
   border-radius: 9999px;
   font-size: 13px;
   font-weight: 600;
@@ -222,6 +255,7 @@
   background: #f9fafb;
   color: #4b5563;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -447,4 +481,261 @@
 
 .dark .addr-card:hover {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.addr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .addr-card-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.addr-card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #171717;
+}
+
+.dark .addr-card-label {
+  color: #ffffff;
+}
+
+.addr-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addr-action-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #525252;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark .addr-action-btn {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #a3a3a3;
+}
+
+.addr-action-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #171717;
+}
+
+.dark .addr-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.addr-action-btn--delete:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.addr-action-btn--default {
+  background: rgba(217, 119, 6, 0.1);
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.addr-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.addr-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #171717;
+}
+
+.dark .addr-name {
+  color: #ffffff;
+}
+
+.addr-phone {
+  font-size: 13px;
+  color: #737373;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dark .addr-phone {
+  color: #a3a3a3;
+}
+
+.addr-line {
+  font-size: 13px;
+  color: #525252;
+  line-height: 1.5;
+}
+
+.dark .addr-line {
+  color: #d4d4d4;
+}
+
+.addr-btn-save {
+  background: #d97706;
+  color: #ffffff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+}
+
+.addr-btn-save:hover {
+  background: #b45309;
+}
+
+/* ── Mobile & Tablet Responsiveness ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .addresses-page-wrapper {
+    padding: 75px 12px 30px 12px;
+  }
+
+  .addr-container {
+    padding: 18px 14px;
+    border-radius: 16px;
+  }
+
+  .addr-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+  }
+
+  .addr-header h1 {
+    font-size: 22px;
+    letter-spacing: -0.3px;
+  }
+
+  .addr-header p {
+    font-size: 12.5px;
+  }
+
+  .addr-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-addr-action {
+    padding: 5px 10px;
+    font-size: 11px;
+    margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .btn-add-addr,
+  .addr-btn-add {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 11.5px;
+  }
+
+  .addr-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .addr-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .addr-card-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .addr-name {
+    font-size: 14.5px;
+  }
+
+  .addr-phone,
+  .addr-line {
+    font-size: 12px;
+  }
+
+  .addr-action-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .addr-form-panel {
+    padding: 16px 14px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+
+  .addr-form-panel-header h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .addr-field label {
+    font-size: 12px;
+  }
+
+  .addr-field input,
+  .addr-field select {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .addr-form-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .addr-btn-outline,
+  .addr-btn-save {
+    width: 100%;
+    text-align: center;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .addr-header h1 {
+    font-size: 20px;
+  }
+
+  .addr-label-btn {
+    padding: 7px 10px;
+    font-size: 11.5px;
+  }
 }

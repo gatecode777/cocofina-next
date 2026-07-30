@@ -70,6 +70,7 @@ const orderSchema = new mongoose.Schema(
     },
 
     notes: { type: String, default: '' },
+    cancelReason: { type: String, default: '' },
 
     // ── Shiprocket integration ────────────────────────────────────────────────
     shiprocket: {

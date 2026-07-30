@@ -414,7 +414,7 @@ const AddressesPage = () => {
               <h1>Saved Addresses</h1>
               <p>Manage your delivery locations and default addresses</p>
             </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div className="addr-header-actions">
               <button
                 className="btn-addr-action"
                 onClick={() => router.push('/my-profile')}

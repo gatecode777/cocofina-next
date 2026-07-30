@@ -206,31 +206,18 @@ const AccountPage = () => {
           <>
             <div className="account-header">
               <div className="title-section">
-                <button
-                  onClick={() => router.push('/')}
-                  className="btn-back-to-store"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    marginBottom: '12px',
-                    padding: '6px 14px',
-                    borderRadius: '20px',
-                    background: '#fef3c7',
-                    color: '#92400e',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    border: '1px solid #fde68a',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  ← Back to Store
-                </button>
                 <h1>My Account</h1>
                 <p>Manage your profile, orders, and account settings.</p>
               </div>
-              <button className="btn-logout" onClick={handleLogout}>Log Out</button>
+              <div className="account-header-actions">
+                <button
+                  onClick={() => router.push('/')}
+                  className="btn-back-to-store"
+                >
+                  ← Back to Store
+                </button>
+                <button className="btn-logout" onClick={handleLogout}>Log Out</button>
+              </div>
             </div>
 
             <div className="account-overview-card">
@@ -467,22 +454,22 @@ const RecentOrders = () => {
 
   return (
     <>
-      <div className="recent-orders-header">Recent Orders</div>
       {orders.map((order) => (
-        <div className="order-row" key={order._id} onClick={() => router.push('/my-orders')}>
-          <span>
-            <strong>{order.orderNumber}</strong>
+        <Link href="/my-orders" className="order-row" key={order._id} style={{ textDecoration: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <strong>#{order.orderNumber}</strong>
             <span style={{
-              marginLeft: '8px', fontSize: '12px',
-              background: STATUS_COLORS[order.status] + '20',
-              color: STATUS_COLORS[order.status],
-              padding: '2px 8px', borderRadius: '10px', fontWeight: 600
+              fontSize: '11px',
+              background: STATUS_COLORS[order.status] ? STATUS_COLORS[order.status] + '20' : 'rgba(217, 119, 6, 0.15)',
+              color: STATUS_COLORS[order.status] || '#d97706',
+              padding: '3px 10px', borderRadius: '9999px', fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.5px'
             }}>
               {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
             </span>
-          </span>
+          </div>
           <i className="fas fa-arrow-right"></i>
-        </div>
+        </Link>
       ))}
     </>
   );

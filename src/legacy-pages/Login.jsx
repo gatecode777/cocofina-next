@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
+import { useTheme } from 'next-themes';
 import { userAuth } from '@/services/api';
 import '@/styles/login.css';
 
@@ -11,6 +12,7 @@ import '@/styles/login.css';
 const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme, resolvedTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +20,8 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const isDark = isMounted && (resolvedTheme === 'dark' || theme === 'dark');
 
   // Check if already logged in
   useEffect(() => {
@@ -229,7 +233,7 @@ const LoginForm = () => {
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
                   useOneTap={false}
-                  theme="filled_blue"
+                  theme={isDark ? "filled_black" : "outline"}
                   shape="pill"
                   width="300"
                   text="signin_with"

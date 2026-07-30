@@ -24,18 +24,22 @@ export function CartDrawer() {
   const grandTotal = subtotal + shippingFee;
   const progressToFreeShipping = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
+  React.useEffect(() => {
+    if (isCartOpen) {
+      router.prefetch("/buynow");
+      router.prefetch("/login?redirectAfterLogin=/buynow");
+    }
+  }, [isCartOpen, router]);
+
   const handleCheckout = () => {
     setIsCheckingOut(true);
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      setIsCartOpen(false);
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      if (!token) {
-        router.push("/login?redirectAfterLogin=/buynow");
-      } else {
-        router.push("/buynow");
-      }
-    }, 400);
+    setIsCartOpen(false);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) {
+      router.push("/login?redirectAfterLogin=/buynow");
+    } else {
+      router.push("/buynow");
+    }
   };
 
   if (!isCartOpen) return null;
