@@ -331,18 +331,26 @@ input:-webkit-autofill:active {
   justify-content: center;
   width: 100%;
   margin-bottom: 20px;
-  overflow: hidden;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
-.google-login-wrapper > div {
+.google-login-wrapper > div,
+.google-login-wrapper div[role="button"] {
   width: 100% !important;
   display: flex !important;
   justify-content: center !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 9999px !important;
 }
 
 .google-login-wrapper iframe {
   margin: 0 auto !important;
   max-width: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 9999px !important;
 }
 
 .google-loading {
