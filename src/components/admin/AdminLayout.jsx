@@ -160,6 +160,14 @@ const AdminLayout = ({ children }) => {
             </Link>
           )}
 
+          {canSee('recipes') && (
+            <Link href="/admin/recipes"
+              className={`nav-item ${isActive('/admin/recipes') ? 'active' : ''}`}>
+              <i className="fas fa-utensils"></i>
+              {sidebarOpen && <span>Recipes</span>}
+            </Link>
+          )}
+
           {/* Admin Management — super_admin only */}
           {isSuperAdmin && (
             <Link href="/admin/managers"
