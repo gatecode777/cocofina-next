@@ -88,7 +88,7 @@ export default function RecipesPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-neutral-950 pt-20">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 pt-20">
       <Navbar />
 
       {/* Header */}
@@ -215,6 +215,6 @@ export default function RecipesPage() {
           </div>
         )}
       </section>
-    </main>
+    </div>
   );
 }

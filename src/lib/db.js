@@ -3,6 +3,9 @@ import dns from "dns";
 
 // Fix querySrv ECONNREFUSED on Windows / local network DNS lookup for MongoDB Atlas SRV records
 try {
+  if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+  }
   dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
 } catch (e) {
   console.warn("Could not set custom DNS servers for MongoDB connection:", e);
@@ -16,6 +19,10 @@ if (!cached) {
 }
 
 export async function connectDB() {
+  try {
+    dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
+  } catch (e) {}
+
   const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/cocofina";
 
   if (!process.env.MONGODB_URI) {

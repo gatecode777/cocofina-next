@@ -36,22 +36,31 @@ export const metadata = {
 };
 
 async function getBlogsData() {
-  await connectDB();
-  const categories = await BlogCategory.find({ isActive: true }).lean();
-  
-  const query = { status: 'published' };
-  const totalBlogs = await Blog.countDocuments(query);
-  const blogs = await Blog.find(query)
-    .populate('category', 'name slug')
-    .sort({ publishedAt: -1, createdAt: -1 })
-    .limit(6)
-    .lean();
+  try {
+    await connectDB();
+    const categories = await BlogCategory.find({ isActive: true }).lean();
+    
+    const query = { status: 'published' };
+    const totalBlogs = await Blog.countDocuments(query);
+    const blogs = await Blog.find(query)
+      .populate('category', 'name slug')
+      .sort({ publishedAt: -1, createdAt: -1 })
+      .limit(6)
+      .lean();
 
-  return {
-    initialCategories: JSON.parse(JSON.stringify(categories)),
-    initialBlogs: JSON.parse(JSON.stringify(blogs)),
-    initialTotalCount: totalBlogs,
-  };
+    return {
+      initialCategories: JSON.parse(JSON.stringify(categories)),
+      initialBlogs: JSON.parse(JSON.stringify(blogs)),
+      initialTotalCount: totalBlogs,
+    };
+  } catch (err) {
+    console.error('getBlogsData SSR connection error:', err);
+    return {
+      initialCategories: [],
+      initialBlogs: [],
+      initialTotalCount: 0,
+    };
+  }
 }
 
 export default async function Page() {

@@ -79,6 +79,7 @@ export function Navbar() {
     { label: "Products", href: "/products" },
     { label: "About Us", href: "/about-us" },
     { label: "Process", href: "/how-its-made" },
+    { label: "Blog", href: "/our-blogs" },
     { label: "Recipes", href: "/recipes" },
   ];
 

@@ -6,11 +6,13 @@ import Blog from '@/models/Blog';
 import '@/models/BlogCategory'; // Register BlogCategory model
 import ShareButtons from '@/components/blog/ShareButtons';
 import BlogAskForm from '@/components/blog/BlogAskForm';
+import { Navbar } from '@/components/Navbar';
+import { getUploadUrl } from '@/lib/imageHelper';
 import '@/styles/singleblog.css';
 
 export const dynamic = "force-dynamic";
 
-const getCoverSrc = (f) => f ? `/uploads/blogs/${f}` : '/Blog1.jpg';
+const getCoverSrc = (f) => getUploadUrl(f, 'blogs');
 
 export async function generateMetadata({ params }) {
   await connectDB();
@@ -234,104 +236,107 @@ export default async function Page({ params }) {
   const contentBlocks = blog.content || [];
 
   return (
-    <main>
-      <section className="blg-hero-section">
-        <div className="blg-container">
-          <div className="blg-header-area">
-            {blog.category && (
-              <Link href={`/our-blogs?category=${blog.category.slug}`} className="category-tag">
-                {blog.category.name}
-              </Link>
-            )}
-            <h1 className="blg-main-title">{blog.title}</h1>
-            <div className="blg-meta-info">
-              <span>By {blog.author?.name || 'Cocofina'} — {fmtDate(blog.publishedAt || blog.createdAt)}</span>
-              <span className="blg-read-time">{blog.readTime} minute read</span>
-            </div>
-            <ShareButtons title={blog.title} />
-          </div>
-
-          <div className="blg-media-grid">
-            <div className="blg-img-box">
-              <img
-                src={getCoverSrc(blog.coverImage)}
-                alt={blog.coverImageAlt || blog.title}
-                className="blg-featured-img"
-                onError={(e) => { e.target.src = '/Blog1.jpg'; }}
-              />
-            </div>
-
-            <BlogAskForm />
-          </div>
-        </div>
-      </section>
-
-      <section className="blg-body-section">
-        <div className="blg-container">
-          <div className="blg-text-block">
-            {contentBlocks.map((block, i) => (
-              <ContentBlock key={i} block={block} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="blg-bottom-section">
-        <div className="blg-container">
-          {blog.author?.name && (
-            <div className="blg-author-card">
-              <div className="blg-author-flex">
-                <div className="blg-author-img">
-                  {getAuthorSrc(blog.author.image) ? (
-                    <img src={getAuthorSrc(blog.author.image)} alt={blog.author.name}
-                      onError={(e) => { e.target.style.display = 'none'; }} />
-                  ) : (
-                    <div className="blg-author-initials">
-                      {blog.author.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="blg-author-info">
-                  <h3>{blog.author.name}</h3>
-                  {blog.author.designation && <p>({blog.author.designation})</p>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {blog.tags?.length > 0 && (
-            <div className="blg-tags">
-              {blog.tags.map((tag, idx) => (
-                <span key={idx} className="blg-tag">#{tag} </span>
-              ))}
-            </div>
-          )}
-
-          <div className="blg-disclaimer">
-            <p>
-              <strong>Disclaimer:</strong> The information provided in this blog is intended for general
-              informational and educational purposes only. While we strive to provide accurate and
-              up-to-date information, it should not be considered as professional medical or dietary advice.
-            </p>
-            <p>
-              Coconut sugar, including products from Cocofina Sugar, should be consumed in moderation
-              as part of a balanced diet. Individuals with specific health conditions should consult a
-              qualified healthcare professional before making any dietary changes.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {related.length > 0 && (
-        <section className="blg-related-section">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 pt-20 flex flex-col justify-between">
+      <div>
+        <Navbar />
+        <section className="blg-hero-section">
           <div className="blg-container">
-            <h2 className="blg-related-title">Related Articles</h2>
-            <div className="sbl-related-grid">
-              {related.map(r => <RelatedCard key={r._id} blog={r} />)}
+            <div className="blg-header-area">
+              {blog.category && (
+                <Link href={`/our-blogs?category=${blog.category.slug}`} className="category-tag">
+                  {blog.category.name}
+                </Link>
+              )}
+              <h1 className="blg-main-title">{blog.title}</h1>
+              <div className="blg-meta-info">
+                <span>By {blog.author?.name || 'Cocofina'} — {fmtDate(blog.publishedAt || blog.createdAt)}</span>
+                <span className="blg-read-time">{blog.readTime} minute read</span>
+              </div>
+              <ShareButtons title={blog.title} />
+            </div>
+
+            <div className="blg-media-grid">
+              <div className="blg-img-box">
+                <img
+                  src={getCoverSrc(blog.coverImage)}
+                  alt={blog.coverImageAlt || blog.title}
+                  className="blg-featured-img"
+                  onError={(e) => { e.target.src = '/Blog1.jpg'; }}
+                />
+              </div>
+
+              <BlogAskForm />
             </div>
           </div>
         </section>
-      )}
-    </main>
+
+        <section className="blg-body-section">
+          <div className="blg-container">
+            <div className="blg-text-block">
+              {contentBlocks.map((block, i) => (
+                <ContentBlock key={i} block={block} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="blg-bottom-section">
+          <div className="blg-container">
+            {blog.author?.name && (
+              <div className="blg-author-card">
+                <div className="blg-author-flex">
+                  <div className="blg-author-img">
+                    {getAuthorSrc(blog.author.image) ? (
+                      <img src={getAuthorSrc(blog.author.image)} alt={blog.author.name}
+                        onError={(e) => { e.target.style.display = 'none'; }} />
+                    ) : (
+                      <div className="blg-author-initials">
+                        {blog.author.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="blg-author-info">
+                    <h3>{blog.author.name}</h3>
+                    {blog.author.designation && <p>({blog.author.designation})</p>}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {blog.tags?.length > 0 && (
+              <div className="blg-tags">
+                {blog.tags.map((tag, idx) => (
+                  <span key={idx} className="blg-tag">#{tag} </span>
+                ))}
+              </div>
+            )}
+
+            <div className="blg-disclaimer">
+              <p>
+                <strong>Disclaimer:</strong> The information provided in this blog is intended for general
+                informational and educational purposes only. While we strive to provide accurate and
+                up-to-date information, it should not be considered as professional medical or dietary advice.
+              </p>
+              <p>
+                Coconut sugar, including products from Cocofina Sugar, should be consumed in moderation
+                as part of a balanced diet. Individuals with specific health conditions should consult a
+                qualified healthcare professional before making any dietary changes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {related.length > 0 && (
+          <section className="blg-related-section">
+            <div className="blg-container">
+              <h2 className="blg-related-title">Related Articles</h2>
+              <div className="sbl-related-grid">
+                {related.map(r => <RelatedCard key={r._id} blog={r} />)}
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
   );
 }
