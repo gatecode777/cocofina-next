@@ -17,24 +17,25 @@ const ShareButtons = ({ title }) => {
   const text = encodeURIComponent(title);
 
   return (
-    <div className="blg-share-btns">
-      <a 
-        href={`https://wa.me/?text=${text}%20${url}`} 
-        target="_blank" 
+    <div className="sblg-share">
+      <span className="sblg-share-label">Share</span>
+      <a
+        href={`https://wa.me/?text=${text}%20${url}`}
+        target="_blank"
         rel="noopener noreferrer"
-        className="btn-share btn-whatsapp"
+        className="sblg-share-btn sblg-share-wa"
       >
         <i className="fab fa-whatsapp"></i> WhatsApp
       </a>
-      <a 
-        href={`https://www.facebook.com/sharer/sharer.php?u=${url}`} 
-        target="_blank" 
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
+        target="_blank"
         rel="noopener noreferrer"
-        className="btn-share btn-facebook"
+        className="sblg-share-btn sblg-share-fb"
       >
         <i className="fab fa-facebook-f"></i> Facebook
       </a>
-      <button className="btn-share btn-copy" onClick={handleCopy}>
+      <button className="sblg-share-btn sblg-share-copy" onClick={handleCopy}>
         <i className="fas fa-link"></i> {copied ? 'Copied!' : 'Copy Link'}
       </button>
     </div>
