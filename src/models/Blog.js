@@ -124,7 +124,7 @@ blogSchema.index({ isFeatured: 1 });
 blogSchema.index({ publishedAt:-1 });
 blogSchema.index({ tags:        1 });
 
-// ── Auto-generate slug + publishedAt ─────────────────────────────────────────
+// ── Auto-generate slug + publishedAt + read time ─────────────────────────────
 blogSchema.pre('save', function (next) {
   // Slug from title
   if (this.isModified('title') && !this.slug) {
@@ -139,17 +139,15 @@ blogSchema.pre('save', function (next) {
   if (this.isModified('status') && this.status === 'published' && !this.publishedAt) {
     this.publishedAt = new Date();
   }
-});
-
-// ── Auto-estimate read time ────────────────────────────────────────────────────
-blogSchema.pre('save', function (next) {
-  if (this.isModified('content')) {
+  // Auto-estimate read time
+  if (this.isModified('content') && Array.isArray(this.content)) {
     const wordCount = this.content.reduce((total, block) => {
-      const text = block.text || block.items?.join(' ') || '';
+      const text = block.text || (Array.isArray(block.items) ? block.items.join(' ') : '') || '';
       return total + text.split(/\s+/).filter(Boolean).length;
     }, 0);
     this.readTime = Math.max(1, Math.ceil(wordCount / 200));
   }
+  next();
 });
 
 const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);

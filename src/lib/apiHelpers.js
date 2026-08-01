@@ -61,7 +61,7 @@ export const parseForm = async (request) => {
 import path from 'path';
 import { writeFile, mkdir } from 'fs/promises';
 
-const withTimeout = (promise, ms = 2500) =>
+const withTimeout = (promise, ms = 25000) =>
   Promise.race([
     promise,
     new Promise((_, reject) => setTimeout(() => reject(new Error('ImageKit upload timeout')), ms)),
