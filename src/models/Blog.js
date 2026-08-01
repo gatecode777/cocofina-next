@@ -1,5 +1,6 @@
 // backend/models/Blog.js
 import mongoose from 'mongoose';
+import BlogCategory from './BlogCategory';
 
 // ── Content block schema (for rich structured content) ────────────────────────
 // ── Content block schema (for rich structured content) ────────────────────────

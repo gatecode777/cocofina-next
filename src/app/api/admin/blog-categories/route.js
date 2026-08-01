@@ -18,11 +18,11 @@ export async function GET(request) {
       ...c, blogCount: await Blog.countDocuments({ category: c._id, status: 'published' }),
     })));
 
-    await logActivity(request, admin, {
+    logActivity(request, admin, {
       action: 'view',
       module: 'blog_categories',
       description: `Viewed blog categories`,
-    });
+    }).catch(err => console.error('logActivity error:', err));
 
     return NextResponse.json({ success: true, categories: withCount });
   } catch (err) {

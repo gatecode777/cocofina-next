@@ -59,8 +59,10 @@ export async function PUT(request, { params }) {
     const excerpt = formData.get('excerpt');
     if (excerpt !== null) updateData.excerpt = excerpt;
 
-    const category = formData.get('category');
-    if (category !== null) updateData.category = category || null;
+    const rawCategory = formData.get('category');
+    if (rawCategory !== null) {
+      updateData.category = (rawCategory && rawCategory !== 'null' && rawCategory !== 'undefined' && rawCategory.trim() !== '') ? rawCategory.trim() : null;
+    }
 
     const status = formData.get('status');
     if (status !== null) updateData.status = status;

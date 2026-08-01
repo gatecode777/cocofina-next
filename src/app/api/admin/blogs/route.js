@@ -26,7 +26,7 @@ export async function GET(request) {
     const filter = {};
     if (status && status !== 'all') filter.status = status;
     if (featured === 'true') filter.isFeatured = true;
-    if (category) filter.category = category;
+    if (category && category !== 'null' && category !== 'undefined' && category.trim() !== '') filter.category = category.trim();
     if (search?.trim()) filter.$or = [
       { title:   { $regex: search.trim(), $options: 'i' } },
       { excerpt: { $regex: search.trim(), $options: 'i' } },
@@ -39,11 +39,11 @@ export async function GET(request) {
       .sort({ createdAt: -1 }).skip(skip).limit(limit)
       .select('-content').lean();
 
-    await logActivity(request, admin, {
+    logActivity(request, admin, {
       action: 'view',
       module: 'blogs',
       description: `Viewed blogs (page ${page})`,
-    });
+    }).catch(err => console.error('logActivity error:', err));
 
     return NextResponse.json({ success: true, blogs, total, totalPages: Math.ceil(total / limit) });
   } catch (err) {
@@ -66,7 +66,8 @@ export async function POST(request) {
     const formData = await request.formData();
     const title            = formData.get('title');
     const excerpt          = formData.get('excerpt') || '';
-    const category         = formData.get('category') || null;
+    const rawCategory      = formData.get('category');
+    const category         = (rawCategory && rawCategory !== 'null' && rawCategory !== 'undefined' && rawCategory.trim() !== '') ? rawCategory.trim() : null;
     const status           = formData.get('status') || 'draft';
     const isFeatured       = formData.get('isFeatured') === 'true';
     const coverImageAlt    = formData.get('coverImageAlt') || '';
