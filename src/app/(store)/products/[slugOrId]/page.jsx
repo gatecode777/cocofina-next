@@ -47,16 +47,24 @@ export async function generateMetadata({ params }) {
     robots: { index: false, follow: false },
   };
 
-  const title = `Buy ${product.name} – Organic Coconut Sugar | Cocofina`;
-  const description = product.description?.short
+  const seoTitle = product.seo?.metaTitle?.trim();
+  const title = seoTitle || `Buy ${product.name} – Organic Coconut Sugar | Cocofina`;
+
+  const seoDescription = product.seo?.metaDescription?.trim();
+  const description = seoDescription || (product.description?.short
     ? `${product.description.short} Shop ${product.name} online at Cocofina – free delivery on ₹499+.`
-    : `Buy ${product.name} – premium organic coconut sugar at Cocofina. Natural, unrefined, low GI sweetener. Free delivery on ₹499+.`;
+    : `Buy ${product.name} – premium organic coconut sugar at Cocofina. Natural, unrefined, low GI sweetener. Free delivery on ₹499+.`);
+
+  const seoKeywordsRaw = product.seo?.keywords || product.seo?.metaKeywords || [];
+  const seoKeywordsArray = Array.isArray(seoKeywordsRaw)
+    ? seoKeywordsRaw
+    : (typeof seoKeywordsRaw === 'string' ? seoKeywordsRaw.split(',').map(k => k.trim()).filter(Boolean) : []);
+
   const firstImage = product.images?.[0];
   const imageUrl = firstImage
     ? (firstImage.startsWith('http') ? firstImage : `https://ik.imagekit.io/zjd5xircoy/cocofina/products/${firstImage}`)
     : 'https://www.cocofinasugar.com/og-image.jpg';
   const url = `https://www.cocofinasugar.com/products/${product.slug || params.slugOrId}`;
-  const lowestPrice = product.variants?.reduce((min, v) => Math.min(min, v.price), Infinity);
 
   return {
     title,
@@ -68,7 +76,7 @@ export async function generateMetadata({ params }) {
       'natural sweetener',
       'low GI sugar',
       'Cocofina products',
-      ...(product.seo?.keywords || []),
+      ...seoKeywordsArray,
     ],
     alternates: { canonical: url },
     openGraph: {
@@ -169,9 +177,34 @@ export default async function Page({ params }) {
   const initialImage = images[0] || '';
   const isOutOfStock = product.stockStatus === 'Out of Stock';
   const isLimitedStock = product.stockStatus === 'Limited Stock';
+  const lowestPrice = product.variants?.reduce((min, v) => Math.min(min, v.price), Infinity);
+  const firstImage = images[0];
+  const imageUrl = firstImage
+    ? (firstImage.startsWith('http') ? firstImage : `https://ik.imagekit.io/zjd5xircoy/cocofina/products/${firstImage}`)
+    : 'https://www.cocofinasugar.com/og-image.jpg';
+  const url = `https://www.cocofinasugar.com/products/${product.slug || params.slugOrId}`;
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.seo?.metaTitle || product.name,
+    description: product.seo?.metaDescription || product.description?.short || product.name,
+    image: imageUrl,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'INR',
+      price: lowestPrice !== Infinity ? lowestPrice : 0,
+      availability: isOutOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      url: url,
+    },
+  };
 
   return (
     <main className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-500">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <Navbar />
       <div className="product-page-container">
         <nav className="prod-breadcrumb">

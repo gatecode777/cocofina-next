@@ -22,8 +22,17 @@ export async function generateMetadata({ params }) {
     robots: { index: false, follow: false },
   };
 
-  const title = `${blog.title} | Cocofina Blog`;
-  const description = blog.excerpt || blog.seo?.metaDescription || `Read "${blog.title}" on the Cocofina blog — tips, recipes and health information about organic coconut sugar.`;
+  const seoTitle = blog.seo?.metaTitle?.trim();
+  const title = seoTitle || `${blog.title} | Cocofina Blog`;
+
+  const seoDescription = blog.seo?.metaDescription?.trim();
+  const description = seoDescription || blog.excerpt || `Read "${blog.title}" on the Cocofina blog — tips, recipes and health information about organic coconut sugar.`;
+
+  const seoKeywordsRaw = blog.seo?.metaKeywords || '';
+  const seoKeywordsArray = typeof seoKeywordsRaw === 'string'
+    ? seoKeywordsRaw.split(',').map(k => k.trim()).filter(Boolean)
+    : (Array.isArray(seoKeywordsRaw) ? seoKeywordsRaw : []);
+
   const imageUrl = blog.coverImage
     ? `https://www.cocofinasugar.com/uploads/blogs/${blog.coverImage}`
     : 'https://www.cocofinasugar.com/og-image.jpg';
@@ -33,6 +42,7 @@ export async function generateMetadata({ params }) {
     title,
     description,
     keywords: [
+      ...seoKeywordsArray,
       ...(blog.tags || []),
       'coconut sugar blog',
       'organic sweetener tips',
@@ -235,8 +245,39 @@ export default async function Page({ params }) {
   const { blog, related } = data;
   const contentBlocks = blog.content || [];
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.seo?.metaTitle || blog.title,
+    description: blog.seo?.metaDescription || blog.excerpt || blog.title,
+    image: getCoverSrc(blog.coverImage),
+    datePublished: blog.publishedAt || blog.createdAt,
+    dateModified: blog.updatedAt || blog.publishedAt || blog.createdAt,
+    author: {
+      '@type': 'Person',
+      name: blog.author?.name || 'Cocofina',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Cocofina',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.cocofinasugar.com/logo.png',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://www.cocofinasugar.com/blog/${params.slug}`,
+    },
+    keywords: blog.seo?.metaKeywords || (blog.tags || []).join(', '),
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950 pt-20 flex flex-col justify-between">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div>
         <Navbar />
         <section className="blg-hero-section">
