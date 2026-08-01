@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/db';
 import Blog from '@/models/Blog';
 import '@/models/BlogCategory'; // Register BlogCategory model
 import ShareButtons from '@/components/blog/ShareButtons';
+import { BlogCoverImage, BlogBlockImage, BlogRelatedImage, BlogAuthorImage } from '@/components/blog/BlogImage';
 import BlogAskForm from '@/components/blog/BlogAskForm';
 import { Navbar } from '@/components/Navbar';
 import { getUploadUrl } from '@/lib/imageHelper';
@@ -160,12 +161,10 @@ const ContentBlock = ({ block }) => {
     case 'image':
       return block.imageFile ? (
         <figure className="blg-figure">
-          <img
+          <BlogBlockImage
             src={`/uploads/blogs/${block.imageFile}`}
             alt={block.imageAlt || ''}
             className="blg-block-img"
-            loading="lazy"
-            onError={(e) => { e.target.style.display = 'none'; }}
           />
           {block.imageCaption && <figcaption>{block.imageCaption}</figcaption>}
         </figure>
@@ -200,8 +199,7 @@ const ContentBlock = ({ block }) => {
 const RelatedCard = ({ blog }) => (
   <Link href={`/blog/${blog.slug}`} className="sbl-related-card">
     <div className="sbl-related-img">
-      <img src={getCoverSrc(blog.coverImage)} alt={blog.title}
-        onError={(e) => { e.target.src = '/Blog1.jpg'; }} loading="lazy" />
+      <BlogRelatedImage src={getCoverSrc(blog.coverImage)} alt={blog.title} />
     </div>
     <div className="sbl-related-info">
       {blog.category && <span className="category-tag" style={{ fontSize: 11, padding: '2px 10px' }}>{blog.category.name}</span>}
@@ -298,11 +296,10 @@ export default async function Page({ params }) {
 
             <div className="blg-media-grid">
               <div className="blg-img-box">
-                <img
+                <BlogCoverImage
                   src={getCoverSrc(blog.coverImage)}
                   alt={blog.coverImageAlt || blog.title}
                   className="blg-featured-img"
-                  onError={(e) => { e.target.src = '/Blog1.jpg'; }}
                 />
               </div>
 
@@ -328,8 +325,7 @@ export default async function Page({ params }) {
                 <div className="blg-author-flex">
                   <div className="blg-author-img">
                     {getAuthorSrc(blog.author.image) ? (
-                      <img src={getAuthorSrc(blog.author.image)} alt={blog.author.name}
-                        onError={(e) => { e.target.style.display = 'none'; }} />
+                      <BlogAuthorImage src={getAuthorSrc(blog.author.image)} alt={blog.author.name} />
                     ) : (
                       <div className="blg-author-initials">
                         {blog.author.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
