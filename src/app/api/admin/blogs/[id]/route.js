@@ -99,15 +99,33 @@ export async function PUT(request, { params }) {
     }
 
     const coverImageFile = formData.get('coverImage');
-    if (coverImageFile instanceof File) {
+    const removeCoverImage = formData.get('removeCoverImage') === 'true';
+    const authorImageFile = formData.get('authorImage');
+    const removeAuthorImage = formData.get('removeAuthorImage') === 'true';
+
+    const [newCoverImage, newAuthorImage] = await Promise.all([
+      (coverImageFile instanceof File && coverImageFile.size > 0)
+        ? saveFile(coverImageFile, 'blogs')
+        : Promise.resolve(null),
+      (authorImageFile instanceof File && authorImageFile.size > 0)
+        ? saveFile(authorImageFile, 'profiles')
+        : Promise.resolve(null),
+    ]);
+
+    if (newCoverImage !== null) {
       await deleteFile(existingBlog.coverImage, 'blogs');
-      updateData.coverImage = await saveFile(coverImageFile, 'blogs');
+      updateData.coverImage = newCoverImage;
+    } else if (removeCoverImage) {
+      await deleteFile(existingBlog.coverImage, 'blogs');
+      updateData.coverImage = '';
     }
 
-    const authorImageFile = formData.get('authorImage');
-    if (authorImageFile instanceof File) {
-      await deleteFile(existingBlog.author.image, 'profiles');
-      updateData['author.image'] = await saveFile(authorImageFile, 'profiles');
+    if (newAuthorImage !== null) {
+      await deleteFile(existingBlog.author?.image, 'profiles');
+      updateData['author.image'] = newAuthorImage;
+    } else if (removeAuthorImage) {
+      await deleteFile(existingBlog.author?.image, 'profiles');
+      updateData['author.image'] = '';
     }
 
     const updatedBlog = await Blog.findByIdAndUpdate(
@@ -116,13 +134,13 @@ export async function PUT(request, { params }) {
       { new: true, runValidators: true }
     );
 
-    await logActivity(request, admin, {
+    logActivity(request, admin, {
       action: 'edit',
       module: 'blogs',
       description: `Updated blog "${updatedBlog.title}"`,
       targetId: updatedBlog._id,
       targetName: updatedBlog.title,
-    });
+    }).catch(err => console.error('logActivity error:', err));
 
     return NextResponse.json({
       success: true,

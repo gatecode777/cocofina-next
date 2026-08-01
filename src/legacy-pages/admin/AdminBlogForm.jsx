@@ -346,6 +346,8 @@ const AdminBlogForm = () => {
   });
   const [coverFile, setCoverFile] = useState(null);
   const [authorImgFile, setAuthorImgFile] = useState(null);
+  const [removeCoverImage, setRemoveCoverImage] = useState(false);
+  const [removeAuthorImage, setRemoveAuthorImage] = useState(false);
   const [blocks, setBlocks] = useState([emptyBlock('paragraph')]);
 
   // Fetch categories
@@ -416,6 +418,15 @@ const AdminBlogForm = () => {
     if (!f) return;
     setCoverFile(f);
     setCoverPreview(URL.createObjectURL(f));
+    setRemoveCoverImage(false);
+  };
+
+  const handleRemoveCover = (e) => {
+    e.stopPropagation();
+    setCoverFile(null);
+    setCoverPreview('');
+    setRemoveCoverImage(true);
+    if (coverRef.current) coverRef.current.value = '';
   };
   
   const handleAuthorImgChange = (e) => {
@@ -423,6 +434,15 @@ const AdminBlogForm = () => {
     if (!f) return;
     setAuthorImgFile(f);
     setAuthorImgPreview(URL.createObjectURL(f));
+    setRemoveAuthorImage(false);
+  };
+
+  const handleRemoveAuthorImg = (e) => {
+    e.stopPropagation();
+    setAuthorImgFile(null);
+    setAuthorImgPreview('');
+    setRemoveAuthorImage(true);
+    if (authorImgRef.current) authorImgRef.current.value = '';
   };
 
   const handleSubmit = async (e) => {
@@ -448,7 +468,10 @@ const AdminBlogForm = () => {
         metaKeywords: form.seoKeywords,
       }));
       if (coverFile) fd.append('coverImage', coverFile);
+      else if (removeCoverImage) fd.append('removeCoverImage', 'true');
+
       if (authorImgFile) fd.append('authorImage', authorImgFile);
+      else if (removeAuthorImage) fd.append('removeAuthorImage', 'true');
 
       const url = isEdit ? `/api/admin/blogs/${id}` : '/api/admin/blogs';
       const method = isEdit ? 'PUT' : 'POST';
@@ -498,7 +521,30 @@ const AdminBlogForm = () => {
 
             {/* Cover image */}
             <div className="abf-card">
-              <h3 className="abf-card-title">Cover Image</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <h3 className="abf-card-title" style={{ margin: 0 }}>Cover Image</h3>
+                {coverPreview && (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      type="button"
+                      className="abf-btn-action abf-btn-replace"
+                      onClick={() => coverRef.current?.click()}
+                      title="Replace Cover Image"
+                    >
+                      <i className="fas fa-sync-alt"></i> Replace Image
+                    </button>
+                    <button
+                      type="button"
+                      className="abf-btn-action abf-btn-remove"
+                      onClick={handleRemoveCover}
+                      title="Remove Cover Image"
+                    >
+                      <i className="fas fa-trash-alt"></i> Remove Image
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="abf-cover-area" onClick={() => coverRef.current?.click()}>
                 {coverPreview
                   ? <img src={coverPreview} alt="Cover preview" className="abf-cover-preview" />
@@ -511,7 +557,7 @@ const AdminBlogForm = () => {
               </div>
               <input ref={coverRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleCoverChange} />
               {coverPreview && (
-                <div style={{ marginTop: 8 }}>
+                <div style={{ marginTop: 12 }}>
                   <label className="abf-label">Image Alt Text</label>
                   <input className="abf-input" name="coverImageAlt" value={form.coverImageAlt}
                     onChange={handleInput} placeholder="Describe the image for accessibility" />
@@ -592,7 +638,7 @@ const AdminBlogForm = () => {
               </label>
             </div>
 
-            {/* Category + Tags */}
+            {/* Category & Tags */}
             <div className="abf-card">
               <h3 className="abf-card-title">Category & Tags</h3>
               <div className="form-group">
@@ -634,6 +680,26 @@ const AdminBlogForm = () => {
                       <small>JPG, PNG — max 5MB</small>
                     </div>
                   </div>
+                  {authorImgPreview && (
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                      <button
+                        type="button"
+                        className="abf-btn-action abf-btn-replace"
+                        style={{ flex: 1, padding: '5px 8px', fontSize: 12, justifyContent: 'center' }}
+                        onClick={() => authorImgRef.current?.click()}
+                      >
+                        <i className="fas fa-sync-alt"></i> Replace
+                      </button>
+                      <button
+                        type="button"
+                        className="abf-btn-action abf-btn-remove"
+                        style={{ flex: 1, padding: '5px 8px', fontSize: 12, justifyContent: 'center' }}
+                        onClick={handleRemoveAuthorImg}
+                      >
+                        <i className="fas fa-trash-alt"></i> Remove
+                      </button>
+                    </div>
+                  )}
                   <input ref={authorImgRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAuthorImgChange} />
 
                   <div className="form-group" style={{ marginTop: 12 }}>

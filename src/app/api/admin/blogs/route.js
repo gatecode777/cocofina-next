@@ -84,14 +84,10 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Title is required' }, { status: 400 });
     }
 
-    let coverImage = '';
-    let authorImage = '';
-    if (coverImageFile instanceof File && coverImageFile.size > 0) {
-      coverImage = await saveFile(coverImageFile, 'blogs');
-    }
-    if (authorImageFile instanceof File && authorImageFile.size > 0) {
-      authorImage = await saveFile(authorImageFile, 'profiles');
-    }
+    const [coverImage, authorImage] = await Promise.all([
+      (coverImageFile instanceof File && coverImageFile.size > 0) ? saveFile(coverImageFile, 'blogs') : Promise.resolve(''),
+      (authorImageFile instanceof File && authorImageFile.size > 0) ? saveFile(authorImageFile, 'profiles') : Promise.resolve(''),
+    ]);
 
     // Generate slug from title
     const slug = title.trim()
@@ -118,13 +114,13 @@ export async function POST(request) {
       seo,
     });
 
-    await logActivity(request, admin, {
+    logActivity(request, admin, {
       action: 'create',
       module: 'blogs',
       description: `Created blog "${blog.title}"`,
       targetId: blog._id,
       targetName: blog.title,
-    });
+    }).catch(err => console.error('logActivity error:', err));
 
     return NextResponse.json({ success: true, message: 'Blog created', blog }, { status: 201 });
   } catch (err) {

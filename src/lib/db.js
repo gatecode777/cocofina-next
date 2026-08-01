@@ -1,28 +1,39 @@
 import mongoose from "mongoose";
-import dns from "dns";
 
-// Fix querySrv ECONNREFUSED on Windows / local network DNS lookup for MongoDB Atlas SRV records
-try {
-  if (dns.setDefaultResultOrder) {
-    dns.setDefaultResultOrder('ipv4first');
-  }
-  dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
-} catch (e) {
-  console.warn("Could not set custom DNS servers for MongoDB connection:", e);
-}
-
-// In development, store the connection on the global object so it
-// survives hot module replacement (Next.js re-imports modules on change)
 let cached = global.mongoose;
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-export async function connectDB() {
+// Convert SRV connection string to direct seedlist with replicaSet for instant Windows connection
+function getDirectUri(uri) {
+  if (!uri || !uri.startsWith('mongodb+srv://')) return uri;
   try {
-    dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
-  } catch (e) {}
+    const match = uri.match(/^mongodb\+srv:\/\/([^:]+):([^@]+)@([^/]+)\/([^?]*)(.*)$/);
+    if (!match) return uri;
+    const [, user, pass, host, db, query] = match;
+    const baseHost = host.trim();
+    const parts = baseHost.split('.');
+    const clusterName = parts[0] || 'cluster0';
+    const clusterId = parts[1] || 'l7xeac9';
+    const domain = baseHost.substring(clusterName.length); // e.g. .l7xeac9.mongodb.net
+    
+    const hosts = [
+      `${clusterName}-shard-00-00${domain}:27017`,
+      `${clusterName}-shard-00-01${domain}:27017`,
+      `${clusterName}-shard-00-02${domain}:27017`
+    ].join(',');
 
+    const replicaSet = `atlas-${clusterId}-shard-0`;
+    const cleanQuery = query ? query.replace(/^\?/, '') : '';
+    
+    return `mongodb://${user}:${pass}@${hosts}/${db}?ssl=true&replicaSet=${replicaSet}&authSource=admin${cleanQuery ? `&${cleanQuery}` : ''}`;
+  } catch (err) {
+    return uri;
+  }
+}
+
+export async function connectDB() {
   const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/cocofina";
 
   if (!process.env.MONGODB_URI) {
@@ -38,13 +49,25 @@ export async function connectDB() {
       bufferCommands: false,
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      connectTimeoutMS: 5000,
+      socketTimeoutMS: 30000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log("MongoDB connected successfully");
-      return mongooseInstance;
-    });
+    // Try standard connection first; if Windows SRV DNS fails or times out, use direct replicaSet connection
+    const directUri = getDirectUri(MONGODB_URI);
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts)
+      .catch((firstErr) => {
+        if (firstErr.message && (firstErr.message.includes('querySrv') || firstErr.message.includes('ECONNREFUSED') || firstErr.name === 'MongooseServerSelectionError')) {
+          console.warn('MongoDB SRV connection failed. Switching to direct Atlas replica set connection...');
+          return mongoose.connect(directUri, opts);
+        }
+        throw firstErr;
+      })
+      .then((mongooseInstance) => {
+        console.log("MongoDB connected successfully");
+        return mongooseInstance;
+      });
   }
 
   try {

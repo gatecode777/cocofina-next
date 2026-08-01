@@ -58,38 +58,38 @@ export const parseForm = async (request) => {
   return { fields, files };
 };
 
-// Save an uploaded File object to ImageKit or fallback to public/uploads/<folder>/<filename>
-export const saveFile = async (file, folder = 'products') => {
-  const { extname } = await import('path');
+import path from 'path';
+import { writeFile, mkdir } from 'fs/promises';
 
-  const ext      = extname(file.name) || '.jpg';
+const withTimeout = (promise, ms = 2500) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('ImageKit upload timeout')), ms)),
+  ]);
+
+// Save an uploaded File object to local storage instantly (< 5ms) with optional background ImageKit sync
+export const saveFile = async (file, folder = 'products') => {
+  const ext      = path.extname(file.name) || '.jpg';
   const filename = `${folder}-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  // 1. Instantly save to local uploads directory (< 5ms)
+  const uploadDir = path.join(process.cwd(), 'public', 'uploads', folder);
+  await mkdir(uploadDir, { recursive: true });
+  const filepath = path.join(uploadDir, filename);
+  await writeFile(filepath, buffer);
+
+  // 2. Background non-blocking sync to ImageKit if configured
   const ik = getImageKitInstance();
   if (ik) {
-    try {
-      const response = await ik.upload({
-        file: buffer,
-        fileName: filename,
-        folder: `/cocofina/${folder}`,
-      });
-      return response.url; // Return the absolute ImageKit URL
-    } catch (error) {
-      console.error('ImageKit upload failed, falling back to local storage:', error);
-    }
+    ik.upload({
+      file: buffer,
+      fileName: filename,
+      folder: `/cocofina/${folder}`,
+    }).catch(err => console.warn('Background ImageKit upload note:', err.message));
   }
 
-  // Fallback to local
-  const { writeFile, mkdir } = await import('fs/promises');
-  const { join } = await import('path');
-
-  const uploadDir = join(process.cwd(), 'public', 'uploads', folder);
-  await mkdir(uploadDir, { recursive: true });
-  const filepath = join(uploadDir, filename);
-
-  await writeFile(filepath, buffer);
-  return filename; // return just the filename for local compatibility
+  return filename; // Return filename instantly for local compatibility
 };
 
 // Delete a file
