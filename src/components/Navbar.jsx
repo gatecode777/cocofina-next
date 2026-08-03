@@ -101,7 +101,7 @@ export function Navbar() {
         </Link>
 
         {/* Center Pill (Desktop LG+) */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 rounded-full px-2 py-2 items-center gap-1 transition-colors duration-500">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 rounded-full px-2 py-2 items-center gap-1 transition-all duration-500 shadow-md dark:shadow-black/40">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -111,7 +111,7 @@ export function Navbar() {
                 className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-bold shadow-sm"
-                    : "text-neutral-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/20 hover:text-neutral-900 dark:hover:text-white"
+                    : "text-neutral-600 dark:text-white/70 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white"
                 }`}
               >
                 {item.label}
@@ -125,7 +125,7 @@ export function Navbar() {
           <button
             onClick={() => setIsCartOpen(true)}
             aria-label="View Shopping Basket"
-            className="relative w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
+            className="relative w-10 h-10 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all active:scale-95 cursor-pointer shadow-sm"
           >
             <ShoppingBag className="w-4 h-4 text-neutral-800 dark:text-white" />
             {totalItems > 0 && (
@@ -138,7 +138,7 @@ export function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
+            className="w-10 h-10 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all active:scale-95 cursor-pointer shadow-sm"
           >
             {mounted && (resolvedTheme === "dark" || theme === "dark") ? (
               <Sun className="w-4 h-4 text-amber-300" />
@@ -153,7 +153,7 @@ export function Navbar() {
               onClick={() => setIsProfileDropdownOpen((prev) => !prev)}
               aria-label="User Profile"
               title={user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : "Account"}
-              className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-all active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all active:scale-95 cursor-pointer shadow-sm"
             >
               {user ? (
                 <div className="w-6 h-6 rounded-full bg-amber-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
@@ -249,7 +249,7 @@ export function Navbar() {
           <button
             onClick={() => setIsCartOpen(true)}
             aria-label="View Basket"
-            className="relative w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer"
+            className="relative w-9 h-9 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer shadow-sm"
           >
             <ShoppingBag className="w-4 h-4" />
             {totalItems > 0 && (
@@ -262,7 +262,7 @@ export function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer"
+            className="w-9 h-9 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer shadow-sm"
           >
             {mounted && (resolvedTheme === "dark" || theme === "dark") ? (
               <Sun className="w-4 h-4 text-amber-300" />
@@ -280,7 +280,7 @@ export function Navbar() {
               }}
               aria-label="User Profile"
               title={user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : "Account"}
-              className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer active:scale-95"
+              className="w-9 h-9 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer active:scale-95 shadow-sm"
             >
               {user ? (
                 <div className="w-5 h-5 rounded-full bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
@@ -366,7 +366,7 @@ export function Navbar() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Mobile Menu"
-            className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer"
+            className="w-9 h-9 rounded-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-center text-neutral-800 dark:text-white cursor-pointer shadow-sm"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

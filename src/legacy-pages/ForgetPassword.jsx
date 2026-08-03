@@ -85,6 +85,7 @@ const ForgotPasswordPage = () => {
                 <div className="input-icon-container-l">
                   <i className="fa-regular fa-envelope"></i>
                   <input
+                  
                     type="email"
                     placeholder="Email Address"
                     className="input-field-s"
@@ -113,7 +114,7 @@ const ForgotPasswordPage = () => {
               </Link>
             </p>
           </div>
-        </div>
+        </div> 
       </div>
     </main>
   );

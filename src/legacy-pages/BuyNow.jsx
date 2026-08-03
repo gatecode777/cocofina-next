@@ -368,24 +368,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
         }
       } catch (err) {
         if (isMounted) {
-          setAvailableCoupons([
-            {
-              code: 'COCO10',
-              label: '10% off (max ₹100)',
-              description: '10% OFF on all orders above ₹299',
-              minOrderValue: 299,
-              eligible: subtotal >= 299,
-              previewDiscount: subtotal >= 299 ? Math.round(subtotal * 0.1) : 0,
-            },
-            {
-              code: 'HEALTHY50',
-              label: '₹50 off',
-              description: 'Flat ₹50 OFF on orders above ₹499',
-              minOrderValue: 499,
-              eligible: subtotal >= 499,
-              previewDiscount: subtotal >= 499 ? 50 : 0,
-            },
-          ]);
+          setAvailableCoupons([]);
         }
       }
     };
@@ -486,7 +469,7 @@ const StepPayment = ({ cartItems, address, shippingMethod, paymentMethod, setPay
               <form onSubmit={handleApplyCoupon} className="flex gap-2 my-2">
                 <input
                   type="text"
-                  placeholder="Promo Code (e.g. COCO10)"
+                  placeholder="Enter Promo Code"
                   value={couponInput}
                   onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
                   className="flex-1 px-3.5 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-sm font-mono focus:outline-none focus:border-amber-600 dark:focus:border-amber-500"

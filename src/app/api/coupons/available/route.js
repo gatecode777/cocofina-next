@@ -21,37 +21,8 @@ export async function GET(request) {
       startDate: { $lte: now },
     }).lean();
 
-    if (!all || all.length === 0) {
-      all = [
-        {
-          _id: 'default-coco10',
-          code: 'COCO10',
-          description: '10% OFF on all orders above ₹299',
-          type: 'percentage',
-          value: 10,
-          maxDiscount: 100,
-          minOrderValue: 299,
-          isActive: true,
-        },
-        {
-          _id: 'default-healthy50',
-          code: 'HEALTHY50',
-          description: 'Flat ₹50 OFF on orders above ₹499',
-          type: 'flat',
-          value: 50,
-          minOrderValue: 499,
-          isActive: true,
-        },
-        {
-          _id: 'default-welcome100',
-          code: 'WELCOME100',
-          description: 'Flat ₹100 OFF on orders above ₹999',
-          type: 'flat',
-          value: 100,
-          minOrderValue: 999,
-          isActive: true,
-        },
-      ];
+    if (!all) {
+      all = [];
     }
 
     const valid = all.filter((c) => {

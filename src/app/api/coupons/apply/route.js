@@ -17,16 +17,7 @@ export async function POST(request) {
 
     let coupon = await Coupon.findOne({ code: code.trim().toUpperCase(), isActive: true });
 
-    if (!coupon) {
-      const codeUpper = code.trim().toUpperCase();
-      if (codeUpper === 'COCO10') {
-        coupon = { code: 'COCO10', type: 'percentage', value: 10, maxDiscount: 100, minOrderValue: 299, isActive: true, usedBy: [] };
-      } else if (codeUpper === 'HEALTHY50') {
-        coupon = { code: 'HEALTHY50', type: 'flat', value: 50, minOrderValue: 499, isActive: true, usedBy: [] };
-      } else if (codeUpper === 'WELCOME100') {
-        coupon = { code: 'WELCOME100', type: 'flat', value: 100, minOrderValue: 999, isActive: true, usedBy: [] };
-      }
-    }
+    // No hardcoded coupons fallback
 
     if (!coupon) return NextResponse.json({ success: false, message: 'Invalid coupon code' }, { status: 400 });
 
