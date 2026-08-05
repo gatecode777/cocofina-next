@@ -108,9 +108,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
         {/* End Google Tag Manager */}
         {/* Meta Pixel Code */}
-        <Script
-          id="meta-pixel"
-          strategy="afterInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
