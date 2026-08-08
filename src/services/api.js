@@ -119,7 +119,7 @@ export const adminProductAPI = {
     body: formData,
   }).then(r => r.json()).then(d => ({ data: d })),
   delete:       (id)           => api.delete(`/api/admin/products/${id}`),
-  deleteImage:  (id, filename) => api.delete(`/api/admin/products/${id}/images/${filename}`),
+  deleteImage:  (id, filename) => api.delete(`/api/admin/products/${id}/images`, { params: { filename } }),
   updateStatus: (id, status)   => api.put(`/api/admin/products/${id}/status`, { status }),
   getStats:     ()             => api.get('/api/admin/products/stats'),
 };
