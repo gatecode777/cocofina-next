@@ -16,7 +16,7 @@ const ProductForm = () => {
   const router = useRouter();
   const id = params?.id;
   const isEditMode = Boolean(id);
-  const MAX_IMAGES = 4;
+  const MAX_IMAGES = 10;
 
   // ── State ────────────────────────────────────────────────────────────────────
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,7 @@ const ProductForm = () => {
     stockStatus: 'In Stock',
     status: 'active',
     isComingSoon: false,
+    sortOrder: '',
     metaTitle: '',
     metaDescription: '',
     keywords: [''],
@@ -95,6 +96,7 @@ const ProductForm = () => {
             stockStatus: p.stockStatus || 'In Stock',
             status: p.status || 'active',
             isComingSoon: p.isComingSoon || false,
+            sortOrder: p.sortOrder !== undefined && p.sortOrder !== 10000 ? p.sortOrder : '',
             metaTitle: p.seo?.metaTitle || '',
             metaDescription: p.seo?.metaDescription || '',
             keywords: p.seo?.keywords?.length ? p.seo.keywords : [''],
@@ -209,6 +211,7 @@ const ProductForm = () => {
         stockStatus: formData.stockStatus,
         status: formData.status,
         isComingSoon: formData.isComingSoon,
+        sortOrder: formData.sortOrder !== '' ? parseInt(formData.sortOrder) : 10000,
         seo: {
           metaTitle: formData.metaTitle,
           metaDescription: formData.metaDescription,
@@ -644,6 +647,18 @@ const ProductForm = () => {
                     <option value="Out of Stock">Out of Stock</option>
                     <option value="Limited Stock">Limited Stock</option>
                   </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Sort Position / Priority</label>
+                  <input
+                    type="number"
+                    name="sortOrder"
+                    value={formData.sortOrder}
+                    onChange={handleInput}
+                    placeholder="e.g. 1 (first), 2, 3..."
+                    min="1"
+                  />
                 </div>
               </div>
 

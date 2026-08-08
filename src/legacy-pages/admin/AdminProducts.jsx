@@ -257,6 +257,11 @@ const AdminProducts = () => {
                           <i className="fas fa-clock" style={{ marginRight: '4px', fontSize: '10px' }}></i> Coming Soon
                         </span>
                       )}
+                      {product.sortOrder !== undefined && product.sortOrder !== 10000 && (
+                        <span style={{ marginLeft: '6px', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600', background: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd' }} title="Position on website">
+                          <i className="fas fa-sort-numeric-down" style={{ marginRight: '4px', fontSize: '10px' }}></i> Pos: {product.sortOrder}
+                        </span>
+                      )}
                     </div>
                   </div>
 

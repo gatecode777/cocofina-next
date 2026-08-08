@@ -48,7 +48,7 @@ export async function GET(request) {
     const total = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .populate('category', 'name slug')
-      .sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+      .sort({ sortOrder: 1, createdAt: -1 }).skip(skip).limit(limit).lean();
 
     await logActivity(request, admin, {
       action: 'view',

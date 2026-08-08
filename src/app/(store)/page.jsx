@@ -36,7 +36,7 @@ async function getHomeProducts() {
     const products = await Promise.race([
       Product.find({ status: "active" })
         .populate("category", "name slug")
-        .sort({ createdAt: -1 })
+        .sort({ sortOrder: 1, createdAt: -1 })
         .limit(20)
         .lean(),
       new Promise((_, reject) =>

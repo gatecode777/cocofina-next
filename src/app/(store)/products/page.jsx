@@ -18,7 +18,7 @@ async function getProducts() {
     const products = await Promise.race([
       Product.find({ status: "active" })
         .populate("category", "name slug")
-        .sort({ createdAt: -1 })
+        .sort({ sortOrder: 1, createdAt: -1 })
         .lean(),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("DB Fetch Timeout")), 1500)

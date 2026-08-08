@@ -92,6 +92,11 @@ const productSchema = new mongoose.Schema(
       type:    Boolean,
       default: false,
     },
+
+    sortOrder: {
+      type:    Number,
+      default: 10000,
+    },
   },
   { timestamps: true }
 );

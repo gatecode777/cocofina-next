@@ -97,7 +97,7 @@ export async function PUT(request, { params }) {
       }
     }
 
-    finalImages = [...finalImages, ...newFilenames].slice(0, 4);
+    finalImages = [...finalImages, ...newFilenames].slice(0, 10);
     productData.images    = finalImages;
     productData.thumbnail = finalImages[0] || existingProduct.thumbnail || '';
 

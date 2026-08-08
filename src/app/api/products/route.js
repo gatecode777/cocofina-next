@@ -26,7 +26,7 @@ export async function GET(request) {
     const total = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .populate('category', 'name slug')
-      .sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+      .sort({ sortOrder: 1, createdAt: -1 }).skip(skip).limit(limit).lean();
 
     return NextResponse.json({ success: true, products, totalProducts: total, totalPages: Math.ceil(total / limit), currentPage: page });
   } catch (err) {
