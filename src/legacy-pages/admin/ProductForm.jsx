@@ -48,6 +48,7 @@ const ProductForm = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
+  const [totalProductsCount, setTotalProductsCount] = useState(4);
 
   // ── Fetch categories ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -66,6 +67,25 @@ const ProductForm = () => {
       }
     };
     fetchCategories();
+  }, []);
+
+  // ── Fetch total products count ──────────────────────────────────────────────
+  useEffect(() => {
+    const fetchTotalProducts = async () => {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const res = await fetch('/api/admin/products?limit=1', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setTotalProductsCount(data.totalProducts || 4);
+        }
+      } catch (e) {
+        console.error('fetchTotalProducts error:', e);
+      }
+    };
+    fetchTotalProducts();
   }, []);
 
   // ── Fetch product for edit mode ───────────────────────────────────────────────
@@ -651,14 +671,21 @@ const ProductForm = () => {
 
                 <div className="form-group">
                   <label>Sort Position / Priority</label>
-                  <input
-                    type="number"
+                  <select
                     name="sortOrder"
                     value={formData.sortOrder}
                     onChange={handleInput}
-                    placeholder="e.g. 1 (first), 2, 3..."
-                    min="1"
-                  />
+                  >
+                    <option value="">Default (No Priority)</option>
+                    {Array.from(
+                      { length: isEditMode ? totalProductsCount : totalProductsCount + 1 },
+                      (_, i) => i + 1
+                    ).map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

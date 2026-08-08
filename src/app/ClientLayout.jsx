@@ -29,8 +29,10 @@ export default function ClientLayout({ children }) {
     </CartProvider>
   );
 
+  const isAdminPage = pathname?.startsWith("/admin");
+
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme={isAdminPage ? "light" : undefined} enableSystem>
       {googleClientId ? (
         <GoogleOAuthProvider clientId={googleClientId}>
           {content}
