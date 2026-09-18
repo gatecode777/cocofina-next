@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { RevealLayer } from "./RevealLayer";
 import { Navbar } from "./Navbar";
 
@@ -97,19 +98,29 @@ export function HeroSection() {
 
         {/* Bottom-right Block (z-50) */}
         <div
-          className="absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] flex flex-col items-start gap-4 sm:gap-5 z-50 hero-anim hero-fade"
+          className="absolute bottom-10 sm:bottom-20 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-md flex flex-col items-start gap-4 sm:gap-5 z-50 hero-anim hero-fade"
           style={{ animationDelay: "0.85s" }}
         >
-          <p className="text-xs sm:text-sm text-neutral-600 dark:text-white/80 leading-relaxed transition-colors duration-500">
+          <p className="text-xs sm:text-sm text-neutral-700 dark:text-white/80 leading-relaxed transition-colors duration-500 max-w-sm">
             — Discover how we transform sweet, organic coconut sap into an
             unrefined, low-glycemic sugar that nourishes both body and earth.
           </p>
-          <Link
-            href="/our-products"
-            className="bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-amber-600/30 cursor-pointer"
-          >
-            Taste the Pureness
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="#inquiry-section"
+              className="bg-[#d97706] hover:bg-[#b45309] text-white text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-amber-600/30 flex items-center gap-2 cursor-pointer"
+            >
+              <span>Request Bulk Inquiry</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+
+            <Link
+              href="/our-products"
+              className="bg-black/40 hover:bg-black/60 dark:bg-white/10 dark:hover:bg-white/20 text-white backdrop-blur-md border border-white/25 text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 cursor-pointer shadow-sm"
+            >
+              Explore Products
+            </Link>
+          </div>
         </div>
       </section>
     </div>

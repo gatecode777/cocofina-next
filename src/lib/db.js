@@ -1,12 +1,35 @@
 import mongoose from "mongoose";
 
+import fs from "fs";
+import path from "path";
+
 let cached = global.mongoose;
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+function resolveMongoURI() {
+  let uri = process.env.MONGODB_URI;
+  if (!uri || uri.includes("cluster0-shard-00-00")) {
+    try {
+      const envPath = path.resolve(process.cwd(), ".env.local");
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, "utf-8");
+        const match = content.match(/^MONGODB_URI=(.*)$/m);
+        if (match && match[1]) {
+          uri = match[1].trim();
+          process.env.MONGODB_URI = uri;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return uri || "mongodb://127.0.0.1:27017/cocofina";
+}
+
 export async function connectDB() {
-  const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/cocofina";
+  const MONGODB_URI = resolveMongoURI();
 
   if (!process.env.MONGODB_URI) {
     console.warn("Warning: MONGODB_URI is not defined in environment variables. Falling back to local MongoDB: mongodb://127.0.0.1:27017/cocofina");
@@ -28,8 +51,8 @@ export async function connectDB() {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 15000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 30000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts)

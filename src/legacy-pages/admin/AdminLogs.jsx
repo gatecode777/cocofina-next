@@ -21,6 +21,7 @@ const MODULE_META = {
   blogs:          { label: 'Blogs',           icon: 'fa-newspaper',    color: '#ec4899' },
   managers:       { label: 'Managers',        icon: 'fa-user-shield',  color: '#ef4444' },
   auth:           { label: 'Auth',            icon: 'fa-key',          color: '#64748b' },
+  inquiries:      { label: 'Inquiries',       icon: 'fa-envelope-open-text', color: '#d97706' },
   other:          { label: 'Other',           icon: 'fa-circle',       color: '#9ca3af' },
 };
 

@@ -22,7 +22,7 @@ const activityLogSchema = new mongoose.Schema(
     module: {
       type:     String,
       enum:     ['dashboard', 'users', 'products', 'categories', 'blogCategories', 'blog_categories',
-                 'orders', 'coupons', 'blogs', 'managers', 'auth', 'other'],
+                 'orders', 'coupons', 'blogs', 'managers', 'auth', 'inquiries', 'other'],
       required: true,
     },
 

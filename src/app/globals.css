@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body {
+  scroll-behavior: smooth;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge and Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  height: 0px;
+  background: transparent;
+}
+
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 @layer utilities {
   .font-sans {
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -76,4 +98,21 @@
 /* Automatic Dark Mode Logo Swap */
 .dark img[src*="cocofina.png"] {
   content: url("/Cocofina-white.png");
+}
+
+/* Floating WhatsApp Ripple & Glow Animation */
+@keyframes whatsappGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7), 0 8px 20px rgba(37, 211, 102, 0.35);
+  }
+  60% {
+    box-shadow: 0 0 0 16px rgba(37, 211, 102, 0), 0 8px 20px rgba(37, 211, 102, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0), 0 8px 20px rgba(37, 211, 102, 0.35);
+  }
+}
+
+.whatsapp-floating-btn {
+  animation: whatsappGlow 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }

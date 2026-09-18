@@ -250,4 +250,12 @@ export const passwordResetAPI = {
   resendOTP:      (email)                              => api.post('/api/reset-password/resend', { email }),
 };
 
+// ==================== INQUIRIES ====================
+export const inquiryAPI = {
+  submit:       (data)     => api.post('/api/inquiries', data),
+  getAll:       (params)   => api.get('/api/admin/inquiries', { params }),
+  update:       (id, data) => api.patch(`/api/admin/inquiries/${id}`, data),
+  delete:       (id)       => api.delete(`/api/admin/inquiries/${id}`),
+};
+
 export default api;

@@ -8,6 +8,7 @@ import { ProductsSection } from "@/components/ProductsSection";
 import { StorySection } from "@/components/StorySection";
 import { ProcessSection } from "@/components/ProcessSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { InquirySection } from "@/components/InquirySection";
 import { FaqSection } from "@/components/FaqSection";
 
 export const revalidate = 60;
@@ -70,7 +71,10 @@ export default async function Page() {
       {/* 5. Customer Testimonials & Reviews */}
       <TestimonialsSection />
 
-      {/* 6. FAQ Accordion Section */}
+      {/* 6. Instant Inquiry & Bulk Supply Section */}
+      <InquirySection />
+
+      {/* 7. FAQ Accordion Section */}
       <FaqSection />
     </main>
   );

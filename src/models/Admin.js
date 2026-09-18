@@ -48,6 +48,7 @@ const adminSchema = new mongoose.Schema(
       coupons:        { type: permissionModuleSchema, default: () => ({ view: false, create: false, edit: false, delete: false }) },
       blogs:          { type: permissionModuleSchema, default: () => ({ view: false, create: false, edit: false, delete: false }) },
       blogCategories: { type: permissionModuleSchema, default: () => ({ view: false, create: false, edit: false, delete: false }) },
+      inquiries:      { type: permissionModuleSchema, default: () => ({ view: true,  create: false, edit: true,  delete: true  }) },
     },
     profile:    { type: String,  default: '' },
     isActive:   { type: Boolean, default: true },
@@ -70,5 +71,9 @@ adminSchema.methods.can = function (module, action = 'view') {
   return Boolean(this.permissions?.[module]?.[action]);
 };
 
-const Admin = mongoose.models.Admin || mongoose.model('Admin', adminSchema);
+if (mongoose.models.Admin) {
+  delete mongoose.models.Admin;
+}
+
+const Admin = mongoose.model('Admin', adminSchema);
 export default Admin;

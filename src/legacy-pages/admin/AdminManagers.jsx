@@ -28,6 +28,7 @@ const MODULES = [
   { key: 'coupons',        label: 'Coupons',          icon: 'fa-tag'           },
   { key: 'blogs',          label: 'Blogs',            icon: 'fa-newspaper'     },
   { key: 'blogCategories', label: 'Blog Categories',  icon: 'fa-newspaper'     },
+  { key: 'inquiries',      label: 'Inquiries',        icon: 'fa-envelope-open-text' },
 ];
 
 const ACTIONS = ['view', 'create', 'edit', 'delete'];

@@ -7,6 +7,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import { CartProvider } from "../context/CartContext";
 import { CartDrawer } from "../components/CartDrawer";
 import { Footer } from "../components/Footer";
+import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
@@ -26,6 +27,7 @@ export default function ClientLayout({ children }) {
         {!isAuthOrAdminPage && <Footer />}
       </div>
       <CartDrawer />
+      {!pathname?.startsWith("/admin") && <FloatingWhatsApp />}
     </CartProvider>
   );
 
